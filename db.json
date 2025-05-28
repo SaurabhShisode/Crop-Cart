@@ -1,0 +1,247 @@
+{
+  "crops": [
+    {
+      "id": "1",
+      "name": "Wheat",
+      "price": 120,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["110001", "110002", "110003", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "2",
+      "name": "Rice",
+      "price": 90,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["560001", "560002", "560003", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "3",
+      "name": "Corn",
+      "price": 85,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["400001", "400002", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "4",
+      "name": "Barley",
+      "price": 75,
+      "availability": "Limited stock",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["110001", "110002", "110004", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "5",
+      "name": "Soybean",
+      "price": 110,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["700001", "700002", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "6",
+      "name": "Cotton",
+      "price": 130,
+      "availability": "Pre-order",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["560001", "560004", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "7",
+      "name": "Sugarcane",
+      "price": 95,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["400001", "400005", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "19",
+      "name": "Millet",
+      "price": 105,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["400003", "110002", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "20",
+      "name": "Lentils",
+      "price": 95,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["110001", "700001", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "21",
+      "name": "Flour",
+      "price": 60,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["560001", "560005", "425401"],
+      "type": "grocery"
+    },
+    {
+      "id": "22",
+      "name": "Cooking Oil",
+      "price": 150,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["400001", "400008", "425401"],
+      "type": "grocery"
+    },
+    {
+      "id": "23",
+      "name": "Sugar",
+      "price": 45,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["110003", "110007", "425401"],
+      "type": "grocery"
+    },
+    {
+      "id": "24",
+      "name": "Salt",
+      "price": 20,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["700001", "700004", "425401"],
+      "type": "grocery"
+    },
+    {
+      "id": "25",
+      "name": "Milk",
+      "price": 60,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["110001", "110009", "425401"],
+      "type": "dairy"
+    },
+    {
+      "id": "26",
+      "name": "Cheese",
+      "price": 200,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["560002", "560006", "425401"],
+      "type": "dairy"
+    },
+    {
+      "id": "27",
+      "name": "Butter",
+      "price": 180,
+      "availability": "Limited stock",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["400001", "400009", "425401"],
+      "type": "dairy"
+    },
+    {
+      "id": "28",
+      "name": "Curd",
+      "price": 40,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["700002", "700005", "425401"],
+      "type": "dairy"
+    },
+    {
+      "id": "29",
+      "name": "Oats",
+      "price": 95,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["110005", "110006", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "30",
+      "name": "Peanuts",
+      "price": 85,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["560007", "560008", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "31",
+      "name": "Green Gram",
+      "price": 110,
+      "availability": "Limited stock",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["700003", "700007", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "32",
+      "name": "Jowar",
+      "price": 100,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["400003", "400006", "425401"],
+      "type": "crop"
+    },
+    {
+      "id": "33",
+      "name": "Honey",
+      "price": 250,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["110002", "110008", "425401"],
+      "type": "grocery"
+    },
+    {
+      "id": "34",
+      "name": "Tea Leaves",
+      "price": 300,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["560010", "560011", "425401"],
+      "type": "grocery"
+    },
+    {
+      "id": "35",
+      "name": "Coffee Beans",
+      "price": 400,
+      "availability": "Limited stock",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["700010", "700011", "425401"],
+      "type": "grocery"
+    },
+    {
+      "id": "36",
+      "name": "Paneer",
+      "price": 220,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["110004", "110010", "425401"],
+      "type": "dairy"
+    },
+    {
+      "id": "37",
+      "name": "Ghee",
+      "price": 350,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["560009", "560012", "425401"],
+      "type": "dairy"
+    },
+    {
+      "id": "38",
+      "name": "Eggs",
+      "price": 5,
+      "availability": "Available now",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/320px-Tomato_je.jpg",
+      "regionPincodes": ["400010", "400011", "425401"],
+      "type": "dairy"
+    }
+  ]
+}
