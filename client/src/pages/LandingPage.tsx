@@ -45,7 +45,7 @@ export default function LandingPage() {
             <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 flex justify-between items-center p-6">
                 <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400">
                     <img
-                        src="\favicon.ico"
+                        src="\client\src\assets\logo.png"
                         alt="CropCart Logo"
                         className="w-8 h-8"
                     />
