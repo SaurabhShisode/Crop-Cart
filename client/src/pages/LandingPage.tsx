@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import heroImage from '../assets/hero.png';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,9 +11,7 @@ import TwitterIcon from '../assets/icons/twitter.svg';
 export default function LandingPage() {
     const [loaded, setLoaded] = useState(false);
     const [active, setActive] = useState('home');
-    const [darkMode, setDarkMode] = useState(() => {
-        return localStorage.getItem('theme') === 'dark';
-    });
+    
 
     const navigate = useNavigate();
 
@@ -21,12 +19,7 @@ export default function LandingPage() {
         setLoaded(true);
     }, []);
 
-    useEffect(() => {
-        document.documentElement.classList.toggle('dark', darkMode);
-        localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-    }, [darkMode]);
-
-    const toggleDarkMode = () => setDarkMode(prev => !prev);
+    
 
     const cards = [
         {

@@ -31,5 +31,4 @@ dist-ssr/
 .env
 .env.local
 
-# Firebase config (if you're not committing it)
-client/src/firebase.ts
+
