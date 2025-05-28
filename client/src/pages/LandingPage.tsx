@@ -11,7 +11,7 @@ import TwitterIcon from '../assets/icons/twitter.svg';
 export default function LandingPage() {
     const [loaded, setLoaded] = useState(false);
     const [active, setActive] = useState('home');
-    
+
 
     const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ export default function LandingPage() {
         setLoaded(true);
     }, []);
 
-    
+
 
     const cards = [
         {
@@ -43,7 +43,14 @@ export default function LandingPage() {
         <div className="min-h-screen bg-[#F9F9F9] dark:bg-gray-900 dark:text-white flex flex-col transition-colors duration-300">
             {/* Navbar */}
             <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 flex justify-between items-center p-6">
-                <div className="text-2xl font-extrabold text-green-700 dark:text-green-400">CropCart</div>
+                <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400">
+                    <img
+                        src="client\public\favicon.ico"
+                        alt="CropCart Logo"
+                        className="w-8 h-8"
+                    />
+                    <span>CropCart</span>
+                </div>
 
                 <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-6">
                     {['home', 'about', 'contact'].map(section => (
@@ -70,7 +77,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="space-x-4 flex items-center">
-                    
+
 
                     <button className="px-5 py-3 bg-green-100 text-green-700 hover:bg-green-200 font-semibold rounded-md text-lg">
                         Sell Your Produce
