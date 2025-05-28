@@ -9,6 +9,8 @@ import {
 import { ShoppingCart, User, ArrowLeft, ArrowRight } from 'lucide-react';
 import homeheroImage from '../assets/home_hero.png';
 import veggiesImage from '../assets/veggies.jpg';
+import logo from '../assets/logo.png';
+
 
 const ScrollableSection: React.FC<{
   children: React.ReactNode;
@@ -52,7 +54,6 @@ const ScrollableSection: React.FC<{
   );
 };
 
-// Utility for hiding scrollbars
 const style = document.createElement('style');
 style.innerHTML = `
 .scrollbar-hide::-webkit-scrollbar {
@@ -103,7 +104,7 @@ const Navbar: React.FC<{
       }
     };
 
-    
+
     useEffect(() => {
       function handleClickOutside(event: MouseEvent) {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -120,11 +121,11 @@ const Navbar: React.FC<{
 
     useEffect(() => {
       const interval = setInterval(() => {
-        setFade(false); 
+        setFade(false);
         setTimeout(() => {
           setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
-          setFade(true); 
-        }, 300); 
+          setFade(true);
+        }, 300);
       }, 3000);
       return () => clearInterval(interval);
     }, []);
@@ -137,13 +138,14 @@ const Navbar: React.FC<{
     return (
       <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
         <div
-          className="text-2xl font-extrabold text-green-700 cursor-pointer select-none"
+          className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
           onClick={() => navigate('/')}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
         >
-          CropCart
+          <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
+          <span>CropCart</span>
         </div>
 
         <div className="hidden md:flex items-center space-x-8">
@@ -218,7 +220,7 @@ const Navbar: React.FC<{
               <span className="font-semibold text-green-700 text-lg">
                 Hi, {userName}
               </span>
-              
+
               <div
                 ref={dropdownRef}
                 className="relative"
@@ -307,8 +309,8 @@ type Crop = {
   name: string;
   type: string;
   price: number;
-  regionPincodes: string[]; 
-  imageUrl?: string; 
+  regionPincodes: string[];
+  imageUrl?: string;
 };
 
 
@@ -448,7 +450,7 @@ const Home: React.FC = () => {
         setSearchQuery={setSearchQuery}
       />
 
-      
+
       <section
         className="relative bg-green-900 text-white overflow-hidden w-full"
         style={{ opacity: heroOpacity, transition: 'opacity 0.1s linear' }}
@@ -481,19 +483,19 @@ const Home: React.FC = () => {
           </svg>
         </div>
       </section>
-      
+
       <main className="flex-grow max-w-7xl mx-auto min-h-screen py-10 px-4">
         <div className="px-6 py-8 bg-gray-50 space-y-6">
-          
+
           <div className="relative rounded-3xl overflow-hidden bg-green-500 text-white p-8 w-full h-80">
-            
+
             <img
               src={veggiesImage}
               alt="Fresh produce"
               className="absolute inset-0 w-full h-full object-cover opacity-90 blur-sm brightness-90 pointer-events-none z-0"
             />
 
-            
+
             <div className="relative z-10">
               <h1 className="text-4xl font-bold mb-2">CropCart Specials</h1>
               <p className="text-lg mb-4">Your trusted platform to buy farm-fresh produce directly from farmers</p>
@@ -505,16 +507,16 @@ const Home: React.FC = () => {
 
 
 
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           
+
             <div className="bg-cyan-200 p-6 rounded-2xl shadow-md hover:scale-105 transition">
               <h2 className="text-xl font-semibold text-cyan-900 mb-2">Organic Vegetables at Your Doorstep</h2>
               <p className="mb-4 text-sm text-cyan-800">Handpicked greens and veggies from nearby farms</p>
               <button className="bg-white text-cyan-700 font-medium px-4 py-2 rounded-md">Order Now</button>
             </div>
 
-            
+
             <div className="bg-yellow-300 p-6 rounded-2xl shadow-md hover:scale-105 transition">
               <h2 className="text-xl font-semibold text-yellow-900 mb-2">Fresh Dairy & Grains</h2>
               <p className="mb-4 text-sm text-yellow-800">Pure milk, ghee, wheat, pulses and more—straight from the source</p>
@@ -551,7 +553,7 @@ const Home: React.FC = () => {
                     <p className="text-green-700 text-sm font-bold mb-1">
                       ₹{crop.price}
                     </p>
-                    
+
                     <button
                       onClick={() => addToCart(crop)}
                       className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
@@ -633,7 +635,7 @@ const Home: React.FC = () => {
               disabled={cart.length === 0}
               onClick={() => {
                 navigate('/checkout');
-                setIsCartOpen(false); 
+                setIsCartOpen(false);
               }}
               className={`w-full mt-3 py-3 rounded-lg font-bold text-white ${cart.length === 0
                 ? 'bg-gray-400 cursor-not-allowed'
