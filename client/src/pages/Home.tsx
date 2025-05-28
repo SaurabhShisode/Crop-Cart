@@ -302,7 +302,19 @@ const Navbar: React.FC<{
       </nav>
     );
   };
+type Crop = {
+  id: string;
+  name: string;
+  type: string;
+  price: number;
+  regionPincodes: string[]; 
+  imageUrl?: string; 
+};
 
+
+type CartItem = Crop & {
+  quantity: number;
+};
 const Home: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -528,7 +540,7 @@ const Home: React.FC = () => {
                     className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                   >
                     <img
-                      src={crop.image}
+                      src={crop.imageUrl}
                       alt={crop.name}
                       className="w-full h-24 object-cover rounded-md mb-2"
                       loading="lazy"
@@ -539,9 +551,7 @@ const Home: React.FC = () => {
                     <p className="text-green-700 text-sm font-bold mb-1">
                       ₹{crop.price}
                     </p>
-                    <p className="text-xs text-gray-500 mb-2 truncate">
-                      {crop.availability}
-                    </p>
+                    
                     <button
                       onClick={() => addToCart(crop)}
                       className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"

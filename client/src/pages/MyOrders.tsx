@@ -1,4 +1,4 @@
-
+/*
 import React, { useEffect, useState } from 'react';
 
 const MyOrders: React.FC = () => {
@@ -30,4 +30,4 @@ const MyOrders: React.FC = () => {
   );
 };
 
-export default MyOrders;
+export default MyOrders;*/

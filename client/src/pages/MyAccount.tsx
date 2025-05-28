@@ -1,4 +1,4 @@
-
+/*
 import React, { useEffect, useState } from 'react';
 
 const MyAccount: React.FC = () => {
@@ -24,4 +24,4 @@ const MyAccount: React.FC = () => {
   );
 };
 
-export default MyAccount;
+export default MyAccount;*/
