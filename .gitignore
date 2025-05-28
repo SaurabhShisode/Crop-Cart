@@ -7,36 +7,29 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependency directories
+node_modules/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Build outputs
+build/
+dist/
+dist-ssr/
+
+# System files
 .DS_Store
+
+# Editor settings
+.vscode/
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-# Node.js
-node_modules/
 
-# Build output
-build/
-dist/
-
-# Logs
-*.log
-
-# .env file
+# Environment variables
 .env
+.env.local
 
-# IDE or Editor configurations
-.vscode/
-.idea/
-# Ignore firebase.ts file containing sensitive data
+# Firebase config (if you're not committing it)
 src/firebase.ts
