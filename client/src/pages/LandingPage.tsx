@@ -43,7 +43,7 @@ export default function LandingPage() {
     return (
         <div className="min-h-screen bg-[#F9F9F9] dark:bg-gray-900 dark:text-white flex flex-col transition-colors duration-300">
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 p-4 md:p-6">
+            <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 p-4 md:px-6">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
                     <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400">
@@ -51,16 +51,8 @@ export default function LandingPage() {
                         <span>CropCart</span>
                     </div>
 
-                    {/* Hamburger/Cross Icon */}
-                    <button
-                        className="md:hidden text-2xl text-green-700 dark:text-green-400 focus:outline-none"
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    >
-                        <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
-                    </button>
-
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex md:items-center space-x-6">
+                    {/* Centered Menu Links (Desktop Only) */}
+                    <div className="hidden md:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
                         {['home', 'about', 'contact'].map((section) => (
                             <button
                                 key={section}
@@ -87,7 +79,10 @@ export default function LandingPage() {
                                 {section.charAt(0).toUpperCase() + section.slice(1)}
                             </button>
                         ))}
+                    </div>
 
+                    {/* Right Buttons (Desktop Only) */}
+                    <div className="hidden md:flex items-center space-x-4">
                         <button className="px-5 py-3 bg-green-100 text-green-700 hover:bg-green-200 font-semibold rounded-md text-lg">
                             Sell Your Produce
                         </button>
@@ -104,6 +99,14 @@ export default function LandingPage() {
                             Sign up
                         </button>
                     </div>
+
+                    {/* Hamburger Icon (Mobile Only) */}
+                    <button
+                        className="md:hidden text-2xl text-green-700 dark:text-green-400 focus:outline-none"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    >
+                        <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
+                    </button>
                 </div>
 
                 {/* Mobile Menu */}
@@ -136,7 +139,6 @@ export default function LandingPage() {
                                 {section.charAt(0).toUpperCase() + section.slice(1)}
                             </button>
                         ))}
-
                         <button className="px-4 py-3 font-semibold text-left text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400">
                             Sell Your Produce
                         </button>
@@ -166,10 +168,10 @@ export default function LandingPage() {
 
 
 
-            {/* Hero Section */}
-            <section className="relative bg-green-900 text-white overflow-hidden">
-                <div className="flex flex-col md:flex-row items-center justify-between px-6 sm:px-8 md:px-10 pt-28 pb-16 md:py-24 max-w-7xl mx-auto">
 
+            {/* Hero Section */}
+            <section className="relative bg-green-900 text-white overflow-hidden h-[850px] sm:h-auto">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
                         className={`max-w-xl space-y-6 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-[100px] opacity-0'
@@ -189,22 +191,25 @@ export default function LandingPage() {
                                 Get Started
                             </button>
                         </div>
-
                     </div>
 
                     {/* Right Image */}
-                    <div className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded ? 'translate-y-20 opacity-100' : 'translate-y-[150px] opacity-0'}`}>
+                    <div
+                        className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
+                            ? 'translate-y-10 sm:translate-y-24 opacity-100'
+                            : 'translate-y-[150px] sm:translate-y-[150px] opacity-0'
+                            }`}
+                    >
                         <img
                             src={heroImage}
                             alt="Hero"
-                            className="w-full object-contain drop-shadow-2xl scale-125 relative z-0"
+                            className="w-5/5 sm:w-full object-contain drop-shadow-2xl scale-100 sm:scale-125 relative z-0"
                         />
                     </div>
-
                 </div>
 
                 {/* SVG Bottom Wave */}
-                <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
+                <div className="hidden sm:block absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
                     <svg
                         className="relative block w-[calc(100%+1.3px)] h-[60px] sm:h-[80px]"
                         xmlns="http://www.w3.org/2000/svg"
@@ -220,27 +225,30 @@ export default function LandingPage() {
             </section>
 
 
+
             {/* What We Do Section */}
-            <section id="what-we-do" className="mt-20 py-24 px-6 md:px-20">
+            <section id="what-we-do" className="mt-12 sm:mt-20 py-16 sm:py-24 px-4 sm:px-6 md:px-20">
                 <div className="max-w-7xl mx-auto text-center">
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-green-800 mb-6">What We Do</h2>
-                    <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-16 font-semibold leading-relaxed">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">
+                        What We Do
+                    </h2>
+                    <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">
                         We connect local farmers directly with consumers through an intuitive, transparent, and fair marketplace.
                     </p>
 
-                    <div className="grid gap-12 md:grid-cols-3">
+                    <div className="grid gap-6 sm:gap-8 md:gap-10 sm:grid-cols-2 md:grid-cols-3">
                         {cards.map((card, index) => (
                             <div
                                 key={index}
-                                className="cursor-pointer group bg-[#F9F9F9] p-10 rounded-3xl shadow-md hover:shadow-xl hover:bg-green-50 transition duration-500 transform hover:-translate-y-4"
+                                className="cursor-pointer group bg-[#F9F9F9] p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl hover:bg-green-50 transition duration-500 transform hover:-translate-y-2 sm:hover:-translate-y-3"
                             >
-                                <div className="text-green-700 text-5xl mb-6 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
+                                <div className="text-green-700 text-3xl sm:text-4xl mb-3 sm:mb-4 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
                                     <FontAwesomeIcon icon={card.icon} />
                                 </div>
-                                <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-green-700 transition-colors duration-300">
+                                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-800 group-hover:text-green-700 transition-colors duration-300">
                                     {card.title}
                                 </h3>
-                                <p className="text-gray-700 group-hover:text-gray-800 transition-colors duration-300 text-lg leading-relaxed font-semibold">
+                                <p className="text-gray-700 group-hover:text-gray-800 transition-colors duration-300 text-sm sm:text-base leading-relaxed font-medium sm:font-semibold">
                                     {card.text}
                                 </p>
                             </div>
@@ -248,6 +256,8 @@ export default function LandingPage() {
                     </div>
                 </div>
             </section>
+
+
 
             <section className="mt-20 py-24 px-6 md:px-20">
                 <div className="max-w-7xl mx-auto text-center">
