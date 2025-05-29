@@ -369,7 +369,7 @@ const Home: React.FC = () => {
   }, [cart]);
 
   useEffect(() => {
-    fetch('https://crop-cart-backend.onrender.com')
+    fetch('https://crop-cart-backend.onrender.com/crops')
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
