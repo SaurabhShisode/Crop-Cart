@@ -52,10 +52,11 @@ const LoginPage: React.FC = () => {
 
       toast.success(`Logged in as ${user.email}`);
       navigate('/home');
-    } catch (error) {
+    } catch (error: any) {
       toast.error('Google login failed');
-      console.error(error);
+      console.error('Google login error:', error.code, error.message);
     }
+
   };
 
   return (
