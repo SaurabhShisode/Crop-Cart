@@ -270,7 +270,7 @@ export default function LandingPage() {
                                 key={idx}
                                 className="bg-[#F9F9F9] rounded-3xl p-8 cursor-pointer hover:bg-green-50 transition duration-500"
                             >
-                                <summary className="font-semibold text-lg md:text-base leading-6 list-none focus:outline-none text-green-700 hover:text-green-800">
+                                <summary className="font-semibold text-lg md:text-base leading-6 list-none focus:outline-none text-green-900 hover:text-green-800">
                                     {question}
                                 </summary>
                                 <p className="mt-3 text-gray-700">{answer}</p>
