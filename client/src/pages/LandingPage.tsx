@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import heroImage from '../assets/hero.png';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSeedling, faBoxOpen, faHandHoldingHeart, faSearch, faShoppingCart, faTruck } from '@fortawesome/free-solid-svg-icons';
+import {
+    faSeedling, faBoxOpen, faHandHoldingHeart, faSearch, faShoppingCart, faTruck, faBars,
+    faTimes,
+} from '@fortawesome/free-solid-svg-icons';
 import InstagramIcon from '../assets/icons/instagram.svg';
 import FacebookIcon from '../assets/icons/facebook.svg';
 import TwitterIcon from '../assets/icons/twitter.svg';
@@ -11,7 +14,7 @@ import logo from '../assets/logo.png';
 export default function LandingPage() {
     const [loaded, setLoaded] = useState(false);
     const [active, setActive] = useState('home');
-
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -19,79 +22,144 @@ export default function LandingPage() {
         setLoaded(true);
     }, []);
 
-
-
     const cards = [
         {
             icon: faSeedling,
-            title: "Empower Farmers",
-            text: "We provide a platform for farmers to sell directly, gain better margins, and grow sustainably."
+            title: 'Empower Farmers',
+            text: 'We provide a platform for farmers to sell directly, gain better margins, and grow sustainably.',
         },
         {
             icon: faBoxOpen,
-            title: "Fresh Produce Delivery",
-            text: "Consumers get farm-fresh fruits and vegetables delivered straight from the source—no middlemen."
+            title: 'Fresh Produce Delivery',
+            text: 'Consumers get farm-fresh fruits and vegetables delivered straight from the source—no middlemen.',
         },
         {
             icon: faHandHoldingHeart,
-            title: "Community First",
-            text: "We build stronger local economies and foster trust by connecting neighbors through fresh food."
-        }
+            title: 'Community First',
+            text: 'We build stronger local economies and foster trust by connecting neighbors through fresh food.',
+        },
     ];
 
     return (
         <div className="min-h-screen bg-[#F9F9F9] dark:bg-gray-900 dark:text-white flex flex-col transition-colors duration-300">
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 flex justify-between items-center p-6">
-                <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400">
-                    <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
+            <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 p-4 md:p-6">
+                <div className="flex justify-between items-center">
+                    {/* Logo */}
+                    <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400">
+                        <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
+                        <span>CropCart</span>
+                    </div>
 
-                    <span>CropCart</span>
-                </div>
+                    {/* Hamburger/Cross Icon */}
+                    <button
+                        className="md:hidden text-2xl text-green-700 dark:text-green-400 focus:outline-none"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    >
+                        <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
+                    </button>
 
-                <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-6">
-                    {['home', 'about', 'contact'].map(section => (
-                        <button
-                            key={section}
-                            onClick={() => {
-                                const elementId = section === 'home' ? null : section === 'about' ? 'what-we-do' : 'contact-us';
-                                if (elementId) {
-                                    const element = document.getElementById(elementId);
-                                    element?.scrollIntoView({ behavior: 'smooth' });
-                                } else {
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                }
-                                setActive(section);
-                            }}
-                            className={`font-semibold text-lg px-4 py-2 rounded-full transition-all duration-300 ease-in-out ${active === section
-                                ? 'bg-green-200 text-green-800 dark:bg-green-500 dark:text-white'
-                                : 'text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400'
-                                }`}
-                        >
-                            {section.charAt(0).toUpperCase() + section.slice(1)}
+                    {/* Desktop Menu */}
+                    <div className="hidden md:flex md:items-center space-x-6">
+                        {['home', 'about', 'contact'].map((section) => (
+                            <button
+                                key={section}
+                                onClick={() => {
+                                    const elementId =
+                                        section === 'home'
+                                            ? null
+                                            : section === 'about'
+                                                ? 'what-we-do'
+                                                : 'contact-us';
+                                    if (elementId) {
+                                        const element = document.getElementById(elementId);
+                                        element?.scrollIntoView({ behavior: 'smooth' });
+                                    } else {
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }
+                                    setActive(section);
+                                }}
+                                className={`font-semibold text-lg px-4 py-2 rounded-full transition-all duration-300 ease-in-out ${active === section
+                                    ? 'bg-green-200 text-green-800 dark:bg-green-500 dark:text-white'
+                                    : 'text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400'
+                                    }`}
+                            >
+                                {section.charAt(0).toUpperCase() + section.slice(1)}
+                            </button>
+                        ))}
+
+                        <button className="px-5 py-3 bg-green-100 text-green-700 hover:bg-green-200 font-semibold rounded-md text-lg">
+                            Sell Your Produce
                         </button>
-                    ))}
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="px-5 py-3 font-semibold text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400 text-lg"
+                        >
+                            Log in
+                        </button>
+                        <button
+                            onClick={() => navigate('/register')}
+                            className="px-5 py-3 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold"
+                        >
+                            Sign up
+                        </button>
+                    </div>
                 </div>
 
-                <div className="space-x-4 flex items-center">
+                {/* Mobile Menu */}
+                {mobileMenuOpen && (
+                    <div className="flex flex-col mt-4 space-y-4 md:hidden">
+                        {['home', 'about', 'contact'].map((section) => (
+                            <button
+                                key={section}
+                                onClick={() => {
+                                    const elementId =
+                                        section === 'home'
+                                            ? null
+                                            : section === 'about'
+                                                ? 'what-we-do'
+                                                : 'contact-us';
+                                    if (elementId) {
+                                        const element = document.getElementById(elementId);
+                                        element?.scrollIntoView({ behavior: 'smooth' });
+                                    } else {
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }
+                                    setActive(section);
+                                    setMobileMenuOpen(false);
+                                }}
+                                className={`font-semibold text-left px-4 py-2 rounded-md transition ${active === section
+                                    ? 'bg-green-200 text-green-800 dark:bg-green-500 dark:text-white'
+                                    : 'text-gray-800 dark:text-gray-200 hover:text-green-700 hover:bg-green-100 dark:hover:text-green-400 dark:hover:bg-green-800'
+                                    }`}
+                            >
+                                {section.charAt(0).toUpperCase() + section.slice(1)}
+                            </button>
+                        ))}
 
-
-                    <button className="px-5 py-3 bg-green-100 text-green-700 hover:bg-green-200 font-semibold rounded-md text-lg">
-                        Sell Your Produce
-                    </button>
-                    <button
-                        onClick={() => navigate('/login')}
-                        className="px-5 py-3 font-semibold text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400 text-lg"
-                    >
-                        Log in
-                    </button>
-                    <button
-                        onClick={() => navigate('/register')}
-                        className="px-5 py-3 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold"
-                    >
-                        Sign up
-                    </button>
-                </div>
+                        <button className="px-4 py-3 font-semibold text-left text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400">
+                            Sell Your Produce
+                        </button>
+                        <button
+                            onClick={() => {
+                                navigate('/login');
+                                setMobileMenuOpen(false);
+                            }}
+                            className="px-4 py-3 font-semibold text-left text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400"
+                        >
+                            Log in
+                        </button>
+                        <button
+                            onClick={() => {
+                                navigate('/register');
+                                setMobileMenuOpen(false);
+                            }}
+                            className="px-4 py-3 font-semibold text-left text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400"
+                        >
+                            Sign up
+                        </button>
+                    </div>
+                )}
             </nav>
 
 
@@ -100,22 +168,31 @@ export default function LandingPage() {
 
             {/* Hero Section */}
             <section className="relative bg-green-900 text-white overflow-hidden">
-                <div className="flex flex-col md:flex-row items-center justify-between px-10 py-24 max-w-7xl mx-auto">
-                    <div className={`max-w-xl space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-[100px] opacity-0'}`}>
-                        <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+                <div className="flex flex-col md:flex-row items-center justify-between px-6 sm:px-8 md:px-10 pt-28 pb-16 md:py-24 max-w-7xl mx-auto">
+
+                    {/* Left Text Content */}
+                    <div
+                        className={`max-w-xl space-y-6 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-[100px] opacity-0'
+                            }`}
+                    >
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-center md:text-left">
                             Buy Fresh Crops <br />Directly from Local Farmers
                         </h1>
-                        <p className="text-xl md:text-2xl text-gray-200 leading-relaxed font-semibold">
+                        <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed font-medium md:font-semibold text-center md:text-left">
                             Join our platform to discover fresh, high-quality produce from farmers nearby and support your community.
                         </p>
-                        <button
-                            onClick={() => navigate('/home')}
-                            className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-xl rounded-md font-semibold"
-                        >
-                            Get Started
-                        </button>
+                        <div className="flex justify-center md:justify-start">
+                            <button
+                                onClick={() => navigate('/home')}
+                                className="w-48 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 sm:px-8 sm:py-4 text-lg sm:text-xl rounded-md font-semibold"
+                            >
+                                Get Started
+                            </button>
+                        </div>
 
                     </div>
+
+                    {/* Right Image */}
                     <div className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded ? 'translate-y-20 opacity-100' : 'translate-y-[150px] opacity-0'}`}>
                         <img
                             src={heroImage}
@@ -123,10 +200,13 @@ export default function LandingPage() {
                             className="w-full object-contain drop-shadow-2xl scale-125 relative z-0"
                         />
                     </div>
+
                 </div>
+
+                {/* SVG Bottom Wave */}
                 <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
                     <svg
-                        className="relative block w-[calc(100%+1.3px)] h-[80px]"
+                        className="relative block w-[calc(100%+1.3px)] h-[60px] sm:h-[80px]"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 1200 120"
                         preserveAspectRatio="none"
@@ -137,8 +217,8 @@ export default function LandingPage() {
                         />
                     </svg>
                 </div>
-
             </section>
+
 
             {/* What We Do Section */}
             <section id="what-we-do" className="mt-20 py-24 px-6 md:px-20">
