@@ -5,19 +5,19 @@ const testimonials = [
         name: "Anita Sharma",
         position: "Home Chef",
         text: "Thanks to CropCart, I get fresh veggies directly from farmers. The quality and delivery are amazing!",
-        avatar: "/avatars/anita.png",
+        
     },
     {
         name: "Ravi Kumar",
         position: "Organic Farmer",
         text: "CropCart helped me reach more customers and sell my produce directly without middlemen. Truly empowering!",
-        avatar: "/avatars/ravi.png",
+        
     },
     {
         name: "Priya Patel",
         position: "Healthy Lifestyle Blogger",
         text: "I love recommending CropCart to my followers. Fresh, local, and eco-friendly produce delivered right to my door.",
-        avatar: "/avatars/priya.png",
+        
     },
 ];
 
@@ -44,7 +44,7 @@ const TestimonialsSection = () => {
                     <div className="flex gap-8 animate-slide-left pr-8 flex-none hover:[animation-play-state:paused]">
                         {[...Array(2)].fill(0).map((_, i) => (
                             <Fragment key={i}>
-                                {testimonials.map(({ name, position, text, avatar }) => (
+                                {testimonials.map(({ name, position, text, }) => (
                                     <div
                                         key={name + i}
                                         className="min-w-[300px] max-w-sm bg-white rounded-3xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300 cursor-default text-left"
