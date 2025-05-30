@@ -17,7 +17,7 @@ const LiveCounters: React.FC = () => {
 
   return (
     <section
-      className="py-24 px-6 md:px-20 bg-green-50"
+      className="py-24 px-6 md:px-20 "
       ref={ref}
     >
       <div className="max-w-7xl mx-auto text-center">

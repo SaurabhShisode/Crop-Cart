@@ -350,7 +350,7 @@ export default function LandingPage() {
 
 
             {/* Contact Section */}
-            <section id="contact-us" className=" py-24 px-6 md:px-20 bg-green-50 text-green-900">
+            <section id="contact-us" className=" py-24 px-6 md:px-20 bg-green-100 text-green-900">
                 <div className="max-w-7xl mx-auto text-center">
                     <h2 className="text-4xl md:text-5xl font-extrabold mb-8">Get in Touch</h2>
                     <p className="max-w-3xl mx-auto mb-16 text-xl font-semibold leading-relaxed">
