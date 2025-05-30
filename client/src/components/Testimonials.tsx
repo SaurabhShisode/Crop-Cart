@@ -1,29 +1,29 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 
 const testimonials = [
     {
         name: "Anita Sharma",
         position: "Home Chef",
         text: "Thanks to CropCart, I get fresh veggies directly from farmers. The quality and delivery are amazing!",
-        avatar: "/avatars/anita.png",
+        avatar: "/avatar/memoji-avatar-4.png",
     },
     {
         name: "Ravi Kumar",
         position: "Organic Farmer",
         text: "CropCart helped me reach more customers and sell my produce directly without middlemen. Truly empowering!",
-        avatar: "/avatars/ravi.png",
+        avatar: "/avatar/memoji-avatar-4.png",
     },
     {
         name: "Priya Patel",
         position: "Healthy Lifestyle Blogger",
         text: "I love recommending CropCart to my followers. Fresh, local, and eco-friendly produce delivered right to my door.",
-        avatar: "/avatars/priya.png",
+        avatar: "/avatar/memoji-avatar-4.png",
     },
 ];
 
 const TestimonialsSection = () => {
     return (
-        <section className="py-24  overflow-hidden">
+        <section className="py-24 overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
                 <h2 className="text-4xl md:text-5xl font-extrabold text-green-800 mb-6">
                     Voices of Trust
@@ -50,7 +50,11 @@ const TestimonialsSection = () => {
                                         className="min-w-[300px] max-w-sm bg-white rounded-3xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300 cursor-default text-left"
                                     >
                                         <div className="flex items-center gap-4 mb-4">
-                                            
+                                            <img
+                                                src={avatar}
+                                                alt={`${name} avatar`}
+                                                className="w-12 h-12 rounded-full object-cover"
+                                            />
                                             <div>
                                                 <h3 className="text-green-800 font-bold text-lg">{name}</h3>
                                                 <p className="text-green-700 text-sm">{position}</p>
@@ -63,7 +67,6 @@ const TestimonialsSection = () => {
                                 ))}
                             </Fragment>
                         ))}
-
                     </div>
                 </div>
             </div>
