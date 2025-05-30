@@ -15,53 +15,61 @@ const LoginPage: React.FC = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      const token = await user.getIdToken();
 
+      const res = await fetch('http://localhost:5000/api/users/google-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
 
-      localStorage.setItem(
-        'cropcartUser',
-        JSON.stringify({
-          name: user.displayName || user.email?.split('@')[0] || 'User',
-          email: user.email,
-          uid: user.uid,
-        })
-      );
-
-      toast.success(`Logged in as ${user.email}`);
-      navigate('/home');
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('cropcartUser', JSON.stringify(data));
+        toast.success(`Logged in as ${user.email}`);
+        navigate('/home');
+      } else {
+        toast.error(data.message || 'Login failed');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Login failed');
       console.error('Login error:', error.code, error.message);
     }
-
   };
 
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+      const token = await user.getIdToken();
 
+      const res = await fetch('http://localhost:5000/api/users/google-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
 
-      localStorage.setItem(
-        'cropcartUser',
-        JSON.stringify({
-          name: user.displayName || user.email?.split('@')[0] || 'User',
-          email: user.email,
-          uid: user.uid,
-        })
-      );
-
-      toast.success(`Logged in as ${user.email}`);
-      navigate('/home');
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('cropcartUser', JSON.stringify(data));
+        toast.success(`Logged in as ${user.email}`);
+        navigate('/home');
+      } else {
+        toast.error(data.message || 'Google login failed');
+      }
     } catch (error: any) {
       toast.error('Google login failed');
       console.error('Google login error:', error.code, error.message);
     }
-
   };
 
   return (
     <div className="min-h-screen flex">
-
+      {/* Left Panel */}
       <div className="w-1/3 relative overflow-hidden flex items-center justify-center bg-green-900">
         <div className="z-10 text-center px-12">
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-white drop-shadow-lg">
@@ -73,14 +81,13 @@ const LoginPage: React.FC = () => {
         </div>
       </div>
 
-
+      {/* Right Panel */}
       <div className="w-2/3 flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100">
         <div className="max-w-md w-full bg-white/80 backdrop-blur-lg p-10 rounded-xl shadow-2xl border border-green-200">
           <h2 className="text-3xl font-bold text-green-800 mb-8 text-center">
             Login to CropCart
           </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
-
             <div className="relative">
               <EnvelopeIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
               <input
@@ -94,7 +101,6 @@ const LoginPage: React.FC = () => {
                 autoComplete="email"
               />
             </div>
-
 
             <div className="relative">
               <LockClosedIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
@@ -118,6 +124,7 @@ const LoginPage: React.FC = () => {
             </button>
           </form>
 
+          {/* OR Divider */}
           <div className="mt-6 text-center">
             <p className="text-gray-500 mb-4">or</p>
             <button
