@@ -1,26 +1,26 @@
 import { Fragment } from "react";
+import avatarImg from "../assets/avatar/memoji-avatar-3.png";
 
 const testimonials = [
     {
         name: "Anita Sharma",
         position: "Home Chef",
         text: "Thanks to CropCart, I get fresh veggies directly from farmers. The quality and delivery are amazing!",
-        avatar: "/avatar/memoji-avatar-4.png",
+        avatar: avatarImg,
     },
     {
         name: "Ravi Kumar",
         position: "Organic Farmer",
         text: "CropCart helped me reach more customers and sell my produce directly without middlemen. Truly empowering!",
-        avatar: "/avatar/memoji-avatar-4.png",
+        avatar: avatarImg,
     },
     {
         name: "Priya Patel",
         position: "Healthy Lifestyle Blogger",
         text: "I love recommending CropCart to my followers. Fresh, local, and eco-friendly produce delivered right to my door.",
-        avatar: "/avatar/memoji-avatar-4.png",
+        avatar: avatarImg,
     },
 ];
-
 const TestimonialsSection = () => {
     return (
         <section className="py-24 overflow-hidden">
