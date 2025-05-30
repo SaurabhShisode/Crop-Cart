@@ -4,7 +4,7 @@ module.exports = {
     "./index.html",
     "./src/**/*.{ts,tsx,js,jsx}"
   ],
-  darkMode: 'class',  // <-- add this line to enable class-based dark mode
+  darkMode: 'class',
   theme: {
     extend: {
       backgroundSize: {
@@ -12,17 +12,22 @@ module.exports = {
       },
       animation: {
         'gradient-x': 'gradientX 5s ease infinite',
+        'slide-left': 'slideLeft 60s linear infinite',
       },
       keyframes: {
         gradientX: {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
         },
+        slideLeft: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],  // <-- Add this
+        poppins: ['Poppins', 'sans-serif'],
       },
     },
   },
   plugins: [],
-}
+};

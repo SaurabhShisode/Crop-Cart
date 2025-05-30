@@ -10,6 +10,12 @@ import InstagramIcon from '../assets/icons/instagram.svg';
 import FacebookIcon from '../assets/icons/facebook.svg';
 import TwitterIcon from '../assets/icons/twitter.svg';
 import logo from '../assets/logo.png';
+import LiveCounters from "../components/LiveCounters";
+import TestimonialSection from "../components/Testimonials";
+
+
+
+
 
 export default function LandingPage() {
     const [loaded, setLoaded] = useState(false);
@@ -227,7 +233,7 @@ export default function LandingPage() {
 
 
             {/* What We Do Section */}
-            <section id="what-we-do" className="mt-12 sm:mt-20 py-16 sm:py-24 px-4 sm:px-6 md:px-20">
+            <section id="what-we-do" className=" mt-20 py-16 sm:py-24 px-4 sm:px-6 md:px-20">
                 <div className="max-w-7xl mx-auto text-center">
                     <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">
                         What We Do
@@ -257,12 +263,12 @@ export default function LandingPage() {
                 </div>
             </section>
 
+                       
 
-
-            <section className="mt-20 py-24 px-6 md:px-20">
+            <section className=" py-24 px-6 md:px-20">
                 <div className="max-w-7xl mx-auto text-center">
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-green-800 mb-6">How It Works</h2>
-                    <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-16 font-semibold leading-relaxed">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">How It Works</h2>
+                    <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">
                         A simple 3-step process to get fresh produce delivered to your doorstep.
                     </p>
 
@@ -274,15 +280,15 @@ export default function LandingPage() {
                         ].map((step, index) => (
                             <div
                                 key={index}
-                                className="cursor-pointer group bg-[#F9F9F9] p-10 rounded-3xl shadow-md hover:shadow-xl hover:bg-green-50 transition duration-500 transform hover:-translate-y-4"
+                                className="cursor-pointer group bg-[#F9F9F9] p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl hover:bg-green-50 transition duration-500 transform hover:-translate-y-2 sm:hover:-translate-y-3"
                             >
-                                <div className="text-green-700 text-5xl mb-6 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
+                                <div className="text-green-700 text-3xl sm:text-4xl mb-3 sm:mb-4 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
                                     <FontAwesomeIcon icon={step.icon} />
                                 </div>
-                                <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-green-700 transition-colors duration-300">
+                                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-800 group-hover:text-green-700 transition-colors duration-300">
                                     {step.title}
                                 </h3>
-                                <p className="text-gray-700 group-hover:text-gray-800 transition-colors duration-300 text-lg leading-relaxed font-semibold">
+                                <p className="text-gray-700 group-hover:text-gray-800 transition-colors duration-300 text-sm sm:text-base leading-relaxed font-medium sm:font-semibold">
                                     {step.text}
                                 </p>
                             </div>
@@ -290,43 +296,10 @@ export default function LandingPage() {
                     </div>
                 </div>
             </section>
-
-            <section className="mt-20 py-24 px-6 md:px-20 ">
-                <div className="max-w-7xl mx-auto text-center">
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-green-900 mb-6">Voices of Trust</h2>
-                    <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-16 font-semibold leading-relaxed">
-                        Hear directly from the farmers whose lives we're transforming.
-                    </p>
-
-                    <div className="grid gap-12 md:grid-cols-2">
-                        {[
-                            {
-                                name: "Ravi Kumar",
-                                text: "Thanks to CropCart, I now earn 30% more by selling directly to customers. It's a game-changer for small farmers like me!",
-                            },
-                            {
-                                name: "Sita Devi",
-                                text: "No middlemen, no hassle. I feel empowered and connected to my community like never before.",
-                            },
-                        ].map((testimonial, index) => (
-                            <div
-                                key={index}
-                                className="cursor-pointer group bg-[#F9F9F9] dark:bg-green-900 p-10 rounded-3xl shadow-md hover:shadow-xl hover:bg-green-50 dark:hover:bg-green-800 transition duration-500 transform hover:-translate-y-4 text-left"
-                            >
-                                <p className="text-gray-700 dark:text-green-100 group-hover:text-gray-800 dark:group-hover:text-white transition-colors duration-300 italic mb-4 font-semibold">
-                                    “{testimonial.text}”
-                                </p>
-                                <div className="text-green-700 dark:text-green-300 font-bold text-lg group-hover:text-green-800 dark:group-hover:text-green-100 transition-colors duration-300">
-                                    — {testimonial.name}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                </div>
-            </section>
-
-            <section className="mt-20 py-24 px-6 md:px-20">
+                         <LiveCounters />
+           
+                        <TestimonialSection />
+            <section className=" py-24 px-6 md:px-20">
                 <div className="max-w-7xl mx-auto text-center">
                     <h2 className="text-4xl md:text-5xl font-extrabold text-green-900 mb-6">Frequently Asked Questions</h2>
                     <p className="text-lg md:text-xl text-gray-800 max-w-3xl mx-auto mb-16 font-semibold leading-relaxed">
@@ -377,7 +350,7 @@ export default function LandingPage() {
 
 
             {/* Contact Section */}
-            <section id="contact-us" className="mt-20 py-24 px-6 md:px-20 bg-green-50 text-green-900">
+            <section id="contact-us" className=" py-24 px-6 md:px-20 bg-green-50 text-green-900">
                 <div className="max-w-7xl mx-auto text-center">
                     <h2 className="text-4xl md:text-5xl font-extrabold mb-8">Get in Touch</h2>
                     <p className="max-w-3xl mx-auto mb-16 text-xl font-semibold leading-relaxed">
@@ -428,7 +401,7 @@ export default function LandingPage() {
             </section>
 
             {/* Footer */}
-            <footer className="bg-green-950 text-green-100 py-16 px-6 md:px-20 mt-20">
+            <footer className="bg-green-950 text-green-100 py-24 px-6 md:px-20 ">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
 
                     {/* Brand Info */}
