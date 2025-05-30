@@ -176,7 +176,7 @@ export default function LandingPage() {
 
 
             {/* Hero Section */}
-            <section className="relative bg-green-900 text-white overflow-hidden h-[850px] sm:h-auto">
+            <section className="relative bg-green-900 text-white overflow-hidden h-[960px] sm:h-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
@@ -202,7 +202,7 @@ export default function LandingPage() {
                     {/* Right Image */}
                     <div
                         className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
-                            ? 'translate-y-10 sm:translate-y-24 opacity-100'
+                            ? 'translate-y-10 sm:translate-y-32 opacity-100'
                             : 'translate-y-[150px] sm:translate-y-[150px] opacity-0'
                             }`}
                     >
@@ -217,17 +217,27 @@ export default function LandingPage() {
                 {/* SVG Bottom Wave */}
                 <div className="hidden sm:block absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
                     <svg
-                        className="relative block w-[calc(100%+1.3px)] h-[60px] sm:h-[80px]"
-                        xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 1200 120"
                         preserveAspectRatio="none"
+                        className="w-full h-[100px]"
+                        xmlns="http://www.w3.org/2000/svg"
                     >
                         <path
-                            d="M0 0 C 600 120 600 120 1200 0 L1200 120 L0 120 Z"
+                            d="
+      M0 120
+      C 300 10, 900 170, 1200 50
+      L1200 120 
+      L0 120 
+      Z
+    "
                             className="fill-[#F9F9F9] dark:fill-gray-900"
                         />
                     </svg>
+
                 </div>
+
+
+
             </section>
 
 
@@ -263,7 +273,7 @@ export default function LandingPage() {
                 </div>
             </section>
 
-                       
+
 
             <section className=" py-24 px-6 md:px-20">
                 <div className="max-w-7xl mx-auto text-center">
@@ -296,9 +306,9 @@ export default function LandingPage() {
                     </div>
                 </div>
             </section>
-                         <LiveCounters />
-           
-                        <TestimonialSection />
+            <LiveCounters />
+
+            <TestimonialSection />
             <section className=" py-24 px-6 md:px-20">
                 <div className="max-w-7xl mx-auto text-center">
                     <h2 className="text-4xl md:text-5xl font-extrabold text-green-900 mb-6">Frequently Asked Questions</h2>
