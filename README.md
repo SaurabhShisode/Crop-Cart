@@ -4,7 +4,7 @@
   <a href="https://crop-cart-rose.vercel.app"><img src="client/src/assets/logo.png" alt="CropCart Logo" width="200" height="200" />
 
   <br>
-  Markdownify
+  CropCart
   <br>
 </h1>
 
