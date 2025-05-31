@@ -1,7 +1,8 @@
 
 <h1 align="center">
   <br>
-  <a href="http://www.amitmerchant.com/electron-markdownify"><img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.png" alt="Markdownify" width="200"></a>
+  <a href="https://crop-cart-rose.vercel.app"><img src="<img src="client/src/assets/logo.png" alt="CropCart Logo" width="200" height="200" />
+
   <br>
   Markdownify
   <br>
