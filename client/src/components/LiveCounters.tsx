@@ -11,8 +11,8 @@ const LiveCounters: React.FC = () => {
   ];
 
   const [ref, inView] = useInView({
-    triggerOnce: true, // Only animate once
-    threshold: 0.3, // % of section visible before triggering
+    triggerOnce: true, 
+    threshold: 0.3, // 
   });
 
   return (
