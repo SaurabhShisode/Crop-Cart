@@ -500,9 +500,10 @@ const Home: React.FC = () => {
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
           >
-            <path d="M0 0 C 600 120 600 120 1200 0 L1200 120 L0 120 Z" fill="#F9F9F9" />
+            <path d="M0 0 C 600 120 600 120 1200 0 L1200 120 L0 120 Z" fill="#FFFFFF" />
           </svg>
         </div>
+
       </section>
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
         <div className="px-6 py-8 bg-white space-y-6">
@@ -579,9 +580,9 @@ const Home: React.FC = () => {
                         ₹{crop.price}
                       </p>
 
-                      
+
                       <p className="text-xs text-gray-600 mb-2">
-                        Quantity: {crop.quantity}
+                        {crop.quantity}
                       </p>
 
                       <button
