@@ -6,7 +6,8 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
-  quantityInCart: string; // changed from quantity:number to quantityInCart:string
+  quantityInCart: string; 
+  quantity: string; 
 }
 
 const CheckoutPage: React.FC = () => {
@@ -85,7 +86,7 @@ const CheckoutPage: React.FC = () => {
                 return (
                   <li key={item.id} className="py-4 flex justify-between">
                     <div>
-                      <p className="font-semibold text-green-800">{item.name}</p>
+                      <p className="font-semibold text-green-800">{item.name} ({item.quantity})</p>
                       <p className="text-sm text-green-700">Qty: {item.quantityInCart}</p>
                     </div>
                     <p className="font-semibold text-green-900">
