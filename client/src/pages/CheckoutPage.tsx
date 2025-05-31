@@ -19,11 +19,24 @@ const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      setCart(JSON.parse(storedCart));
+  const storedUser = localStorage.getItem('cropcartUser');
+  if (storedUser) {
+    try {
+      const data = JSON.parse(storedUser);
+      const userId = data?.user?.id;
+      if (userId) {
+        const cartKey = `cart_${userId}`;
+        const storedCart = localStorage.getItem(cartKey);
+        if (storedCart) {
+          setCart(JSON.parse(storedCart));
+        }
+      }
+    } catch (err) {
+      console.error('Error reading cart from localStorage:', err);
     }
-  }, []);
+  }
+}, []);
+
 
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
