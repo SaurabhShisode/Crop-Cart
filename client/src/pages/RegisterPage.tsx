@@ -12,19 +12,40 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
+  e.preventDefault();
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    const token = await user.getIdToken();
+
+    // Call backend to create user in DB
+    const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token, name, email }),  // send token and user info
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
       toast.success('User registered successfully!', {
         style: { background: '#14532d', color: 'white' },
       });
       navigate('/login');
-    } catch (error: any) {
-      toast.error(error.message, {
+    } else {
+      toast.error(data.message || 'Registration failed', {
         style: { background: '#14532d', color: 'white' },
       });
     }
-  };
+  } catch (error: any) {
+    toast.error(error.message, {
+      style: { background: '#14532d', color: 'white' },
+    });
+  }
+};
+
 
   return (
     <div className="min-h-screen flex">
