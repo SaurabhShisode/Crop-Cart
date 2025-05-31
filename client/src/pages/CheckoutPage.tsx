@@ -6,7 +6,7 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
-  quantity: number;
+  quantityInCart: string; // changed from quantity:number to quantityInCart:string
 }
 
 const CheckoutPage: React.FC = () => {
@@ -19,26 +19,29 @@ const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const storedUser = localStorage.getItem('cropcartUser');
-  if (storedUser) {
-    try {
-      const data = JSON.parse(storedUser);
-      const userId = data?.user?.id;
-      if (userId) {
-        const cartKey = `cart_${userId}`;
-        const storedCart = localStorage.getItem(cartKey);
-        if (storedCart) {
-          setCart(JSON.parse(storedCart));
+    const storedUser = localStorage.getItem('cropcartUser');
+    if (storedUser) {
+      try {
+        const data = JSON.parse(storedUser);
+        const userId = data?.user?.id;
+        if (userId) {
+          const cartKey = `cart_${userId}`;
+          const storedCart = localStorage.getItem(cartKey);
+          if (storedCart) {
+            setCart(JSON.parse(storedCart));
+          }
         }
+      } catch (err) {
+        console.error('Error reading cart from localStorage:', err);
       }
-    } catch (err) {
-      console.error('Error reading cart from localStorage:', err);
     }
-  }
-}, []);
+  }, []);
 
-
-  const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  // Convert quantityInCart string to a number for calculations, default 0 if parse fails
+  const totalPrice = cart.reduce((total, item) => {
+    const quantityNum = parseFloat(item.quantityInCart) || 0;
+    return total + item.price * quantityNum;
+  }, 0);
 
   const handlePlaceOrder = () => {
     if (!name || !email || !address) {
@@ -77,17 +80,20 @@ const CheckoutPage: React.FC = () => {
           <aside className="md:col-span-1 bg-green-100 border border-green-200 rounded-xl p-6">
             <h2 className="text-2xl font-bold text-green-900 mb-6">Order Summary</h2>
             <ul className="divide-y divide-green-300">
-              {cart.map(item => (
-                <li key={item.id} className="py-4 flex justify-between">
-                  <div>
-                    <p className="font-semibold text-green-800">{item.name}</p>
-                    <p className="text-sm text-green-700">Qty: {item.quantity}</p>
-                  </div>
-                  <p className="font-semibold text-green-900">
-                    ₹{(item.price * item.quantity).toFixed(2)}
-                  </p>
-                </li>
-              ))}
+              {cart.map(item => {
+                const quantityNum = parseFloat(item.quantityInCart) || 0;
+                return (
+                  <li key={item.id} className="py-4 flex justify-between">
+                    <div>
+                      <p className="font-semibold text-green-800">{item.name}</p>
+                      <p className="text-sm text-green-700">Qty: {item.quantityInCart}</p>
+                    </div>
+                    <p className="font-semibold text-green-900">
+                      ₹{(item.price * quantityNum).toFixed(2)}
+                    </p>
+                  </li>
+                );
+              })}
             </ul>
             <div className="border-t border-green-300 mt-6 pt-4 flex justify-between items-center">
               <span className="text-xl font-bold text-green-900">Total:</span>
