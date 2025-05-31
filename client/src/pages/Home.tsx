@@ -313,10 +313,10 @@ type Crop = {
   imageUrl?: string;
 };
 
-
 type CartItem = Crop & {
   quantity: number;
 };
+
 const Home: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -326,30 +326,26 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
+  // Load user and cart from localStorage once
   useEffect(() => {
-  const storedUser = localStorage.getItem('cropcartUser');
-  if (storedUser) {
-    try {
-      const data = JSON.parse(storedUser); // data = { token, user }
-      if (data.user && data.user.name && data.user.id) {
-        setUserName(data.user.name);
+    const storedUser = localStorage.getItem('cropcartUser');
+    if (storedUser) {
+      try {
+        const data = JSON.parse(storedUser); // expected: { token, user }
+        if (data.user && data.user.name && data.user.id) {
+          setUserName(data.user.name);
 
-        const cartKey = `cart_${data.user.id}`;
-        const userCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
-        setCart(userCart);
-      } else {
-        // Invalid user data structure in localStorage
+          const cartKey = `cart_${data.user.id}`;
+          const userCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+          setCart(userCart);
+        }
+      } catch (err) {
+        console.error('Failed to parse cropcartUser from localStorage:', err);
         setUserName(null);
         setCart([]);
       }
-    } catch (err) {
-      // Invalid JSON or other error parsing
-      console.error('Failed to parse cropcartUser from localStorage:', err);
-      setUserName(null);
-      setCart([]);
     }
-  }
-}, []);
+  }, []);
 
 
 
@@ -377,12 +373,20 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('cropcartUser');
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      localStorage.setItem(`cart_${user.id}`, JSON.stringify(cart));
+    if (userName) {
+      const storedUser = localStorage.getItem('cropcartUser');
+      if (storedUser) {
+        try {
+          const data = JSON.parse(storedUser);
+          if (data.user && data.user.id) {
+            localStorage.setItem(`cart_${data.user.id}`, JSON.stringify(cart));
+          }
+        } catch {
+          // ignore errors here
+        }
+      }
     }
-  }, [cart]);
+  }, [cart, userName]);
 
   useEffect(() => {
     fetch('https://crop-cart-backend.onrender.com/crops')
@@ -393,10 +397,6 @@ const Home: React.FC = () => {
       .then((data: Crop[]) => setCrops(data))
       .catch((err) => console.error('Error fetching crops:', err));
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
 
   const addToCart = (crop: Crop) => {
     setCart((prev) => {
@@ -441,7 +441,6 @@ const Home: React.FC = () => {
     return matchesPincode && matchesSearch;
   });
 
-
   const groupedCrops = filteredCrops.reduce<Record<string, Crop[]>>(
     (acc, crop) => {
       if (!acc[crop.type]) {
@@ -452,7 +451,6 @@ const Home: React.FC = () => {
     },
     {}
   );
-
   return (
     <div className="min-h-screen bg-green-50 flex flex-col">
       <Navbar
