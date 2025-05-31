@@ -498,7 +498,7 @@ const Home: React.FC = () => {
         </div>
       </section>
       <div className="flex-grow max-w-7xl mx-auto min-h-screen py-10 px-4">
-      <div className="px-6 py-8 bg-gray-50 space-y-6">
+        <div className="px-6 py-8 bg-gray-50 space-y-6">
 
           <div className="relative rounded-3xl overflow-hidden bg-green-500 text-white p-8 w-full h-80">
 
@@ -538,51 +538,53 @@ const Home: React.FC = () => {
           </div>
 
         </div>
-    </div>
+      </div>
       <main className="flex-grow max-w-7xl mx-auto min-h-screen py-10 px-4">
-        
-        {Object.keys(groupedCrops).length === 0 ? (
-          <p className="text-center text-green-900 text-base font-medium">
-            No products available right now.
-          </p>
-        ) : (
-          Object.entries(groupedCrops).map(([type, products]) => (
-            <section key={type} className="mb-12">
-              <h2 className="text-xl font-bold text-green-700 mb-4 capitalize">
-                {type}
-              </h2>
-              <ScrollableSection sectionId={`section-${type}`}>
-                {products.map((crop) => (
-                  <div
-                    key={crop.id}
-                    className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
-                  >
-                    <img
-                      src={crop.imageUrl}
-                      alt={crop.name}
-                      className="w-full h-24 object-cover rounded-md mb-2"
-                      loading="lazy"
-                    />
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
-                      {crop.name}
-                    </h3>
-                    <p className="text-green-700 text-sm font-bold mb-1">
-                      ₹{crop.price}
-                    </p>
+  {Object.keys(groupedCrops).length === 0 ? (
+    <p className="text-center text-green-900 text-base font-medium">
+      No products available right now.
+    </p>
+  ) : (
+    Object.entries(groupedCrops).map(([type, products]) => (
+      <section key={type} className="mb-12 w-full">
+        <h2 className="text-xl font-bold text-green-700 mb-4 capitalize">
+          {type}
+        </h2>
+        <div
+          id={`section-${type}`}
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory w-full pb-2"
+        >
+          {products.map((crop) => (
+            <div
+              key={crop.id}
+              className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
+            >
+              <img
+                src={crop.imageUrl}
+                alt={crop.name}
+                className="w-full h-24 object-cover rounded-md mb-2"
+                loading="lazy"
+              />
+              <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
+                {crop.name}
+              </h3>
+              <p className="text-green-700 text-sm font-bold mb-1">
+                ₹{crop.price}
+              </p>
+              <button
+                onClick={() => addToCart(crop)}
+                className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
+              >
+                🛒 Add
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))
+  )}
+</main>
 
-                    <button
-                      onClick={() => addToCart(crop)}
-                      className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
-                    >
-                      🛒 Add
-                    </button>
-                  </div>
-                ))}
-              </ScrollableSection>
-            </section>
-          ))
-        )}
-      </main>
 
 
 
