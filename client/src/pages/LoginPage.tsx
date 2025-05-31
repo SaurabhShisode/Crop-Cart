@@ -27,13 +27,19 @@ const LoginPage: React.FC = () => {
 
     if (res.ok) {
       localStorage.setItem('cropcartUser', JSON.stringify(data));
-      toast.success(`Logged in as ${email}`);
+      toast.success(`Logged in as ${email}`, {
+        style: { background: '#14532d', color: 'white' },
+      });
       navigate('/home');
     } else {
-      toast.error(data.message || 'Login failed');
+      toast.error(data.message || 'Login failed', {
+        style: { background: '#14532d', color: 'white' },
+      });
     }
   } catch (error: any) {
-    toast.error(error.message || 'Login failed');
+    toast.error(error.message || 'Login failed', {
+        style: { background: '#14532d', color: 'white' },
+      });
     console.error('Login error:', error.code, error.message);
   }
 };
