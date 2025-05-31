@@ -8,117 +8,42 @@
   <br>
 </h1>
 
-<h4 align="center">A minimal Markdown Editor desktop app built on top of <a href="http://electron.atom.io" target="_blank">Electron</a>.</h4>
+<h4 align="center">A full-stack platform empowering farmers to sell fresh produce directly to consumers, built with the MERN stack and Firebase Authentication.</h4>
 
-<p align="center">
-  <a href="https://badge.fury.io/js/electron-markdownify">
-    <img src="https://badge.fury.io/js/electron-markdownify.svg"
-         alt="Gitter">
-  </a>
-  <a href="https://gitter.im/amitmerchant1990/electron-markdownify"><img src="https://badges.gitter.im/amitmerchant1990/electron-markdownify.svg"></a>
-  <a href="https://saythanks.io/to/bullredeyes@gmail.com">
-      <img src="https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg">
-  </a>
-  <a href="https://www.paypal.me/AmitMerchant">
-    <img src="https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&amp;style=flat">
-  </a>
-</p>
+## About CropCart
+<p>CropCart is a community-centric e-commerce platform designed to connect local farmers directly with consumers. The goal is to make fresh, high-quality crops accessible while supporting local agriculture and reducing middlemen.</p>
 
-<p align="center">
-  <a href="#key-features">Key Features</a> •
-  <a href="#how-to-use">How To Use</a> •
-  <a href="#download">Download</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#related">Related</a> •
-  <a href="#license">License</a>
-</p>
-
-![screenshot](https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif)
 
 ## Key Features
 
-* LivePreview - Make changes, See changes
-  - Instantly see what your Markdown documents look like in HTML as you create them.
-* Sync Scrolling
-  - While you type, LivePreview will automatically scroll to the current location you're editing.
-* GitHub Flavored Markdown  
-* Syntax highlighting
-* [KaTeX](https://khan.github.io/KaTeX/) Support
-* Dark/Light mode
-* Toolbar for basic Markdown formatting
-* Supports multiple cursors
-* Save the Markdown preview as PDF
-* Emoji support in preview :tada:
-* App will keep alive in tray for quick usage
-* Full screen mode
-  - Write distraction free.
-* Cross platform
-  - Windows, macOS and Linux ready.
+* Location-Based Crop Listings  
+  - Users can browse fresh produce from nearby farmers.
+* Google Login + JWT  
+  - Secure authentication using Firebase and JWT-based backend verification.
+* Persistent Cart  
+  - Cart data saved using localStorage for a smooth shopping experience.
+* Chat System  
+  - Real-time messaging between users and farmers.
+* Crop Ordering System  
+  - Place and manage orders easily.
+* Fully Responsive  
+  - Optimized for mobile, tablet, and desktop views.
 
-## How To Use
+## Tech Stack
 
-To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+<h3 align="left">Languages and Tools:</h3>
+<p align="left"> <a href="https://expressjs.com" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB" alt="express" height="40"/> </a> 
+<a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)" alt="firebase"  height="40"/> </a> 
+<a href="https://www.mongodb.com/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="mongodb" height="40"/> </a> 
+<a href="https://nodejs.org" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white" alt="nodejs"  height="40"/> </a> 
+<a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="react"  height="40"/> </a> 
+<img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white" alt="react-router" height="40"/>
+<a href="https://tailwindcss.com/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="tailwind" height="40"/> </a> 
+<a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="typescript" height="40"/> </a>
+<img src="https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB" alt="expressjs" height="40"/>
+<img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens" alt="expressjs" height="40"/> </p>
 
-```bash
-# Clone this repository
-$ git clone https://github.com/amitmerchant1990/electron-markdownify
-
-# Go into the repository
-$ cd electron-markdownify
-
-# Install dependencies
-$ npm install
-
-# Run the app
-$ npm start
-```
-
-> **Note**
-> If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
-
-
-## Download
-
-You can [download](https://github.com/amitmerchant1990/electron-markdownify/releases/tag/v1.2.0) the latest installable version of Markdownify for Windows, macOS and Linux.
-
-## Emailware
-
-Markdownify is an [emailware](https://en.wiktionary.org/wiki/emailware). Meaning, if you liked using this app or it has helped you in any way, I'd like you send me an email at <bullredeyes@gmail.com> about anything you'd want to say about this software. I'd really appreciate it!
-
-## Credits
-
-This software uses the following open source packages:
-
-- [Electron](http://electron.atom.io/)
-- [Node.js](https://nodejs.org/)
-- [Marked - a markdown parser](https://github.com/chjj/marked)
-- [showdown](http://showdownjs.github.io/showdown/)
-- [CodeMirror](http://codemirror.net/)
-- Emojis are taken from [here](https://github.com/arvida/emoji-cheat-sheet.com)
-- [highlight.js](https://highlightjs.org/)
-
-## Related
-
-[Try Web version of Markdownify](https://notepad.js.org/markdown-editor/)
-
-## Support
-
-If you like this project and think it has helped in any way, consider buying me a coffee!
-
-<a href="https://buymeacoffee.com/amitmerchant" target="_blank"><img src="app/img/bmc-button.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-
-## You may also like...
-
-- [Pomolectron](https://github.com/amitmerchant1990/pomolectron) - A pomodoro app
-- [Correo](https://github.com/amitmerchant1990/correo) - A menubar/taskbar Gmail App for Windows and macOS
-
-## License
-
-MIT
-
----
-
-> [amitmerchant.com](https://www.amitmerchant.com) &nbsp;&middot;&nbsp;
-> GitHub [@amitmerchant1990](https://github.com/amitmerchant1990) &nbsp;&middot;&nbsp;
-> Twitter [@amit_merchant](https://twitter.com/amit_merchant)
-
+- **Frontend:** React, TypeScript, Tailwind CSS, React Router, react-hot-toast  
+- **Backend:** Node.js, Express, MongoDB, Mongoose, Firebase Admin  
+- **Authentication:** Firebase Authentication + JWT  
+- **Storage:** MongoDB for crops and user data; localStorage for cart persistence.
