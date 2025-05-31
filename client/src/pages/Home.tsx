@@ -644,7 +644,7 @@ const Home: React.FC = () => {
                   <div>
                     <h3 className="font-semibold text-green-900">{item.name}</h3>
                     <p className="text-sm text-gray-600">
-                      Qty: {item.quantity} × ₹{item.price}
+                      Qty: {item.quantityInCart} × ₹{item.price}
                     </p>
                   </div>
                   <button
