@@ -8,53 +8,52 @@ import { toast } from 'react-hot-toast';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);  // <-- loading state added
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-     await signInWithEmailAndPassword(auth, email, password);
-    
+    e.preventDefault();
+    setLoading(true);  // start loading
 
-    const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password }),
-});
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
 
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      localStorage.setItem('cropcartUser', JSON.stringify(data));
-      toast.success(`Logged in as ${email}`, {
+      if (res.ok) {
+        localStorage.setItem('cropcartUser', JSON.stringify(data));
+        toast.success(`Logged in as ${email}`, {
+          style: { background: '#14532d', color: 'white' },
+        });
+        navigate('/home');
+      } else {
+        toast.error(data.message || 'Login failed', {
+          style: { background: '#14532d', color: 'white' },
+        });
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Login failed', {
         style: { background: '#14532d', color: 'white' },
       });
-      navigate('/home');
-    } else {
-      toast.error(data.message || 'Login failed', {
-        style: { background: '#14532d', color: 'white' },
-      });
+      console.error('Login error:', error.code, error.message);
+    } finally {
+      setLoading(false);  // stop loading
     }
-  } catch (error: any) {
-    toast.error(error.message || 'Login failed', {
-        style: { background: '#14532d', color: 'white' },
-      });
-    console.error('Login error:', error.code, error.message);
-  }
-};
-
+  };
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
     try {
-      // Google sign-in popup
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      // Get Firebase ID token
       const token = await user.getIdToken();
 
-      // Send token to backend same as email/password flow
       const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -73,8 +72,11 @@ const LoginPage: React.FC = () => {
     } catch (error: any) {
       toast.error('Google login failed');
       console.error('Google login error:', error.code, error.message);
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
@@ -107,6 +109,7 @@ const LoginPage: React.FC = () => {
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-green-300 focus:border-green-900 focus:ring-2 focus:ring-green-400 focus:outline-none transition"
                 placeholder="you@example.com"
                 autoComplete="email"
+                disabled={loading}
               />
             </div>
 
@@ -121,14 +124,17 @@ const LoginPage: React.FC = () => {
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-green-300 focus:border-green-900 focus:ring-2 focus:ring-green-400 focus:outline-none transition"
                 placeholder="••••••••"
                 autoComplete="current-password"
+                disabled={loading}
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-green-900 text-white py-3 rounded-lg font-semibold hover:scale-[1.02] transition-all shadow-md"
+              className={`w-full py-3 rounded-lg font-semibold shadow-md transition-all
+                ${loading ? 'bg-green-700 cursor-not-allowed' : 'bg-green-900 hover:scale-[1.02]'}`}
+              disabled={loading}
             >
-              Login
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
 
@@ -137,14 +143,16 @@ const LoginPage: React.FC = () => {
             <p className="text-gray-500 mb-4">or</p>
             <button
               onClick={handleGoogleLogin}
-              className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition-all shadow-sm"
+              disabled={loading}
+              className={`w-full flex items-center justify-center gap-3 py-2 rounded-lg shadow-sm transition-all
+                ${loading ? 'bg-gray-300 cursor-not-allowed text-gray-500' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'}`}
             >
               <img
                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
                 alt="Google logo"
                 className="h-5 w-5"
               />
-              Sign in with Google
+              {loading ? 'Please wait...' : 'Sign in with Google'}
             </button>
           </div>
 
@@ -153,6 +161,7 @@ const LoginPage: React.FC = () => {
             <button
               onClick={() => navigate('/register')}
               className="font-semibold underline hover:text-green-900"
+              disabled={loading}
             >
               Register here
             </button>
