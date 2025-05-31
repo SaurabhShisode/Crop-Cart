@@ -327,19 +327,30 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('cropcartUser');
-    if (storedUser) {
-      const data = JSON.parse(storedUser);
-      setUserName(data.user.name);
+  const storedUser = localStorage.getItem('cropcartUser');
+  if (storedUser) {
+    try {
+      const data = JSON.parse(storedUser); // data = { token, user }
+      if (data.user && data.user.name && data.user.id) {
+        setUserName(data.user.name);
 
-      const cartKey = `cart_${data.user.id}`;
-      const userCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
-      setCart(userCart);
-
-
-      
+        const cartKey = `cart_${data.user.id}`;
+        const userCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+        setCart(userCart);
+      } else {
+        // Invalid user data structure in localStorage
+        setUserName(null);
+        setCart([]);
+      }
+    } catch (err) {
+      // Invalid JSON or other error parsing
+      console.error('Failed to parse cropcartUser from localStorage:', err);
+      setUserName(null);
+      setCart([]);
     }
-  }, []);
+  }
+}, []);
+
 
 
   const [heroOpacity, setHeroOpacity] = useState(1);
