@@ -11,37 +11,33 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // Sign in user via Firebase Auth (email/password)
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+  e.preventDefault();
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    const token = await user.getIdToken();
 
-      // Get Firebase ID token
-      const token = await user.getIdToken();
+    const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', { // <-- changed here
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
 
-      // Send token to your backend to verify and get your own JWT + user data
-      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
-      });
+    const data = await res.json();
 
-      const data = await res.json();
-
-      if (res.ok) {
-        // Save backend JWT/user info in localStorage
-        localStorage.setItem('cropcartUser', JSON.stringify(data));
-        toast.success(`Logged in as ${user.email}`);
-        navigate('/home');
-      } else {
-        toast.error(data.message || 'Login failed');
-      }
-    } catch (error: any) {
-      toast.error(error.message || 'Login failed');
-      console.error('Login error:', error.code, error.message);
+    if (res.ok) {
+      localStorage.setItem('cropcartUser', JSON.stringify(data));
+      toast.success(`Logged in as ${user.email}`);
+      navigate('/home');
+    } else {
+      toast.error(data.message || 'Login failed');
     }
-  };
+  } catch (error: any) {
+    toast.error(error.message || 'Login failed');
+    console.error('Login error:', error.code, error.message);
+  }
+};
+
 
   const handleGoogleLogin = async () => {
     try {
