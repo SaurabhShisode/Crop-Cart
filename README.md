@@ -1,6 +1,7 @@
 # CropCart - Online Crop Marketplace
 
-![CropCart Logo](client/src/assets/logo.png)
+<img src="client/src/assets/logo.png" alt="CropCart Logo" width="200" height="200" />
+
 
 CropCart is a full-stack web application for buying and selling crops online. It allows users to browse crops filtered by region pincodes, add items to a cart, and place orders with shipping details.
 
