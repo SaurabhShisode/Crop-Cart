@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
       const user = userCredential.user;
       const token = await user.getIdToken();
 
-      const res = await fetch('http://localhost:5000/api/users/google-login', {
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google-login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
