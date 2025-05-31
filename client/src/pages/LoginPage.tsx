@@ -16,6 +16,8 @@ const LoginPage: React.FC = () => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     const token = await user.getIdToken();
+    console.log('Firebase ID Token:', token);
+
 
     const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', { // <-- changed here
       method: 'POST',
