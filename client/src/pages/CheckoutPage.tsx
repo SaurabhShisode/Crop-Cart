@@ -38,29 +38,59 @@ const CheckoutPage: React.FC = () => {
     }
   }, []);
 
-  // Convert quantityInCart string to a number for calculations, default 0 if parse fails
   const totalPrice = cart.reduce((total, item) => {
     const quantityNum = parseFloat(item.quantityInCart) || 0;
     return total + item.price * quantityNum;
   }, 0);
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!name || !email || !address) {
       toast.error('Please fill in all fields.');
       return;
     }
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      const storedUser = localStorage.getItem('cropcartUser');
+      const userId = storedUser ? JSON.parse(storedUser)?.user?.id : null;
+
+      const orderData = {
+        userId,
+        name,
+        email,
+        address,
+        items: cart,
+        total: (totalPrice * 1.18 + 50).toFixed(2),
+        tax: (totalPrice * 0.18).toFixed(2),
+        deliveryFee: 50,
+      };
+
+      const response = await fetch('http://localhost:5000/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) throw new Error('Failed to place order.');
+
       toast.success('Order placed successfully!');
-      localStorage.removeItem('cart');
+      if (userId) {
+        localStorage.removeItem(`cart_${userId}`);
+      }
       setCart([]);
       setName('');
       setEmail('');
       setAddress('');
       navigate('/home');
-    }, 1500);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (cart.length === 0) {
@@ -114,7 +144,6 @@ const CheckoutPage: React.FC = () => {
                 <span>₹{(totalPrice * 1.18 + 50).toFixed(2)}</span>
               </div>
             </div>
-
           </aside>
 
           {/* Shipping Details */}
