@@ -560,7 +560,7 @@ const Home: React.FC = () => {
                       className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
                       <img
-                        src={crop.imageUrl}
+                        src={crop.image}
                         alt={crop.name}
                         className="w-full h-24 object-cover rounded-md mb-2"
                         loading="lazy"
