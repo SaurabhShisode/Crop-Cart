@@ -89,9 +89,13 @@ const CheckoutPage: React.FC = () => {
                       <p className="font-semibold text-green-800">{item.name} ({item.quantity})</p>
                       <p className="text-sm text-green-700">Qty: {item.quantityInCart}</p>
                     </div>
-                    <p className="font-semibold text-green-900">
-                      ₹{(item.price * quantityNum).toFixed(2)}
-                    </p>
+                    <div className="text-green-900 font-semibold space-y-1">
+  <p>Base Price: ₹{(item.price * quantityNum).toFixed(2)}</p>
+  <p>Tax (18%): ₹{(item.price * quantityNum * 0.18).toFixed(2)}</p>
+  <p>Delivery Fee: ₹50.00</p>
+  <p className="font-bold">Total: ₹{((item.price * quantityNum) * 1.18 + 50).toFixed(2)}</p>
+</div>
+
                   </li>
                 );
               })}
