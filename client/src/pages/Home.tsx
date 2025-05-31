@@ -541,7 +541,7 @@ const Home: React.FC = () => {
       </div>
 
       <div className="flex justify-center">
-        <main className="flex-grow max-w-7xl mx-20 min-h-screen py-10 px-4">
+        <main className="flex-grow max-w-7xl mx-20 min-h-screen py-10 px-4 bg-white">
 
           {Object.keys(groupedCrops).length === 0 ? (
             <p className="text-center text-green-900 text-base font-medium">
