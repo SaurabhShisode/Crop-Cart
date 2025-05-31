@@ -13,20 +13,24 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Sign in user via Firebase Auth (email/password)
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      // Get Firebase ID token
       const token = await user.getIdToken();
 
+      // Send token to your backend to verify and get your own JWT + user data
       const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google-login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
       });
 
       const data = await res.json();
+
       if (res.ok) {
+        // Save backend JWT/user info in localStorage
         localStorage.setItem('cropcartUser', JSON.stringify(data));
         toast.success(`Logged in as ${user.email}`);
         navigate('/home');
@@ -41,19 +45,22 @@ const LoginPage: React.FC = () => {
 
   const handleGoogleLogin = async () => {
     try {
+      // Google sign-in popup
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+
+      // Get Firebase ID token
       const token = await user.getIdToken();
 
+      // Send token to backend same as email/password flow
       const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google-login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
       });
 
       const data = await res.json();
+
       if (res.ok) {
         localStorage.setItem('cropcartUser', JSON.stringify(data));
         toast.success(`Logged in as ${user.email}`);
@@ -66,7 +73,6 @@ const LoginPage: React.FC = () => {
       console.error('Google login error:', error.code, error.message);
     }
   };
-
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
