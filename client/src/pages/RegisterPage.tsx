@@ -10,41 +10,44 @@ const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
 
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, role: 'user' }),
+      });
 
-    // Call backend to create user in DB
-    const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password, role: 'user' }),  // add password and role
-  // send token and user info
-    });
+      const data = await res.json();
 
-    const data = await res.json();
-
-    if (res.ok) {
-      toast.success('User registered successfully!', {
+      if (res.ok) {
+        toast.success('User registered successfully!', {
+          style: { background: '#14532d', color: 'white' },
+        });
+        navigate('/login');
+      } else {
+        toast.error(data.message || 'Registration failed', {
+          style: { background: '#14532d', color: 'white' },
+        });
+      }
+    } catch (error: any) {
+      toast.error(error.message, {
         style: { background: '#14532d', color: 'white' },
       });
-      navigate('/login');
-    } else {
-      toast.error(data.message || 'Registration failed', {
-        style: { background: '#14532d', color: 'white' },
-      });
+    } finally {
+      setLoading(false);
     }
-  } catch (error: any) {
-    toast.error(error.message, {
-      style: { background: '#14532d', color: 'white' },
-    });
-  }
-};
+  };
+
 
 
   return (
@@ -111,10 +114,15 @@ const RegisterPage: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full bg-green-900 text-white py-3 rounded-lg font-semibold hover:scale-[1.02] transition-all shadow-md"
+              disabled={loading}
+              className={`w-full py-3 rounded-lg font-semibold transition-all shadow-md ${loading
+                  ? 'bg-green-900 text-white cursor-not-allowed'
+                  : 'bg-green-900 text-white hover:scale-[1.02]'
+                }`}
             >
-              Register
+              {loading ? 'Registering...' : 'Register'}
             </button>
+
           </form>
 
           <p className="mt-6 text-center text-green-700">
