@@ -310,11 +310,14 @@ type Crop = {
   type: string;
   price: number;
   regionPincodes: string[];
-  image?: string; 
+  image?: string;
+  availability: string;
+  quantity: string;
 };
 
+
 type CartItem = Crop & {
-  quantity: number;
+  quantityInCart: number;
 };
 
 const Home: React.FC = () => {
@@ -403,10 +406,10 @@ const Home: React.FC = () => {
       const exists = prev.find((item) => item.id === crop.id);
       if (exists) {
         return prev.map((item) =>
-          item.id === crop.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === crop.id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
         );
       } else {
-        return [...prev, { ...crop, quantity: 1 }];
+        return [...prev, { ...crop, quantityInCart: 1 }];
       }
     });
     setIsCartOpen(true);
@@ -417,9 +420,13 @@ const Home: React.FC = () => {
   };
 
   const totalPrice = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) => total + item.price * item.quantityInCart,
     0
   );
+
+
+  const cartCount = cart.reduce((acc, item) => acc + item.quantityInCart, 0);
+
 
   const handleLogout = () => {
     localStorage.removeItem('cropcartUser');
@@ -427,7 +434,7 @@ const Home: React.FC = () => {
     setCart([]);
   };
 
-  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
 
   const toggleCart = () => setIsCartOpen((prev) => !prev);
 
@@ -555,13 +562,11 @@ const Home: React.FC = () => {
                 </h2>
                 <ScrollableSection sectionId={`section-${type}`}>
                   {products.map((crop) => (
-                    
+
                     <div
                       key={crop.id}
                       className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
-                     
-
                       <img
                         src={crop.image}
                         alt={crop.name}
@@ -574,7 +579,7 @@ const Home: React.FC = () => {
                       <p className="text-green-700 text-sm font-bold mb-1">
                         ₹{crop.price}
                       </p>
-
+                      <p className="text-gray-600 text-xs mb-2">{crop.quantity}</p>
                       <button
                         onClick={() => addToCart(crop)}
                         className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
@@ -582,6 +587,7 @@ const Home: React.FC = () => {
                         🛒 Add
                       </button>
                     </div>
+
                   ))}
                 </ScrollableSection>
               </section>
