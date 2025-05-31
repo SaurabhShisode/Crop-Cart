@@ -21,7 +21,7 @@ const LoginPage: React.FC = () => {
       const token = await user.getIdToken();
 
       // Send token to your backend to verify and get your own JWT + user data
-      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google-login', {
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
@@ -53,7 +53,7 @@ const LoginPage: React.FC = () => {
       const token = await user.getIdToken();
 
       // Send token to backend same as email/password flow
-      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google-login', {
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
