@@ -6,8 +6,8 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
-  quantityInCart: string; 
-  quantity: string; 
+  quantityInCart: string;
+  quantity: string;
 }
 
 const CheckoutPage: React.FC = () => {
@@ -89,21 +89,32 @@ const CheckoutPage: React.FC = () => {
                       <p className="font-semibold text-green-800">{item.name} ({item.quantity})</p>
                       <p className="text-sm text-green-700">Qty: {item.quantityInCart}</p>
                     </div>
-                    <div className="text-green-900 font-semibold space-y-1">
-  <p>Base Price: ₹{(item.price * quantityNum).toFixed(2)}</p>
-  <p>Tax (18%): ₹{(item.price * quantityNum * 0.18).toFixed(2)}</p>
-  <p>Delivery Fee: ₹50.00</p>
-  <p className="font-bold">Total: ₹{((item.price * quantityNum) * 1.18 + 50).toFixed(2)}</p>
-</div>
-
+                    <p className="font-semibold text-green-900">
+                      ₹{(item.price * quantityNum).toFixed(2)}
+                    </p>
                   </li>
                 );
               })}
             </ul>
-            <div className="border-t border-green-300 mt-6 pt-4 flex justify-between items-center">
-              <span className="text-xl font-bold text-green-900">Total:</span>
-              <span className="text-xl font-bold text-green-900">₹{totalPrice.toFixed(2)}</span>
+            <div className="border-t border-green-300 mt-6 pt-4 space-y-1 text-green-900">
+              <div className="flex justify-between items-center">
+                <span className="text-base">Base Price:</span>
+                <span>₹{totalPrice.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-base">Taxes:</span>
+                <span>₹{(totalPrice * 0.18).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-base">Delivery Fee:</span>
+                <span>₹50.00</span>
+              </div>
+              <div className="flex justify-between items-center font-bold text-xl border-t border-green-300 pt-2 mt-2">
+                <span>Total:</span>
+                <span>₹{(totalPrice * 1.18 + 50).toFixed(2)}</span>
+              </div>
             </div>
+
           </aside>
 
           {/* Shipping Details */}
@@ -164,9 +175,8 @@ const CheckoutPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full bg-green-900 text-white py-3 rounded-lg font-semibold shadow hover:bg-green-800 transition duration-200 ${
-                  loading ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`w-full bg-green-900 text-white py-3 rounded-lg font-semibold shadow hover:bg-green-800 transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
               >
                 {loading ? 'Placing Order...' : 'Place Order'}
               </button>
