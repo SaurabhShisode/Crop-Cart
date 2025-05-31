@@ -17,7 +17,6 @@ const RegisterPage: React.FC = () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     const token = await user.getIdToken();
-    console.log('Firebase ID Token:', token);
 
     // Call backend to create user in DB
     const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/register', {
