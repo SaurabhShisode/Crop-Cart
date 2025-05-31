@@ -565,7 +565,7 @@ const Home: React.FC = () => {
                   {products.map((crop) => (
                     <div
                       key={crop.id}
-                      className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg  flex flex-col w-48 flex-shrink-0"
+                      className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
                       <img
                         src={crop.image}
@@ -573,26 +573,24 @@ const Home: React.FC = () => {
                         className="w-full h-24 object-cover rounded-md mb-2"
                         loading="lazy"
                       />
-                      <div className="p-2">
-                        <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
-                          {crop.name}
-                        </h3>
-                        <p className="text-green-700 text-sm font-bold mb-1">
-                          ₹{crop.price}
-                        </p>
+                      <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
+                        {crop.name}
+                      </h3>
+                      <p className="text-green-700 text-sm font-bold mb-1">
+                        ₹{crop.price}
+                      </p>
 
 
-                        <p className="text-xs text-gray-600 mb-2">
-                          {crop.quantity}
-                        </p>
+                      <p className="text-xs text-gray-600 mb-2">
+                        {crop.quantity}
+                      </p>
 
-                        <button
-                          onClick={() => addToCart(crop)}
-                          className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
-                        >
-                          🛒 Add
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => addToCart(crop)}
+                        className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
+                      >
+                        🛒 Add
+                      </button>
                     </div>
                   ))}
                 </ScrollableSection>
