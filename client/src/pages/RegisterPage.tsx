@@ -14,9 +14,8 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    const token = await user.getIdToken();
+    await createUserWithEmailAndPassword(auth, email, password);
+
 
     // Call backend to create user in DB
     const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/register', {
@@ -24,7 +23,8 @@ const RegisterPage: React.FC = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ token, name, email }),  // send token and user info
+      body: JSON.stringify({ name, email, password, role: 'user' }),  // add password and role
+  // send token and user info
     });
 
     const data = await res.json();
