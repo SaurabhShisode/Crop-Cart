@@ -20,12 +20,22 @@ CropCart is a full-stack web application for buying and selling crops online. It
 
 ## Tech Stack
 
-![Tech Stack](./assets/tech-stack.png)
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" alt="Tailwind CSS" width="40" height="40"/>
+  <img src="https://img.shields.io/badge/React%20Router-CA4245?style=flat&logo=react-router&logoColor=white" alt="React Router" height="40"/>
+  <img src="https://img.shields.io/badge/Hot%20Toast-333333?style=flat&logoColor=white" alt="React Hot Toast" height="40"/>
 
-- **Frontend:** React, TypeScript, Tailwind CSS, React Router, react-hot-toast
-- **Backend:** Node.js, Express, MongoDB, Mongoose, Firebase Admin
-- **Authentication:** Firebase Authentication + JWT
-- **Storage:** MongoDB for crops and user data; localStorage for cart persistence.
+  <br />
+
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" alt="Express" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase" width="40" height="40"/>
+  <img src="https://img.shields.io/badge/JWT-black?style=flat&logo=jsonwebtokens&logoColor=white" alt="JWT" height="40"/>
+</p>
+
 
 ---
 
