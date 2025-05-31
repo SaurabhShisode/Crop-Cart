@@ -317,7 +317,7 @@ type Crop = {
 
 
 type CartItem = Crop & {
-    quantityInCart: number;
+  quantityInCart: number;
 };
 
 const Home: React.FC = () => {
@@ -402,30 +402,30 @@ const Home: React.FC = () => {
   }, []);
 
   const addToCart = (crop: Crop) => {
-  setCart((prev) => {
-    const exists = prev.find((item) => item.id === crop.id);
-    if (exists) {
-      return prev.map((item) =>
-        item.id === crop.id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
-      );
-    } else {
-      return [...prev, { ...crop, quantityInCart: 1 }];
-    }
-  });
-  setIsCartOpen(true);
-};
+    setCart((prev) => {
+      const exists = prev.find((item) => item.id === crop.id);
+      if (exists) {
+        return prev.map((item) =>
+          item.id === crop.id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
+        );
+      } else {
+        return [...prev, { ...crop, quantityInCart: 1 }];
+      }
+    });
+    setIsCartOpen(true);
+  };
 
-const removeFromCart = (id: string) => {
-  setCart((prev) => prev.filter((item) => item.id !== id));
-};
+  const removeFromCart = (id: string) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
 
-const totalPrice = cart.reduce(
-  (total, item) => total + item.price * item.quantityInCart,
-  0
-);
+  const totalPrice = cart.reduce(
+    (total, item) => total + item.price * item.quantityInCart,
+    0
+  );
 
 
-const cartCount = cart.reduce((acc, item) => acc + item.quantityInCart, 0);
+  const cartCount = cart.reduce((acc, item) => acc + item.quantityInCart, 0);
 
 
   const handleLogout = () => {
@@ -434,7 +434,7 @@ const cartCount = cart.reduce((acc, item) => acc + item.quantityInCart, 0);
     setCart([]);
   };
 
-  
+
 
   const toggleCart = () => setIsCartOpen((prev) => !prev);
 
@@ -562,13 +562,10 @@ const cartCount = cart.reduce((acc, item) => acc + item.quantityInCart, 0);
                 </h2>
                 <ScrollableSection sectionId={`section-${type}`}>
                   {products.map((crop) => (
-                    
                     <div
                       key={crop.id}
                       className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
-                     
-
                       <img
                         src={crop.image}
                         alt={crop.name}
@@ -582,6 +579,11 @@ const cartCount = cart.reduce((acc, item) => acc + item.quantityInCart, 0);
                         ₹{crop.price}
                       </p>
 
+                      
+                      <p className="text-xs text-gray-600 mb-2">
+                        Quantity: {crop.quantity}
+                      </p>
+
                       <button
                         onClick={() => addToCart(crop)}
                         className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
@@ -592,6 +594,7 @@ const cartCount = cart.reduce((acc, item) => acc + item.quantityInCart, 0);
                   ))}
                 </ScrollableSection>
               </section>
+
             ))
           )}
         </main>
