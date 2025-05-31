@@ -131,7 +131,7 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               className={`w-full py-3 rounded-lg font-semibold shadow-md transition-all
-                ${loading ? 'bg-green-700 cursor-not-allowed' : 'bg-green-900 hover:scale-[1.02]'}`}
+                ${loading ? 'bg-green-900 text-white cursor-not-allowed' : 'bg-green-900 text-white hover:scale-[1.02]'}`}
               disabled={loading}
             >
               {loading ? 'Logging in...' : 'Login'}
