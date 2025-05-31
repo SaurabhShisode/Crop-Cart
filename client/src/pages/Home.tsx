@@ -329,14 +329,19 @@ const Home: React.FC = () => {
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
-      const user = JSON.parse(storedUser);
-      setUserName(user.name);
+      const data = JSON.parse(storedUser);
+      setUserName(data.user.name);
 
-      const cartKey = `cart_${user.id}`;
+      const cartKey = `cart_${data.user.id}`;
       const userCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
       setCart(userCart);
+
+
+      
     }
   }, []);
+
+
   const [heroOpacity, setHeroOpacity] = useState(1);
 
   useEffect(() => {
