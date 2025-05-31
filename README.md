@@ -23,7 +23,8 @@ CropCart is a full-stack web application for buying and selling crops online. It
 <p align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript" width="40" height="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" alt="Tailwind CSS" width="40" height="40"/>
+  <img src="![image](https://github.com/user-attachments/assets/01862ba3-bd0d-4bca-957c-33f2a0fe3fc4)
+" alt="Tailwind CSS" width="40" height="40"/>
   <img src="https://img.shields.io/badge/React%20Router-CA4245?style=flat&logo=react-router&logoColor=white" alt="React Router" height="40"/>
   <img src="https://img.shields.io/badge/Hot%20Toast-333333?style=flat&logoColor=white" alt="React Hot Toast" height="40"/>
 
