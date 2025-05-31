@@ -13,22 +13,21 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    const token = await user.getIdToken();
+     await signInWithEmailAndPassword(auth, email, password);
     
 
-    const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', { // <-- changed here
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
+    const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password }),
+});
+
 
     const data = await res.json();
 
     if (res.ok) {
       localStorage.setItem('cropcartUser', JSON.stringify(data));
-      toast.success(`Logged in as ${user.email}`);
+      toast.success(`Logged in as ${email}`);
       navigate('/home');
     } else {
       toast.error(data.message || 'Login failed');
