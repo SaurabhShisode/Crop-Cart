@@ -498,7 +498,7 @@ const Home: React.FC = () => {
         </div>
       </section>
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
-        <div className="px-6 py-8 bg-gray-50 space-y-6">
+        <div className="px-6 py-8 bg-white space-y-6">
 
           <div className="relative rounded-3xl overflow-hidden bg-green-500 text-white p-8 w-full h-80">
 
