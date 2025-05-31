@@ -452,7 +452,7 @@ const Home: React.FC = () => {
     {}
   );
   return (
-    <div className="min-h-screen bg-green-50 flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       <Navbar
         userName={userName}
         onLogout={handleLogout}
