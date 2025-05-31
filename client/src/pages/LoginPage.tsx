@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('cropcartUser', JSON.stringify(data));
+        localStorage.setItem('cropcartUser', data.token);
         toast.success(`Logged in as ${email}`, {
           style: { background: '#14532d', color: 'white' },
         });
