@@ -636,7 +636,7 @@ const Home: React.FC = () => {
             </p>
           ) : (
             <div className="flex-grow overflow-y-auto">
-              {cart.map((item, crop) => (
+              {cart.map((item) => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between mb-4 border-b pb-2"
