@@ -497,9 +497,8 @@ const Home: React.FC = () => {
           </svg>
         </div>
       </section>
-
-      <main className="flex-grow max-w-7xl mx-auto min-h-screen py-10 px-4">
-        <div className="px-6 py-8 bg-gray-50 space-y-6">
+      <div className="flex-grow max-w-7xl mx-auto min-h-screen py-10 px-4">
+      <div className="px-6 py-8 bg-gray-50 space-y-6">
 
           <div className="relative rounded-3xl overflow-hidden bg-green-500 text-white p-8 w-full h-80">
 
@@ -539,6 +538,9 @@ const Home: React.FC = () => {
           </div>
 
         </div>
+    </div>
+      <main className="flex-grow max-w-7xl mx-auto min-h-screen py-10 px-4">
+        
         {Object.keys(groupedCrops).length === 0 ? (
           <p className="text-center text-green-900 text-base font-medium">
             No products available right now.
