@@ -636,16 +636,19 @@ const Home: React.FC = () => {
             </p>
           ) : (
             <div className="flex-grow overflow-y-auto">
-              {cart.map((item) => (
+              {cart.map((item, crop) => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between mb-4 border-b pb-2"
                 >
                   <div>
-                    <h3 className="font-semibold text-green-900">{item.name}</h3>
+                    <h3 className="font-semibold text-green-900">
+                      {item.name} ({item.quantity})
+                    </h3>
                     <p className="text-sm text-gray-600">
                       Qty: {item.quantityInCart} × ₹{item.price}
                     </p>
+
                   </div>
                   <button
                     onClick={() => removeFromCart(item.id)}
