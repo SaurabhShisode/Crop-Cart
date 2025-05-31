@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="https://crop-cart-rose.vercel.app"><img src="<img src="client/src/assets/logo.png" alt="CropCart Logo" width="200" height="200" />
+  <a href="https://crop-cart-rose.vercel.app"><img src="client/src/assets/logo.png" alt="CropCart Logo" width="200" height="200" />
 
   <br>
   Markdownify
