@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState,  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import logo from '../assets/logo.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { UserIcon,  } from '@heroicons/react/24/outline';
 
 interface Order {
   _id: string;
@@ -22,9 +20,9 @@ interface Order {
 const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const [userName, setUserName] = useState<string | null>(null);
 
   const navigate = useNavigate();
