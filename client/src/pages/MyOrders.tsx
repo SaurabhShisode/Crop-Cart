@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { toast } from 'react-hot-toast';
 import logo from '../assets/logo.png';
 import {
@@ -7,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { User, } from 'lucide-react';
 import Footer from '../components/Footer';
+
 
 interface Order {
   _id: string;
@@ -20,6 +23,47 @@ interface Order {
   deliveryFee: number;
   createdAt: string;
 }
+
+const downloadInvoice = (order: Order) => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text('CropCart Invoice', 14, 22);
+
+  doc.setFontSize(12);
+  doc.text(`Order ID: ${order._id}`, 14, 35);
+  doc.text(`Name: ${order.name}`, 14, 42);
+  doc.text(`Phone: ${order.phone}`, 14, 49);
+  doc.text(`Address: ${order.address}`, 14, 56);
+  doc.text(`Date: ${new Date(order.createdAt).toLocaleString('en-GB')}`, 14, 63);
+
+  const itemRows = order.items.map((item, idx) => [
+    idx + 1,
+    item.name,
+    item.quantityInCart,
+    item.quantity,
+  ]);
+
+  autoTable(doc, {
+    head: [['#', 'Item', 'Quantity in Cart', 'Quantity']],
+    body: itemRows,
+    startY: 70,
+  });
+
+  // FIX: Cast doc to include lastAutoTable
+  const finalY = (doc as any).lastAutoTable.finalY + 10;
+
+  const basePrice = parseFloat(order.total) - parseFloat(order.tax) - order.deliveryFee;
+
+  doc.setFontSize(12);
+  doc.text(`Base Price: ₹${basePrice.toFixed(2)}`, 14, finalY);
+  doc.text(`Tax: ₹${parseFloat(order.tax).toFixed(2)}`, 14, finalY + 7);
+  doc.text(`Delivery Fee: ₹${order.deliveryFee.toFixed(2)}`, 14, finalY + 14);
+  doc.setFontSize(14);
+  doc.text(`Total: ₹${parseFloat(order.total).toFixed(2)}`, 14, finalY + 25);
+
+  doc.save(`Invoice_${order._id}.pdf`);
+};
 
 
 const MyOrders: React.FC = () => {
@@ -251,6 +295,13 @@ const MyOrders: React.FC = () => {
                       <p className="text-gray-500">Total</p>
                       <p className="font-bold text-green-700 dark:text-green-300">₹{total.toFixed(2)}</p>
                     </div>
+                    <button
+                      onClick={() => downloadInvoice(order)}
+                      className="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300"
+                    >
+                      Download Invoice
+                    </button>
+
                   </div>
                 </div>
               );
