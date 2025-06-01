@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import logo from '../assets/logo.png'; // Adjust the path based on your project structure
+import logo from '../assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { UserIcon, UserPlusIcon } from '@heroicons/react/24/outline'; // ✅ Assuming Heroicons are used
 
 interface Order {
   _id: string;
@@ -21,6 +22,10 @@ const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [userName, setUserName] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +41,8 @@ const MyOrders: React.FC = () => {
         const user = JSON.parse(userData);
         const token = user.token;
         const userId = user.user.id;
+
+        setUserName(user.user.name); // ✅ Extract user name for display
 
         const res = await fetch(`https://crop-cart-backend.onrender.com/api/orders/user/${userId}`, {
           headers: {
@@ -60,6 +67,12 @@ const MyOrders: React.FC = () => {
     fetchOrders();
   }, [navigate]);
 
+  const onLogout = () => {
+    localStorage.removeItem('cropcartUser');
+    toast.success('Logged out successfully');
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Navbar */}
@@ -81,18 +94,82 @@ const MyOrders: React.FC = () => {
 
           {/* Right Side Desktop Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <button
-              onClick={() => navigate('/login')}
-              className="px-5 py-2 font-semibold text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400 text-lg"
-            >
-              Log in
-            </button>
-            <button
-              onClick={() => navigate('/register')}
-              className="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold"
-            >
-              Sign up
-            </button>
+            <div className="flex items-center space-x-4 relative">
+              {userName ? (
+                <>
+                  <span className="font-semibold text-green-700 text-lg">
+                    Hi, {userName}
+                  </span>
+                  <div ref={dropdownRef} className="relative">
+                    <button
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      aria-haspopup="true"
+                      aria-expanded={dropdownOpen}
+                      aria-label="User menu"
+                    >
+                      <UserIcon className="w-6 h-6 text-green-700" />
+                    </button>
+                    {dropdownOpen && (
+                      <ul className="absolute right-0 mt-2 w-48 bg-white border border-green-200 rounded-md shadow-lg z-50" role="menu">
+                        <li>
+                          <button
+                            onClick={() => {
+                              navigate('/myorders');
+                              setDropdownOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                            role="menuitem"
+                          >
+                            My Orders
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() => {
+                              navigate('/my-account');
+                              setDropdownOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                            role="menuitem"
+                          >
+                            My Account
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() => {
+                              onLogout();
+                              setDropdownOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
+                            role="menuitem"
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="px-4 py-2 font-semibold text-gray-800 hover:text-green-700 text-lg"
+                  >
+                    Log in
+                  </button>
+                  <button
+                    onClick={() => navigate('/register')}
+                    className="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold flex items-center gap-2"
+                  >
+                    <UserPlusIcon className="w-5 h-5" />
+                    Sign up
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -134,7 +211,7 @@ const MyOrders: React.FC = () => {
             {orders.map(order => (
               <li key={order._id} className="border border-green-300 dark:border-green-600 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800">
                 <p><strong>Order ID:</strong> {order._id}</p>
-                <p><strong>Placed on:</strong> {new Date(order.createdAt).toLocaleString('en-GB')}</p>
+                <p><strong>Placed on:</strong> {new Date(order.createdAt).toLocaleDateString('en-GB')}</p>
                 <p><strong>Delivery Address:</strong> {order.address}</p>
                 <p><strong>Items:</strong></p>
                 <ul className="ml-4 list-disc">
