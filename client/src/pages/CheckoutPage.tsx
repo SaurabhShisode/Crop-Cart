@@ -45,10 +45,10 @@ const CheckoutPage: React.FC = () => {
     const quantityNum = parseFloat(item.quantityInCart) || 0;
     return total + item.price * quantityNum;
   }, 0);
-
+  const toastStyle = { style: { background: '#14532d', color: 'white' } };
   const handlePlaceOrder = async () => {
     if (!name || !email || !address) {
-      toast.error('Please fill in all fields.');
+      toast.error('Please fill in all fields.', toastStyle);
       return;
     }
 
@@ -70,7 +70,7 @@ const CheckoutPage: React.FC = () => {
         deliveryFee: 50,
       };
 
-
+      
       const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
         method: 'POST',
         headers: {
@@ -81,7 +81,7 @@ const CheckoutPage: React.FC = () => {
 
       if (!response.ok) throw new Error('Failed to place order.');
 
-      toast.success('Order placed successfully!');
+      toast.success('Order placed successfully!', toastStyle);
       if (userId) {
         localStorage.removeItem(`cart_${userId}`);
       }
@@ -92,7 +92,7 @@ const CheckoutPage: React.FC = () => {
       navigate('/home');
     } catch (err) {
       console.error(err);
-      toast.error('Failed to place order. Please try again.');
+      toast.error('Failed to place order. Please try again.', toastStyle);
     } finally {
       setLoading(false);
     }
