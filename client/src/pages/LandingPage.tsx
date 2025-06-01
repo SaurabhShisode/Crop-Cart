@@ -375,17 +375,17 @@ export default function LandingPage() {
                         />
                         
                         <img
-                            src="./src/assets/investor2.png"
+                            src="./src/assets/Investor2.png"
                             alt="Investor 4"
                             className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-44 grayscale hover:grayscale-0 transition duration-300"
                         />
                         <img
-                            src="./src/assets/investor3.png"
+                            src="./src/assets/Investor3.png"
                             alt="Investor 5"
                             className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-32 grayscale hover:grayscale-0 transition duration-300"
                         />
                         <img
-                            src="./src/assets/investor4.png"
+                            src="./src/assets/Investor4.png"
                             alt="Investor 6"
                             className="h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-40 grayscale hover:grayscale-0 transition duration-300"
                         />
