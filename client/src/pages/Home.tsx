@@ -244,7 +244,7 @@ const Navbar: React.FC<{
                     <li>
                       <button
                         onClick={() => {
-                          navigate('/my-orders');
+                          navigate('/myorders');
                           setDropdownOpen(false);
                         }}
                         className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
