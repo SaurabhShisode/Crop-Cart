@@ -27,11 +27,9 @@ interface Order {
 const downloadInvoice = (order: Order) => {
   const doc = new jsPDF();
 
-
   doc.setFontSize(20);
   doc.setFont('helvetica', 'bold');
   doc.text('CropCart Invoice', 14, 20);
-
 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
@@ -45,7 +43,6 @@ const downloadInvoice = (order: Order) => {
   details.forEach((line, i) => {
     doc.text(line, 14, 30 + i * 7);
   });
-
 
   const itemRows = order.items.map((item, idx) => [
     idx + 1,
@@ -70,36 +67,34 @@ const downloadInvoice = (order: Order) => {
   });
 
   const finalY = (doc as any).lastAutoTable.finalY + 10;
-
   const basePrice = parseFloat(order.total) - parseFloat(order.tax) - order.deliveryFee;
-
 
   const marginLeft = 14;
   const marginRight = 200;
   const lineHeight = 8;
 
   doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
   doc.setTextColor(60);
 
   doc.text('Base Price:', marginLeft, finalY);
-  doc.text(`₹${basePrice.toFixed(2)}`, marginRight, finalY, { align: 'right' });
+  doc.text(`\u20B9${basePrice.toFixed(2)}`, marginRight, finalY, { align: 'right' });
 
   doc.text('Tax:', marginLeft, finalY + lineHeight);
-  doc.text(`₹${parseFloat(order.tax).toFixed(2)}`, marginRight, finalY + lineHeight, { align: 'right' });
+  doc.text(`\u20B9${parseFloat(order.tax).toFixed(2)}`, marginRight, finalY + lineHeight, { align: 'right' });
 
   doc.text('Delivery Fee:', marginLeft, finalY + 2 * lineHeight);
-  doc.text(`₹${order.deliveryFee.toFixed(2)}`, marginRight, finalY + 2 * lineHeight, { align: 'right' });
-
+  doc.text(`\u20B9${order.deliveryFee.toFixed(2)}`, marginRight, finalY + 2 * lineHeight, { align: 'right' });
 
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(0, 0, 0);
   doc.text('Total:', marginLeft, finalY + 3 * lineHeight + 4);
-  doc.text(`₹${parseFloat(order.total).toFixed(2)}`, marginRight, finalY + 3 * lineHeight + 4, { align: 'right' });
+  doc.text(`\u20B9${parseFloat(order.total).toFixed(2)}`, marginRight, finalY + 3 * lineHeight + 4, { align: 'right' });
 
- 
   doc.save(`Invoice_${order._id}.pdf`);
 };
+
 
 
 
