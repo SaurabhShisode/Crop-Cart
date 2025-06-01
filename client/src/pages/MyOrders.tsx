@@ -80,7 +80,7 @@ const MyOrders: React.FC = () => {
 
   return (
   <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-    {/* Navbar */}
+   
     <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
         <div
           className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
@@ -183,7 +183,7 @@ const MyOrders: React.FC = () => {
       </nav>
 
     {/* Orders Section */}
-    <main className="pt-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <main className="pt-28 pb-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold text-green-900 dark:text-green-300 mb-8">My Orders</h1>
 
       {loading ? (
