@@ -6,9 +6,6 @@ import {
     faSeedling, faBoxOpen, faHandHoldingHeart, faSearch, faShoppingCart, faTruck, faBars,
     faTimes,
 } from '@fortawesome/free-solid-svg-icons';
-import InstagramIcon from '../assets/icons/instagram.svg';
-import FacebookIcon from '../assets/icons/facebook.svg';
-import TwitterIcon from '../assets/icons/twitter.svg';
 import logo from '../assets/logo.png';
 import LiveCounters from "../components/LiveCounters";
 import TestimonialSection from "../components/Testimonials";
