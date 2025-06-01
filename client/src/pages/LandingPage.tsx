@@ -12,6 +12,10 @@ import TwitterIcon from '../assets/icons/twitter.svg';
 import logo from '../assets/logo.png';
 import LiveCounters from "../components/LiveCounters";
 import TestimonialSection from "../components/Testimonials";
+import investor1 from './assets/Investor1.png';
+import investor2 from './assets/Investor2.png';
+import investor3 from './assets/Investor3.png';
+import investor4 from './assets/Investor4.png';
 
 
 
@@ -369,24 +373,24 @@ export default function LandingPage() {
                     <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12">
                         
                         <img
-                            src="./src/assets/Investor1.png"
-                            alt="Investor 2"
+                            src={investor1}
+                            alt="Investor 1"
                             className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-36 grayscale hover:grayscale-0 transition duration-300"
                         />
                         
                         <img
-                            src="./src/assets/Investor2.png"
-                            alt="Investor 4"
+                            src={investor2}
+                            alt="Investor 2"
                             className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-44 grayscale hover:grayscale-0 transition duration-300"
                         />
                         <img
-                            src="./src/assets/Investor3.png"
-                            alt="Investor 5"
+                            src={investor3}
+                            alt="Investor 3"
                             className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-32 grayscale hover:grayscale-0 transition duration-300"
                         />
                         <img
-                            src="./src/assets/Investor4.png"
-                            alt="Investor 6"
+                            src={investor4}
+                            alt="Investor 4"
                             className="h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-40 grayscale hover:grayscale-0 transition duration-300"
                         />
 
