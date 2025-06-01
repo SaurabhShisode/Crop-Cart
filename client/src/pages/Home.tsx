@@ -602,7 +602,7 @@ const Home: React.FC = () => {
 
       </div>
 
-
+          
 
 
       <footer className="bg-green-900 text-green-100 py-6 mt-12">

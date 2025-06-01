@@ -16,7 +16,7 @@ interface Order {
   tax: string;
   deliveryFee: number;
   createdAt: string;
-  
+
 }
 
 const MyOrders: React.FC = () => {
@@ -222,8 +222,9 @@ const MyOrders: React.FC = () => {
                   <strong>Order ID:</strong> {order._id}
                 </p>
                 <p>
-                  <strong>Placed on:</strong> {new Date(order.createdAt).toLocaleDateString('en-GB')}
+                  <strong>Placed on:</strong> {new Date(order.createdAt).toLocaleString('en-GB')}
                 </p>
+
                 <p>
                   <strong>Delivery Address:</strong> {order.address}
                 </p>
