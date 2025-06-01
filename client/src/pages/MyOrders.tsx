@@ -21,7 +21,6 @@ const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [active, setActive] = useState<string>(''); // optional
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -135,7 +134,7 @@ const MyOrders: React.FC = () => {
             {orders.map(order => (
               <li key={order._id} className="border border-green-300 dark:border-green-600 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800">
                 <p><strong>Order ID:</strong> {order._id}</p>
-                <p><strong>Placed on:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                <p><strong>Placed on:</strong> {new Date(order.createdAt).toLocaleString('en-GB')}</p>
                 <p><strong>Delivery Address:</strong> {order.address}</p>
                 <p><strong>Items:</strong></p>
                 <ul className="ml-4 list-disc">
