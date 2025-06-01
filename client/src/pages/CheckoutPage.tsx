@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
+import Footer from '../components/Footer';
 
 interface CartItem {
   id: string;
@@ -213,6 +214,7 @@ const CheckoutPage: React.FC = () => {
           </section>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

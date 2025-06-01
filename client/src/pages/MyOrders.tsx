@@ -6,6 +6,7 @@ import {
   UserPlusIcon,
 } from '@heroicons/react/24/outline';
 import {  User,} from 'lucide-react';
+import Footer from '../components/Footer';
 
 interface Order {
   _id: string;
@@ -252,6 +253,7 @@ const MyOrders: React.FC = () => {
         </div>
       )}
     </main>
+    <Footer />
   </div>
 );
 
