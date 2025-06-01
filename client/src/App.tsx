@@ -4,6 +4,7 @@ import Login from './pages/LoginPage';
 import Register from './pages/RegisterPage'; 
 import Home from './pages/Home'; 
 import CheckoutPage from './pages/CheckoutPage';
+import MyOrders from './pages/MyOrders';
 
 function App() {
   return (
@@ -13,6 +14,8 @@ function App() {
       <Route path="/register" element={<Register />} /> 
       <Route path="/home" element={<Home />} />
       <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/myorders" element={<MyOrders />} />
+
     </Routes>
   );
 }
