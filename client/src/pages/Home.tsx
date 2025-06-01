@@ -586,11 +586,18 @@ const Home: React.FC = () => {
                       </p>
 
                       <button
-                        onClick={() => addToCart(crop)}
+                        onClick={() => {
+                          if (!userName) {
+                            navigate('/login');
+                          } else {
+                            addToCart(crop);
+                          }
+                        }}
                         className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
                       >
                         🛒 Add
                       </button>
+
                     </div>
                   ))}
                 </ScrollableSection>
@@ -602,7 +609,7 @@ const Home: React.FC = () => {
 
       </div>
 
-          
+
 
 
       <Footer />
