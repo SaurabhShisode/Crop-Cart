@@ -92,9 +92,13 @@ export default function LandingPage() {
 
                     {/* Right Buttons (Desktop Only) */}
                     <div className="hidden md:flex items-center space-x-4">
-                        <button className="px-5 py-3 bg-green-100 text-green-700 hover:bg-green-200 font-semibold rounded-md text-lg">
+                        <button
+                            onClick={() => navigate('/farmer-login')}
+                            className="px-5 py-3 bg-green-100 text-green-700 hover:bg-green-200 font-semibold rounded-md text-lg"
+                        >
                             Sell Your Produce
                         </button>
+
                         <button
                             onClick={() => navigate('/login')}
                             className="px-5 py-3 font-semibold text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400 text-lg"
@@ -368,13 +372,13 @@ export default function LandingPage() {
                     </p>
 
                     <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12">
-                        
+
                         <img
                             src={investor1}
                             alt="Investor 1"
                             className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-36 grayscale hover:grayscale-0 transition duration-300"
                         />
-                        
+
                         <img
                             src={investor2}
                             alt="Investor 2"

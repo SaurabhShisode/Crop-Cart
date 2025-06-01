@@ -58,7 +58,7 @@ const RegisterPage: React.FC = () => {
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-white drop-shadow-lg">
             Join Us.<br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-lime-100 to-white animate-pulse">
-              Grow together with CropCart
+              Let's grow together with CropCart
             </span>
           </h1>
         </div>

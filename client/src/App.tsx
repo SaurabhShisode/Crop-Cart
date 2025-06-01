@@ -5,7 +5,7 @@ import Register from './pages/RegisterPage';
 import Home from './pages/Home'; 
 import CheckoutPage from './pages/CheckoutPage';
 import MyOrders from './pages/MyOrders';
-
+import FarmerLogin from './pages/FarmerLoginPage'; 
 function App() {
   return (
     <Routes>
@@ -15,6 +15,7 @@ function App() {
       <Route path="/home" element={<Home />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/myorders" element={<MyOrders />} />
+      <Route path="/farmer-login" element={<FarmerLogin  />} />
 
     </Routes>
   );
