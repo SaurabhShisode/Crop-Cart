@@ -114,7 +114,7 @@ const CheckoutPage: React.FC = () => {
         <Navbar />
         <div className="max-w-6xl w-full bg-white rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-8 p-10">
           {/* Order Summary */}
-          <aside className="md:col-span-1 bg-green-100 border border-green-200 rounded-xl p-6">
+          <section className="md:col-span-1 bg-green-100 border border-green-200 rounded-xl p-6">
             <h2 className="text-2xl font-bold text-green-900 mb-6">Order Summary</h2>
             <ul className="divide-y divide-green-300">
               {cart.map(item => {
@@ -150,7 +150,7 @@ const CheckoutPage: React.FC = () => {
                 <span>₹{(totalPrice * 1.18 + 50).toFixed(2)}</span>
               </div>
             </div>
-          </aside>
+          </section>
 
           {/* Shipping Details */}
           <section className="md:col-span-2 p-6 border border-green-200 rounded-xl">
