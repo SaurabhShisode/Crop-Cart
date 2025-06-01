@@ -412,7 +412,7 @@ const Home: React.FC = () => {
         return [...prev, { ...crop, quantityInCart: 1 }];
       }
     });
-    setIsCartOpen(true);
+    setIsCartOpen(false);
   };
 
   const removeFromCart = (id: string) => {
