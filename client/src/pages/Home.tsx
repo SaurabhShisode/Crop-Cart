@@ -115,7 +115,7 @@ const Navbar: React.FC<{
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const placeholders = ["Search for tomatoes...", "Search for onions...", "Search for potatoes..."];
+    const placeholders = ["Search for wheat...", "Search for milk...", "Search for butter..."];
     const [placeholderIndex, setPlaceholderIndex] = useState(0);
     const [fade, setFade] = useState(true);
 
@@ -614,7 +614,7 @@ const Home: React.FC = () => {
 
 
       <div
-        className={`fixed top-28 right-0 h-[calc(100vh-8rem)] w-80 bg-white shadow-lg transform transition-transform rounded ${isCartOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-28 right-0 h-[calc(100vh-8rem)] w-80 bg-white shadow-lg transform transition-transform rounded z-12 ${isCartOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         aria-label="Shopping cart drawer"
       >
