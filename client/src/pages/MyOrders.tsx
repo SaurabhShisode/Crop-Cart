@@ -11,11 +11,12 @@ interface Order {
   name: string;
   email: string;
   address: string;
-  items: Array<{ name: string; quantity: number }>;
+  items: Array<{ name: string; quantity: number; quantityInCart: string; }>;
   total: string;
   tax: string;
   deliveryFee: number;
   createdAt: string;
+  
 }
 
 const MyOrders: React.FC = () => {
@@ -232,7 +233,7 @@ const MyOrders: React.FC = () => {
                 <ul className="ml-4 list-disc">
                   {order.items.map((item, idx) => (
                     <li key={idx}>
-                      {item.name} x {item.quantity}
+                      {item.name} x {item.quantityInCart} ({item.quantity})
                     </li>
                   ))}
                 </ul>
