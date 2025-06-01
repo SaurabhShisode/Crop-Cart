@@ -8,27 +8,27 @@ import { toast } from 'react-hot-toast';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);  // <-- loading state added
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);  // start loading
+    setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      const token = await userCred.user.getIdToken();
 
-      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', {
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ token }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
         localStorage.setItem('cropcartUser', JSON.stringify(data));
-
         toast.success(`Logged in as ${email}`, {
           style: { background: '#14532d', color: 'white' },
         });
@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
       });
       console.error('Login error:', error.code, error.message);
     } finally {
-      setLoading(false);  // stop loading
+      setLoading(false);
     }
   };
 
@@ -86,7 +86,7 @@ const LoginPage: React.FC = () => {
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-white drop-shadow-lg">
             Welcome Back.<br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-lime-100 to-white animate-pulse">
-              Let’s grow together with CropCart
+              Grow together with CropCart
             </span>
           </h1>
         </div>
