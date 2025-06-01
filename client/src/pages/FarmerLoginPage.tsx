@@ -83,7 +83,7 @@ const FarmerLoginPage: React.FC = () => {
       <div className="w-1/3 flex items-center justify-center bg-green-900">
         <div className="text-center px-12">
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-white drop-shadow-lg">
-            Welcome Farmer 
+            Welcome Farmer!
             <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-lime-100 to-white animate-pulse">
               Grow More. Earn More. With CropCart.
