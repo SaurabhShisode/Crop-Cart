@@ -27,15 +27,25 @@ interface Order {
 const downloadInvoice = (order: Order) => {
   const doc = new jsPDF();
 
-  doc.setFontSize(18);
-  doc.text('CropCart Invoice', 14, 22);
+
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('CropCart Invoice', 14, 20);
+
 
   doc.setFontSize(12);
-  doc.text(`Order ID: ${order._id}`, 14, 35);
-  doc.text(`Name: ${order.name}`, 14, 42);
-  doc.text(`Phone: ${order.phone}`, 14, 49);
-  doc.text(`Address: ${order.address}`, 14, 56);
-  doc.text(`Date: ${new Date(order.createdAt).toLocaleString('en-GB')}`, 14, 63);
+  doc.setFont('helvetica', 'normal');
+  const details = [
+    `Order ID: ${order._id}`,
+    `Name: ${order.name}`,
+    `Phone: ${order.phone}`,
+    `Address: ${order.address}`,
+    `Date: ${new Date(order.createdAt).toLocaleString('en-GB')}`,
+  ];
+  details.forEach((line, i) => {
+    doc.text(line, 14, 30 + i * 7);
+  });
+
 
   const itemRows = order.items.map((item, idx) => [
     idx + 1,
@@ -47,36 +57,47 @@ const downloadInvoice = (order: Order) => {
   autoTable(doc, {
     head: [['#', 'Item', 'Quantity in Cart', 'Quantity']],
     body: itemRows,
-    startY: 70,
+    startY: 30 + details.length * 7 + 10,
+    headStyles: {
+      fillColor: [54, 69, 173],
+      textColor: 255,
+      halign: 'center',
+    },
+    bodyStyles: {
+      halign: 'center',
+    },
+    alternateRowStyles: { fillColor: [240, 240, 240] },
   });
 
-  // FIX: Cast doc to include lastAutoTable
   const finalY = (doc as any).lastAutoTable.finalY + 10;
 
   const basePrice = parseFloat(order.total) - parseFloat(order.tax) - order.deliveryFee;
 
-  // Price details aligned left and right for neatness
+
   const marginLeft = 14;
-  const marginRight = 180;
-  const lineHeight = 7;
+  const marginRight = 200;
+  const lineHeight = 8;
 
   doc.setFontSize(12);
-  doc.setTextColor(50);
+  doc.setTextColor(60);
 
-  doc.text(`Base Price:`, marginLeft, finalY);
+  doc.text('Base Price:', marginLeft, finalY);
   doc.text(`₹${basePrice.toFixed(2)}`, marginRight, finalY, { align: 'right' });
 
-  doc.text(`Tax:`, marginLeft, finalY + lineHeight);
+  doc.text('Tax:', marginLeft, finalY + lineHeight);
   doc.text(`₹${parseFloat(order.tax).toFixed(2)}`, marginRight, finalY + lineHeight, { align: 'right' });
 
-  doc.text(`Delivery Fee:`, marginLeft, finalY + 2 * lineHeight);
+  doc.text('Delivery Fee:', marginLeft, finalY + 2 * lineHeight);
   doc.text(`₹${order.deliveryFee.toFixed(2)}`, marginRight, finalY + 2 * lineHeight, { align: 'right' });
 
+
   doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
   doc.setTextColor(0, 0, 0);
-  doc.text(`Total:`, marginLeft, finalY + 3 * lineHeight + 4);
+  doc.text('Total:', marginLeft, finalY + 3 * lineHeight + 4);
   doc.text(`₹${parseFloat(order.total).toFixed(2)}`, marginRight, finalY + 3 * lineHeight + 4, { align: 'right' });
 
+ 
   doc.save(`Invoice_${order._id}.pdf`);
 };
 
