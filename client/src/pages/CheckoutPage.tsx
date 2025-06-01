@@ -186,24 +186,6 @@ const CheckoutPage: React.FC = () => {
                 />
               </div>
 
-              {/* Address autocomplete input */}
-              <div>
-                <label htmlFor="address-autocomplete" className="block text-green-800 font-medium mb-2">
-                  Search Address (Autocomplete)
-                </label>
-                <input
-                  id="address-autocomplete"
-                  type="text"
-                  ref={addressInputRef}
-                  placeholder="Start typing your address..."
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-600 transition"
-                />
-                <p className="text-sm text-green-700 mt-1 italic">
-                  Please select an address from the suggestions.
-                </p>
-              </div>
-
-              {/* Show detailed address fields (read-only, filled from autocomplete) */}
               <div>
                 <label htmlFor="address" className="block text-green-800 font-medium mb-2">
                   Shipping Address
