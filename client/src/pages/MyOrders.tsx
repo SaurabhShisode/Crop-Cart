@@ -5,21 +5,22 @@ import logo from '../assets/logo.png';
 import {
   UserPlusIcon,
 } from '@heroicons/react/24/outline';
-import {  User,} from 'lucide-react';
+import { User, } from 'lucide-react';
 import Footer from '../components/Footer';
 
 interface Order {
   _id: string;
   name: string;
   email: string;
+  phone: string;
   address: string;
   items: Array<{ name: string; quantity: number; quantityInCart: string; }>;
   total: string;
   tax: string;
   deliveryFee: number;
   createdAt: string;
-
 }
+
 
 const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -27,7 +28,7 @@ const MyOrders: React.FC = () => {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [userName, setUserName] = useState<string | null>(null);
 
   const navigate = useNavigate();
@@ -72,16 +73,16 @@ const MyOrders: React.FC = () => {
   }, [navigate]);
 
   const onLogout = () => {
-  localStorage.removeItem('cropcartUser');
-  toast.success('Logged out successfully');
-  navigate('/home'); 
-};
+    localStorage.removeItem('cropcartUser');
+    toast.success('Logged out successfully');
+    navigate('/home');
+  };
 
 
   return (
-  <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-   
-    <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+      <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
         <div
           className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
           onClick={() => navigate('/')}
@@ -182,80 +183,84 @@ const MyOrders: React.FC = () => {
         </div>
       </nav>
 
-    {/* Orders Section */}
-    <main className="pt-28 pb-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-green-900 dark:text-green-300 mb-8">My Orders</h1>
+      {/* Orders Section */}
+      <main className="pt-28 pb-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-bold text-green-900 dark:text-green-300 mb-8">My Orders</h1>
 
-      {loading ? (
-        <div className="text-center text-green-800 dark:text-green-200">Loading your orders...</div>
-      ) : orders.length === 0 ? (
-        <div className="text-center text-gray-600 dark:text-gray-400 text-lg">You haven’t placed any orders yet.</div>
-      ) : (
-        <div className="grid gap-6">
-          {orders.map((order) => {
-            const total = parseFloat(order.total);
-            const tax = parseFloat(order.tax);
-            const delivery = order.deliveryFee;
-            const basePrice = total - tax - delivery;
+        {loading ? (
+          <div className="text-center text-green-800 dark:text-green-200">Loading your orders...</div>
+        ) : orders.length === 0 ? (
+          <div className="text-center text-gray-600 dark:text-gray-400 text-lg">You haven’t placed any orders yet.</div>
+        ) : (
+          <div className="grid gap-6">
+            {orders.map((order) => {
+              const total = parseFloat(order.total);
+              const tax = parseFloat(order.tax);
+              const delivery = order.deliveryFee;
+              const basePrice = total - tax - delivery;
 
-            return (
-              <div
-                key={order._id}
-                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Order ID:</p>
-                    <p className="text-lg font-semibold text-green-800 dark:text-green-300">{order._id}</p>
+              return (
+                <div
+                  key={order._id}
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Order ID:</p>
+                      <p className="text-lg font-semibold text-green-800 dark:text-green-300">{order._id}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">Placed on</p>
+                      <p className="text-md font-medium">{new Date(order.createdAt).toLocaleString('en-GB')}</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">Placed on</p>
-                    <p className="text-md font-medium">{new Date(order.createdAt).toLocaleString('en-GB')}</p>
+
+                  <p className="mb-2">
+                    <span className="font-medium">Delivery Address:</span> {order.address}
+                  </p>
+                  <p className="mb-2">
+                    <span className="font-medium">Phone:</span> {order.phone}
+                  </p>
+
+
+                  <div className="mb-4">
+                    <p className="font-medium mb-1">Items:</p>
+                    <ul className="list-disc ml-6 space-y-1 text-sm">
+                      {order.items.map((item, idx) => (
+                        <li key={idx}>
+                          <span className="font-medium">{item.name}</span> — {item.quantityInCart} ({item.quantity})
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div>
+                      <p className="text-gray-500">Base Price</p>
+                      <p className="font-semibold">₹{basePrice.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Tax</p>
+                      <p className="font-semibold">₹{tax.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Delivery</p>
+                      <p className="font-semibold">₹{delivery.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Total</p>
+                      <p className="font-bold text-green-700 dark:text-green-300">₹{total.toFixed(2)}</p>
+                    </div>
                   </div>
                 </div>
-
-                <p className="mb-2">
-                  <span className="font-medium">Delivery Address:</span> {order.address}
-                </p>
-
-                <div className="mb-4">
-                  <p className="font-medium mb-1">Items:</p>
-                  <ul className="list-disc ml-6 space-y-1 text-sm">
-                    {order.items.map((item, idx) => (
-                      <li key={idx}>
-                        <span className="font-medium">{item.name}</span> — {item.quantityInCart} ({item.quantity})
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                  <div>
-                    <p className="text-gray-500">Base Price</p>
-                    <p className="font-semibold">₹{basePrice.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Tax</p>
-                    <p className="font-semibold">₹{tax.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Delivery</p>
-                    <p className="font-semibold">₹{delivery.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Total</p>
-                    <p className="font-bold text-green-700 dark:text-green-300">₹{total.toFixed(2)}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </main>
-    <Footer />
-  </div>
-);
+              );
+            })}
+          </div>
+        )}
+      </main>
+      <Footer />
+    </div>
+  );
 
 };
 

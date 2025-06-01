@@ -16,6 +16,8 @@ const CheckoutPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -60,12 +62,14 @@ const CheckoutPage: React.FC = () => {
         userId,
         name,
         email,
+        phone,
         address,
         items: cart,
         total: (totalPrice * 1.18 + 50).toFixed(2),
         tax: (totalPrice * 0.18).toFixed(2),
         deliveryFee: 50,
       };
+
 
       const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
         method: 'POST',
@@ -186,6 +190,22 @@ const CheckoutPage: React.FC = () => {
                   className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-600 transition"
                 />
               </div>
+              <div>
+                <label htmlFor="phone" className="block text-green-800 font-medium mb-2">
+                  Phone Number
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  placeholder="e.g., 9876543210"
+                  pattern="[0-9]{10}"
+                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-600 transition"
+                />
+              </div>
+
 
               <div>
                 <label htmlFor="address" className="block text-green-800 font-medium mb-2">
