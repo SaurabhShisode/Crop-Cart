@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
+
 interface CartItem {
   id: string;
   name: string;
@@ -111,7 +111,7 @@ const CheckoutPage: React.FC = () => {
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-green-50 flex items-center justify-center px-6 py-10">
-        <Navbar />
+        
         <div className="max-w-6xl w-full bg-white rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-8 p-10">
           {/* Order Summary */}
           <section className="md:col-span-1 bg-green-100 border border-green-200 rounded-xl p-6">
