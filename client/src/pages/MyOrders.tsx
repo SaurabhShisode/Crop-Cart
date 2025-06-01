@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import logo from '../assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { UserIcon, UserPlusIcon } from '@heroicons/react/24/outline'; // ✅ Assuming Heroicons are used
+import { UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 
 interface Order {
   _id: string;
@@ -42,11 +42,11 @@ const MyOrders: React.FC = () => {
         const token = user.token;
         const userId = user.user.id;
 
-        setUserName(user.user.name); // ✅ Extract user name for display
+        setUserName(user.user.name);
 
         const res = await fetch(`https://crop-cart-backend.onrender.com/api/orders/user/${userId}`, {
           headers: {
-            'Authorization': `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -79,7 +79,10 @@ const MyOrders: React.FC = () => {
       <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 p-4 md:px-6">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400 cursor-pointer" onClick={() => navigate('/')}>
+          <div
+            className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400 cursor-pointer"
+            onClick={() => navigate('/')}
+          >
             <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
             <span>CropCart</span>
           </div>
@@ -97,9 +100,7 @@ const MyOrders: React.FC = () => {
             <div className="flex items-center space-x-4 relative">
               {userName ? (
                 <>
-                  <span className="font-semibold text-green-700 text-lg">
-                    Hi, {userName}
-                  </span>
+                  <span className="font-semibold text-green-700 text-lg">Hi, {userName}</span>
                   <div ref={dropdownRef} className="relative">
                     <button
                       onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -111,7 +112,10 @@ const MyOrders: React.FC = () => {
                       <UserIcon className="w-6 h-6 text-green-700" />
                     </button>
                     {dropdownOpen && (
-                      <ul className="absolute right-0 mt-2 w-48 bg-white border border-green-200 rounded-md shadow-lg z-50" role="menu">
+                      <ul
+                        className="absolute right-0 mt-2 w-48 bg-white border border-green-200 rounded-md shadow-lg z-50"
+                        role="menu"
+                      >
                         <li>
                           <button
                             onClick={() => {
@@ -209,20 +213,56 @@ const MyOrders: React.FC = () => {
         ) : (
           <ul className="space-y-6">
             {orders.map(order => (
-              <li key={order._id} className="border border-green-300 dark:border-green-600 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800">
-                <p><strong>Order ID:</strong> {order._id}</p>
-                <p><strong>Placed on:</strong> {new Date(order.createdAt).toLocaleDateString('en-GB')}</p>
-                <p><strong>Delivery Address:</strong> {order.address}</p>
-                <p><strong>Items:</strong></p>
+              <li
+                key={order._id}
+                className="border border-green-300 dark:border-green-600 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800"
+              >
+                <p>
+                  <strong>Order ID:</strong> {order._id}
+                </p>
+                <p>
+                  <strong>Placed on:</strong> {new Date(order.createdAt).toLocaleDateString('en-GB')}
+                </p>
+                <p>
+                  <strong>Delivery Address:</strong> {order.address}
+                </p>
+                <p>
+                  <strong>Items:</strong>
+                </p>
                 <ul className="ml-4 list-disc">
                   {order.items.map((item, idx) => (
-                    <li key={idx}>{item.name} x {item.quantity}</li>
+                    <li key={idx}>
+                      {item.name} x {item.quantity}
+                    </li>
                   ))}
                 </ul>
-                <p><strong>Total:</strong> ₹{order.total}</p>
-                <p><strong>Tax:</strong> ₹{order.tax}</p>
-                <p><strong>Delivery Fee:</strong> ₹{order.deliveryFee}</p>
+
+                {/** Calculate basePrice */}
+                {(() => {
+                  const total = parseFloat(order.total);
+                  const tax = parseFloat(order.tax);
+                  const delivery = order.deliveryFee;
+                  const basePrice = total - tax - delivery;
+
+                  return (
+                    <>
+                      <p>
+                        <strong>Base Price:</strong> ₹{basePrice.toFixed(2)}
+                      </p>
+                      <p>
+                        <strong>Tax:</strong> ₹{tax.toFixed(2)}
+                      </p>
+                      <p>
+                        <strong>Delivery Fee:</strong> ₹{delivery.toFixed(2)}
+                      </p>
+                      <p>
+                        <strong>Total:</strong> ₹{total.toFixed(2)}
+                      </p>
+                    </>
+                  );
+                })()}
               </li>
+
             ))}
           </ul>
         )}
