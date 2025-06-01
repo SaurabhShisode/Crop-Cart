@@ -27,21 +27,16 @@ interface Order {
 const downloadInvoice = (order: Order) => {
   const doc = new jsPDF();
 
-  // Title
-  doc.setFontSize(20);
-  doc.setTextColor(40);
-  doc.text('🌾 CropCart Invoice', 14, 22);
+  doc.setFontSize(18);
+  doc.text('CropCart Invoice', 14, 22);
 
-  // Order Info
   doc.setFontSize(12);
-  doc.setTextColor(80);
   doc.text(`Order ID: ${order._id}`, 14, 35);
   doc.text(`Name: ${order.name}`, 14, 42);
   doc.text(`Phone: ${order.phone}`, 14, 49);
   doc.text(`Address: ${order.address}`, 14, 56);
   doc.text(`Date: ${new Date(order.createdAt).toLocaleString('en-GB')}`, 14, 63);
 
-  // Table
   const itemRows = order.items.map((item, idx) => [
     idx + 1,
     item.name,
@@ -53,32 +48,34 @@ const downloadInvoice = (order: Order) => {
     head: [['#', 'Item', 'Quantity in Cart', 'Quantity']],
     body: itemRows,
     startY: 70,
-    theme: 'striped',
-    styles: {
-      fontSize: 11,
-      cellPadding: 3,
-    },
-    headStyles: {
-      fillColor: [63, 81, 181],
-      textColor: 255,
-      fontStyle: 'bold',
-    },
-    alternateRowStyles: { fillColor: [240, 240, 240] },
   });
 
+  // FIX: Cast doc to include lastAutoTable
   const finalY = (doc as any).lastAutoTable.finalY + 10;
+
   const basePrice = parseFloat(order.total) - parseFloat(order.tax) - order.deliveryFee;
 
-  // Totals
+  // Price details aligned left and right for neatness
+  const marginLeft = 14;
+  const marginRight = 180;
+  const lineHeight = 7;
+
   doc.setFontSize(12);
   doc.setTextColor(50);
-  doc.text(`Base Price: ₹${basePrice.toFixed(2)}`, 14, finalY);
-  doc.text(`Tax: ₹${parseFloat(order.tax).toFixed(2)}`, 14, finalY + 7);
-  doc.text(`Delivery Fee: ₹${order.deliveryFee.toFixed(2)}`, 14, finalY + 14);
+
+  doc.text(`Base Price:`, marginLeft, finalY);
+  doc.text(`₹${basePrice.toFixed(2)}`, marginRight, finalY, { align: 'right' });
+
+  doc.text(`Tax:`, marginLeft, finalY + lineHeight);
+  doc.text(`₹${parseFloat(order.tax).toFixed(2)}`, marginRight, finalY + lineHeight, { align: 'right' });
+
+  doc.text(`Delivery Fee:`, marginLeft, finalY + 2 * lineHeight);
+  doc.text(`₹${order.deliveryFee.toFixed(2)}`, marginRight, finalY + 2 * lineHeight, { align: 'right' });
 
   doc.setFontSize(14);
   doc.setTextColor(0, 0, 0);
-  doc.text(`Total: ₹${parseFloat(order.total).toFixed(2)}`, 14, finalY + 25);
+  doc.text(`Total:`, marginLeft, finalY + 3 * lineHeight + 4);
+  doc.text(`₹${parseFloat(order.total).toFixed(2)}`, marginRight, finalY + 3 * lineHeight + 4, { align: 'right' });
 
   doc.save(`Invoice_${order._id}.pdf`);
 };
