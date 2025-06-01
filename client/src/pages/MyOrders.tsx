@@ -6,33 +6,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 
-import {
-  GoogleMap,
-  LoadScript,
-  DirectionsService,
-  DirectionsRenderer,
-} from '@react-google-maps/api';
-
 interface Order {
   _id: string;
   name: string;
   email: string;
-  address: string;  // buyer address string
-  items: Array<{ name: string; quantity: number; quantityInCart: string }>;
+  address: string;
+  items: Array<{ name: string; quantity: number; quantityInCart: string; }>;
   total: string;
   tax: string;
   deliveryFee: number;
   createdAt: string;
+  
 }
-
-const sellerLocation = { lat: 28.6139, lng: 77.209 }; // example seller location (Delhi)
-
-const containerStyle = {
-  width: '100%',
-  height: '300px',
-  marginTop: '10px',
-  borderRadius: '8px',
-};
 
 const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -42,12 +27,7 @@ const MyOrders: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [userName, setUserName] = useState<string | null>(null);
 
-  const [directionsResults, setDirectionsResults] = useState<{ [key: string]: google.maps.DirectionsResult | null }>({});
-
   const navigate = useNavigate();
-
-  // Your Google Maps API key
-  const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY_HERE';
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -87,29 +67,6 @@ const MyOrders: React.FC = () => {
 
     fetchOrders();
   }, [navigate]);
-
-  // Function to get directions for an order by geocoding address and requesting directions
-  const requestDirections = (orderId: string, destinationAddress: string) => {
-    // Use DirectionsService from Google Maps
-    // Store directions in state to render
-    return (
-      <DirectionsService
-        options={{
-          origin: sellerLocation,
-          destination: destinationAddress,
-          travelMode: google.maps.TravelMode.DRIVING,
-        }}
-        callback={(result, status) => {
-          if (status === google.maps.DirectionsStatus.OK && result) {
-            setDirectionsResults(prev => ({ ...prev, [orderId]: result }));
-          } else {
-            toast.error(`Could not load route for order ${orderId}`);
-            setDirectionsResults(prev => ({ ...prev, [orderId]: null }));
-          }
-        }}
-      />
-    );
-  };
 
   const onLogout = () => {
     localStorage.removeItem('cropcartUser');
@@ -255,76 +212,60 @@ const MyOrders: React.FC = () => {
         ) : orders.length === 0 ? (
           <div className="text-center text-green-800 dark:text-green-200">You have no orders yet.</div>
         ) : (
-          <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-            <ul className="space-y-6">
-              {orders.map(order => (
-                <li
-                  key={order._id}
-                  className="border border-green-300 dark:border-green-600 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800"
-                >
-                  <p>
-                    <strong>Order ID:</strong> {order._id}
-                  </p>
-                  <p>
-                    <strong>Placed on:</strong> {new Date(order.createdAt).toLocaleDateString('en-GB')}
-                  </p>
-                  <p>
-                    <strong>Delivery Address:</strong> {order.address}
-                  </p>
-                  <p>
-                    <strong>Items:</strong>
-                  </p>
-                  <ul className="ml-4 list-disc">
-                    {order.items.map((item, idx) => (
-                      <li key={idx}>
-                        {item.name} x {item.quantityInCart} ({item.quantity})
-                      </li>
-                    ))}
-                  </ul>
+          <ul className="space-y-6">
+            {orders.map(order => (
+              <li
+                key={order._id}
+                className="border border-green-300 dark:border-green-600 rounded-lg p-4 shadow-sm bg-white dark:bg-gray-800"
+              >
+                <p>
+                  <strong>Order ID:</strong> {order._id}
+                </p>
+                <p>
+                  <strong>Placed on:</strong> {new Date(order.createdAt).toLocaleDateString('en-GB')}
+                </p>
+                <p>
+                  <strong>Delivery Address:</strong> {order.address}
+                </p>
+                <p>
+                  <strong>Items:</strong>
+                </p>
+                <ul className="ml-4 list-disc">
+                  {order.items.map((item, idx) => (
+                    <li key={idx}>
+                      {item.name} x {item.quantityInCart} ({item.quantity})
+                    </li>
+                  ))}
+                </ul>
 
-                  {/* Price summary */}
-                  {(() => {
-                    const total = parseFloat(order.total);
-                    const tax = parseFloat(order.tax);
-                    const delivery = order.deliveryFee;
-                    const basePrice = total - tax - delivery;
+                {/** Calculate basePrice */}
+                {(() => {
+                  const total = parseFloat(order.total);
+                  const tax = parseFloat(order.tax);
+                  const delivery = order.deliveryFee;
+                  const basePrice = total - tax - delivery;
 
-                    return (
-                      <>
-                        <p>
-                          <strong>Base Price:</strong> ₹{basePrice.toFixed(2)}
-                        </p>
-                        <p>
-                          <strong>Tax:</strong> ₹{tax.toFixed(2)}
-                        </p>
-                        <p>
-                          <strong>Delivery Fee:</strong> ₹{delivery.toFixed(2)}
-                        </p>
-                        <p>
-                          <strong>Total:</strong> ₹{total.toFixed(2)}
-                        </p>
-                      </>
-                    );
-                  })()}
+                  return (
+                    <>
+                      <p>
+                        <strong>Base Price:</strong> ₹{basePrice.toFixed(2)}
+                      </p>
+                      <p>
+                        <strong>Tax:</strong> ₹{tax.toFixed(2)}
+                      </p>
+                      <p>
+                        <strong>Delivery Fee:</strong> ₹{delivery.toFixed(2)}
+                      </p>
+                      <p>
+                        <strong>Total:</strong> ₹{total.toFixed(2)}
+                      </p>
+                    </>
+                  );
+                })()}
+              </li>
 
-                  {/* Map showing route */}
-                  <GoogleMap
-                    mapContainerStyle={containerStyle}
-                    center={sellerLocation}
-                    zoom={7}
-                  >
-                    {/* Request directions if not already available */}
-                    {!directionsResults[order._id] && requestDirections(order._id, order.address)}
-
-                    {/* Render directions when available */}
-                    {directionsResults[order._id] && (
-                      <DirectionsRenderer directions={directionsResults[order._id]!} />
-                    )}
-                  </GoogleMap>
-                </li>
-              ))}
-            </ul>
-          </LoadScript>
+            ))}
+          </ul>
         )}
       </div>
     </div>
