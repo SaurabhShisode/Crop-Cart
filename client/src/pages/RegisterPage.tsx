@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { UserIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
@@ -13,46 +13,40 @@ const RegisterPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, role: 'user' }),
+      });
 
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+      const data = await res.json();
 
-    
-    await sendEmailVerification(user);
-
-
-    const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, role: 'user' }),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      toast.success('Verification email sent. Please verify before logging in.', {
+      if (res.ok) {
+        toast.success('User registered successfully!', {
+          style: { background: '#14532d', color: 'white' },
+        });
+        navigate('/login');
+      } else {
+        toast.error(data.message || 'Registration failed', {
+          style: { background: '#14532d', color: 'white' },
+        });
+      }
+    } catch (error: any) {
+      toast.error(error.message, {
         style: { background: '#14532d', color: 'white' },
       });
-      navigate('/login');
-    } else {
-      toast.error(data.message || 'Registration failed', {
-        style: { background: '#14532d', color: 'white' },
-      });
+    } finally {
+      setLoading(false);
     }
-  } catch (error: any) {
-    toast.error(error.message, {
-      style: { background: '#14532d', color: 'white' },
-    });
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
 
 
