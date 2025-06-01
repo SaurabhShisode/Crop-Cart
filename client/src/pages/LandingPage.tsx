@@ -12,10 +12,10 @@ import TwitterIcon from '../assets/icons/twitter.svg';
 import logo from '../assets/logo.png';
 import LiveCounters from "../components/LiveCounters";
 import TestimonialSection from "../components/Testimonials";
-import investor1 from './assets/Investor1.png';
-import investor2 from './assets/Investor2.png';
-import investor3 from './assets/Investor3.png';
-import investor4 from './assets/Investor4.png';
+import investor1 from '../assets/Investor1.png';
+import investor2 from '../assets/Investor2.png';
+import investor3 from '../assets/Investor3.png';
+import investor4 from '../assets/Investor4.png';
 
 
 
