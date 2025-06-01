@@ -25,9 +25,9 @@ export default function LandingPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 100); 
-    return () => clearTimeout(timer);
-}, []);
+        const timer = setTimeout(() => setLoaded(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
 
 
     const cards = [
@@ -183,7 +183,7 @@ export default function LandingPage() {
                     {/* Left Text Content */}
                     <div
                         className={`max-w-xl space-y-6 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-4 opacity-100' : 'translate-y-[100px] opacity-0'
-                            } mt-8 md:mt-24`} 
+                            } mt-8 md:mt-24`}
                     >
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-center md:text-left">
                             Buy Fresh Crops <br />Directly from Local Farmers
@@ -352,6 +352,44 @@ export default function LandingPage() {
                                 <p className="mt-3 text-gray-700">{answer}</p>
                             </details>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+
+            <section className="py-24 px-6 md:px-20 ">
+                <div className="max-w-7xl mx-auto text-center">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">
+                        Our Investors
+                    </h2>
+                    <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-12 sm:mb-16 font-medium sm:font-semibold leading-relaxed">
+                        Trusted by leading venture partners who support innovation in agriculture and local commerce.
+                    </p>
+
+                    <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12">
+                        
+                        <img
+                            src="./src/assets/Investor1.png"
+                            alt="Investor 2"
+                            className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-36 grayscale hover:grayscale-0 transition duration-300"
+                        />
+                        
+                        <img
+                            src="./src/assets/investor2.png"
+                            alt="Investor 4"
+                            className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-44 grayscale hover:grayscale-0 transition duration-300"
+                        />
+                        <img
+                            src="./src/assets/investor3.png"
+                            alt="Investor 5"
+                            className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-32 grayscale hover:grayscale-0 transition duration-300"
+                        />
+                        <img
+                            src="./src/assets/investor4.png"
+                            alt="Investor 6"
+                            className="h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-40 grayscale hover:grayscale-0 transition duration-300"
+                        />
+
                     </div>
                 </div>
             </section>
