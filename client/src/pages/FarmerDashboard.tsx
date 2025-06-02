@@ -420,7 +420,7 @@ const FarmerDashboard: React.FC = () => {
                   <option value="" disabled>
                     Select Crop Type
                   </option>
-                  <option value="Vegetable">Vegetable</option>
+
                   <option value="Crop">Crop</option>
                   <option value="Dairy">Dairy</option>
                   <option value="Grocery">Grocery</option>
