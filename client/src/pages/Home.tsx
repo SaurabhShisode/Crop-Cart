@@ -404,18 +404,30 @@ const Home: React.FC = () => {
   }, []);
 
   const addToCart = (crop: Crop) => {
+    console.log("Adding crop to cart:", crop); // 👈 See if farmer is present here
+
     setCart((prev) => {
       const exists = prev.find((item) => item._id === crop._id);
       if (exists) {
         return prev.map((item) =>
-          item._id === crop._id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
+          item._id === crop._id
+            ? { ...item, quantityInCart: item.quantityInCart + 1 }
+            : item
         );
       } else {
-        return [...prev, { ...crop, quantityInCart: 1, farmer: crop.farmer, }];
+        return [
+          ...prev,
+          {
+            ...crop,
+            quantityInCart: 1,
+          },
+        ];
       }
     });
+
     setIsCartOpen(false);
   };
+
 
   const removeFromCart = (id: string) => {
     setCart((prev) => prev.filter((item) => item._id !== id));
