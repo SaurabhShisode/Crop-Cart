@@ -313,6 +313,7 @@ type Crop = {
   image?: string;
   availability: string;
   quantity: string;
+  farmerId: string; 
 };
 
 
@@ -402,18 +403,19 @@ const Home: React.FC = () => {
   }, []);
 
   const addToCart = (crop: Crop) => {
-    setCart((prev) => {
-      const exists = prev.find((item) => item.id === crop.id);
-      if (exists) {
-        return prev.map((item) =>
-          item.id === crop.id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
-        );
-      } else {
-        return [...prev, { ...crop, quantityInCart: 1 }];
-      }
-    });
-    setIsCartOpen(false);
-  };
+  setCart((prev) => {
+    const exists = prev.find((item) => item.id === crop.id);
+    if (exists) {
+      return prev.map((item) =>
+        item.id === crop.id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
+      );
+    } else {
+      return [...prev, { ...crop, quantityInCart: 1 }]; 
+    }
+  });
+  setIsCartOpen(false);
+};
+
 
   const removeFromCart = (id: string) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
