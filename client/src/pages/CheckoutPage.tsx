@@ -4,12 +4,13 @@ import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../components/Footer';
 
 interface CartItem {
-  _id: string;
+  _id: string; 
   name: string;
   price: number;
   quantityInCart: string;
   quantity: string;
   farmer: string;
+  cropId: string; 
 }
 
 const CheckoutPage: React.FC = () => {
@@ -18,7 +19,6 @@ const CheckoutPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
-
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -46,61 +46,67 @@ const CheckoutPage: React.FC = () => {
     const quantityNum = parseFloat(item.quantityInCart) || 0;
     return total + item.price * quantityNum;
   }, 0);
+  
   const toastStyle = { style: { background: '#14532d', color: 'white' } };
+
   const handlePlaceOrder = async () => {
-  if (!name || !email || !address || !cart.length) {
-    toast.error('Please fill in all fields and add items to cart.', toastStyle);
-    return;
-  }
+    if (!name || !email || !address || !cart.length) {
+      toast.error('Please fill in all fields and add items to cart.', toastStyle);
+      return;
+    }
 
-  const farmer = cart[0]?.farmer;
-  if (!farmer) {
-    toast.error('Missing farmer information.', toastStyle);
-    return;
-  }
+    const farmer = cart[0]?.farmer;
+    if (!farmer) {
+      toast.error('Missing farmer information.', toastStyle);
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const storedUser = localStorage.getItem('cropcartUser');
-    const userId = storedUser ? JSON.parse(storedUser)?.user?.id : null;
+    try {
+      const storedUser = localStorage.getItem('cropcartUser');
+      const userId = storedUser ? JSON.parse(storedUser)?.user?.id : null;
 
-    const orderData = {
-      userId,
-      farmer, 
-      name,
-      email,
-      phone,
-      address,
-      items: cart,
-      total: (totalPrice * 1.18 + 50).toFixed(2),
-      tax: (totalPrice * 0.18).toFixed(2),
-      deliveryFee: 50,
-    };
+      const orderData = {
+        userId,
+        farmerId: farmer, 
+        name,
+        email,
+        phone,
+        address,
+        items: cart.map((item) => ({
+          cropId: item._id, 
+          name: item.name,
+          price: item.price,
+          quantity: item.quantityInCart, 
+        })),
+        total: (totalPrice * 1.18 + 50).toFixed(2), 
+        tax: (totalPrice * 0.18).toFixed(2),
+        deliveryFee: 50,
+      };
 
-    const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData),
-    });
+      const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+      });
 
-    if (!response.ok) throw new Error('Failed to place order.');
+      if (!response.ok) throw new Error('Failed to place order.');
 
-    toast.success('Order placed successfully!', toastStyle);
-    if (userId) localStorage.removeItem(`cart_${userId}`);
-    setCart([]);
-    setName('');
-    setEmail('');
-    setAddress('');
-    navigate('/home');
-  } catch (err) {
-    console.error(err);
-    toast.error('Failed to place order. Please try again.', toastStyle);
-  } finally {
-    setLoading(false);
-  }
-};
-
+      toast.success('Order placed successfully!', toastStyle);
+      if (userId) localStorage.removeItem(`cart_${userId}`);
+      setCart([]); 
+      setName('');
+      setEmail('');
+      setAddress('');
+      navigate('/home');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to place order. Please try again.', toastStyle);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (cart.length === 0) {
     return (
