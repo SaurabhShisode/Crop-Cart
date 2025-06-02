@@ -313,7 +313,7 @@ type Crop = {
   image?: string;
   availability: string;
   quantity: string;
-  farmer: string; 
+  farmer: string;
 };
 
 
@@ -331,12 +331,12 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  
+
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
       try {
-        const data = JSON.parse(storedUser); 
+        const data = JSON.parse(storedUser);
         if (data.user && data.user.name && data.user.id) {
           setUserName(data.user.name);
 
@@ -387,7 +387,7 @@ const Home: React.FC = () => {
             localStorage.setItem(`cart_${data.user.id}`, JSON.stringify(cart));
           }
         } catch {
-       
+
         }
       }
     }
@@ -411,7 +411,7 @@ const Home: React.FC = () => {
           item._id === crop._id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
         );
       } else {
-        return [...prev, { ...crop, quantityInCart: 1,farmer: crop.farmer, }];
+        return [...prev, { ...crop, quantityInCart: 1, farmer: crop.farmer, }];
       }
     });
     setIsCartOpen(false);
