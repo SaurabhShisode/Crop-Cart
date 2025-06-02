@@ -177,10 +177,8 @@ const FarmerDashboard: React.FC = () => {
         const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
         const [cropsRes, ordersRes, statsRes] = await Promise.all([
-          fetch('/api/farmer/crops', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+          fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
+            headers: { Authorization: `Bearer ${token}` },
           }),
           fetch('/api/farmer/orders', {
             headers: {
