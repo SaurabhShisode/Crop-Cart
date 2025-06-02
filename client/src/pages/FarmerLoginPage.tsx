@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockClosedIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '../firebase';
+import { signInWithPopup } from 'firebase/auth'; 
 import { toast } from 'react-hot-toast';
+import { auth, provider } from '../firebase';
 
 const FarmerLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,23 +16,26 @@ const FarmerLoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCred.user.getIdToken();
-
-      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google', {
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('cropcartUser', JSON.stringify({ ...data, role: 'farmer' }));
+        if (data.user.role !== 'farmer') {
+          toast.error('You are not registered as a farmer.');
+          setLoading(false);
+          return;
+        }
+
+        localStorage.setItem('cropcartUser', JSON.stringify(data));
         toast.success(`Logged in as Farmer ${email}`, {
           style: { background: '#14532d', color: 'white' },
         });
-        navigate('/farmer-dashboard'); 
+        navigate('/farmer-dashboard');
       } else {
         toast.error(data.message || 'Login failed', {
           style: { background: '#14532d', color: 'white' },
@@ -64,14 +67,26 @@ const FarmerLoginPage: React.FC = () => {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('cropcartUser', JSON.stringify({ ...data, role: 'farmer' }));
-        toast.success(`Logged in as Farmer ${user.email}`);
+        if (data.user.role !== 'farmer') {
+          toast.error('You are not registered as a farmer.');
+          setLoading(false);
+          return;
+        }
+
+        localStorage.setItem('cropcartUser', JSON.stringify(data));
+        toast.success(`Logged in as Farmer ${user.email}`, {
+          style: { background: '#14532d', color: 'white' },
+        });
         navigate('/farmer-dashboard');
       } else {
-        toast.error(data.message || 'Google login failed');
+        toast.error(data.message || 'Google login failed', {
+          style: { background: '#14532d', color: 'white' },
+        });
       }
-    } catch (error: any) {
-      toast.error('Google login failed');
+    } catch (error) {
+      toast.error('Google login failed', {
+        style: { background: '#14532d', color: 'white' },
+      });
     } finally {
       setLoading(false);
     }
