@@ -13,6 +13,7 @@ import { toast } from 'react-hot-toast';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
 import { User } from 'lucide-react';
 import logo from '../assets/logo.png';
+import Footer from '../components/Footer';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -63,7 +64,7 @@ const Navbar: React.FC = () => {
   const onLogout = () => {
     localStorage.removeItem('cropcartUser');
     toast.success('Logged out successfully');
-    navigate('/home');
+    navigate('/');
   };
 
   return (
@@ -115,18 +116,7 @@ const Navbar: React.FC = () => {
                       My Orders
                     </button>
                   </li>
-                  <li>
-                    <button
-                      onClick={() => {
-                        navigate('/my-account');
-                        setDropdownOpen(false);
-                      }}
-                      className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                      role="menuitem"
-                    >
-                      My Account
-                    </button>
-                  </li>
+                  
                   <li>
                     <button
                       onClick={() => {
@@ -174,7 +164,7 @@ const FarmerDashboard: React.FC = () => {
 
 
   useEffect(() => {
-    // Simulated fetches – replace with real API calls
+  
     const fetchCrops = async () => {
       const res = await fetch('/api/farmer/crops');
       const data = await res.json();
@@ -248,20 +238,85 @@ const FarmerDashboard: React.FC = () => {
 
         {/* Crops Uploaded */}
         <section className="mb-10">
-          <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {crops.map((crop) => (
-              <div
-                key={crop._id}
-                className="bg-white border border-green-200 p-4 rounded-lg shadow hover:shadow-md transition"
-              >
-                <h3 className="text-lg font-bold text-green-700">{crop.name}</h3>
-                <p className="text-sm text-gray-600">Price: ₹{crop.price}</p>
-                <p className="text-sm text-gray-600">Quantity: {crop.quantity} kg</p>
-              </div>
-            ))}
-          </div>
-        </section>
+  <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
+
+  {/* Add Crop Form */}
+  <form
+    onSubmit={async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+      const newCrop = {
+        name: formData.get('name'),
+        price: Number(formData.get('price')),
+        quantity: Number(formData.get('quantity')),
+      };
+
+      const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+
+      const res = await fetch('/api/farmer/crops', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newCrop),
+      });
+
+      if (res.ok) {
+        const addedCrop = await res.json();
+        setCrops((prev) => [...prev, addedCrop]);
+        form.reset();
+      } else {
+        alert('Failed to add crop');
+      }
+    }}
+    className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
+  >
+    <input
+      name="name"
+      type="text"
+      required
+      placeholder="Crop Name"
+      className="p-2 border border-green-300 rounded-md"
+    />
+    <input
+      name="price"
+      type="number"
+      required
+      placeholder="Price (₹)"
+      className="p-2 border border-green-300 rounded-md"
+    />
+    <input
+      name="quantity"
+      type="number"
+      required
+      placeholder="Quantity (kg)"
+      className="p-2 border border-green-300 rounded-md"
+    />
+    <button
+      type="submit"
+      className="col-span-1 md:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
+    >
+      Add Crop
+    </button>
+  </form>
+
+  {/* Crop Cards */}
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {crops.map((crop) => (
+      <div
+        key={crop._id}
+        className="bg-white border border-green-200 p-4 rounded-lg shadow hover:shadow-md transition"
+      >
+        <h3 className="text-lg font-bold text-green-700">{crop.name}</h3>
+        <p className="text-sm text-gray-600">Price: ₹{crop.price}</p>
+        <p className="text-sm text-gray-600">Quantity: {crop.quantity} kg</p>
+      </div>
+    ))}
+  </div>
+</section>
+
 
         {/* Orders to Fulfill */}
         <section className="mb-10">
@@ -303,6 +358,7 @@ const FarmerDashboard: React.FC = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </>
   );
 };
