@@ -407,10 +407,19 @@ const Home: React.FC = () => {
     const exists = prev.find((item) => item._id === crop._id);
     if (exists) {
       return prev.map((item) =>
-        item._id === crop._id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
+        item._id === crop._id
+          ? { ...item, quantityInCart: item.quantityInCart + 1 }
+          : item
       );
     } else {
-      return [...prev, { ...crop, quantityInCart: 1 }]; 
+      return [
+        ...prev,
+        {
+          ...crop,
+          quantityInCart: 1,
+          farmer: crop.farmer, 
+        },
+      ];
     }
   });
   setIsCartOpen(false);
