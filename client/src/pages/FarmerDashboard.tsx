@@ -22,6 +22,10 @@ interface Crop {
   name: string;
   price: number;
   quantity: number;
+  type: string;
+  availability: string;
+  regionPincodes: string[];
+  image?: string;
 }
 
 interface Order {
@@ -37,6 +41,7 @@ interface StatsData {
   orders: number;
   earnings: number;
 }
+
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -157,14 +162,14 @@ const Navbar: React.FC = () => {
   );
 };
 
+
 const FarmerDashboard: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
-
+   // const navigate = useNavigate();
 
   useEffect(() => {
-  
     const fetchCrops = async () => {
       const res = await fetch('/api/farmer/crops');
       const data = await res.json();
@@ -188,6 +193,7 @@ const FarmerDashboard: React.FC = () => {
     fetchStats();
   }, []);
 
+  // Chart data as you had
   const ordersChartData = {
     labels: stats.map((item) => item.date),
     datasets: [
@@ -229,132 +235,218 @@ const FarmerDashboard: React.FC = () => {
     },
   };
 
+  // CLOUDINARY UPLOAD CONFIG from your .env variables
+  const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+  // Function to upload image to Cloudinary unsigned
+  async function uploadImageToCloudinary(file: File): Promise<string> {
+    const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+    const res = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error('Image upload failed');
+    }
+
+    const data = await res.json();
+    return data.secure_url; // return the uploaded image URL
+  }
+
   return (
     <>
       <Navbar />
       <div className="min-h-screen p-8 bg-green-50">
-
         <h1 className="text-4xl font-bold text-green-900 mb-8">Farmer Dashboard</h1>
 
         {/* Crops Uploaded */}
         <section className="mb-10">
-  <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
+          <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
 
-  {/* Add Crop Form */}
-  <form
-    onSubmit={async (e) => {
-      e.preventDefault();
-      const form = e.currentTarget;
-      const formData = new FormData(form);
-      const newCrop = {
-        name: formData.get('name'),
-        price: Number(formData.get('price')),
-        quantity: Number(formData.get('quantity')),
-      };
+          {/* Add Crop Form */}
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.currentTarget;
+              const formData = new FormData(form);
 
-      const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+              const imageFile = formData.get('image') as File | null;
 
-      const res = await fetch('/api/farmer/crops', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newCrop),
-      });
+              let imageUrl = '';
+              try {
+                if (imageFile && imageFile.name) {
+                  imageUrl = await uploadImageToCloudinary(imageFile);
+                }
+              } catch (error) {
+                toast.error('Image upload failed');
+                return;
+              }
 
-      if (res.ok) {
-        const addedCrop = await res.json();
-        setCrops((prev) => [...prev, addedCrop]);
-        form.reset();
-      } else {
-        alert('Failed to add crop');
-      }
-    }}
-    className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
-  >
-    <input
-      name="name"
-      type="text"
-      required
-      placeholder="Crop Name"
-      className="p-2 border border-green-300 rounded-md"
-    />
-    <input
-      name="price"
-      type="number"
-      required
-      placeholder="Price (₹)"
-      className="p-2 border border-green-300 rounded-md"
-    />
-    <input
-      name="quantity"
-      type="number"
-      required
-      placeholder="Quantity (kg)"
-      className="p-2 border border-green-300 rounded-md"
-    />
-    <button
-      type="submit"
-      className="col-span-1 md:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
-    >
-      Add Crop
-    </button>
-  </form>
+              const newCrop = {
+                name: formData.get('name'),
+                price: Number(formData.get('price')),
+                quantity: formData.get('quantity'),
+                type: formData.get('type'),
+                availability: formData.get('availability'),
+                regionPincodes: (formData.get('regionPincodes') as string)
+                  .split(',')
+                  .map((p) => p.trim()),
+                image: imageUrl,
+              };
 
-  {/* Crop Cards */}
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {crops.map((crop) => (
-      <div
-        key={crop._id}
-        className="bg-white border border-green-200 p-4 rounded-lg shadow hover:shadow-md transition"
-      >
-        <h3 className="text-lg font-bold text-green-700">{crop.name}</h3>
-        <p className="text-sm text-gray-600">Price: ₹{crop.price}</p>
-        <p className="text-sm text-gray-600">Quantity: {crop.quantity} kg</p>
-      </div>
-    ))}
-  </div>
-</section>
+              const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
+              const res = await fetch('/api/farmer/crops', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(newCrop),
+              });
 
-        {/* Orders to Fulfill */}
+              if (res.ok) {
+                const addedCrop = await res.json();
+                setCrops((prev) => [...prev, addedCrop]);
+                form.reset();
+                toast.success('Crop added successfully');
+              } else {
+                toast.error('Failed to add crop');
+              }
+            }}
+            className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end"
+          >
+            <input
+              name="name"
+              type="text"
+              required
+              placeholder="Crop Name"
+              className="p-2 border border-green-300 rounded-md"
+            />
+            <input
+              name="price"
+              type="number"
+              required
+              placeholder="Price (₹)"
+              className="p-2 border border-green-300 rounded-md"
+            />
+            <input
+              name="quantity"
+              type="text"
+              required
+              placeholder="Quantity (e.g., 20 kg)"
+              className="p-2 border border-green-300 rounded-md"
+            />
+            <input
+              name="type"
+              type="text"
+              required
+              placeholder="Crop Type (e.g., Vegetable)"
+              className="p-2 border border-green-300 rounded-md"
+            />
+            <input
+              name="availability"
+              type="text"
+              required
+              placeholder="Availability (e.g., Available, Out of stock)"
+              className="p-2 border border-green-300 rounded-md"
+            />
+            <input
+              name="regionPincodes"
+              type="text"
+              required
+              placeholder="Region Pincodes (comma separated)"
+              className="p-2 border border-green-300 rounded-md"
+            />
+            <input
+              name="image"
+              type="file"
+              accept="image/*"
+              className="col-span-1 md:col-span-3"
+            />
+            <button
+              type="submit"
+              className="col-span-1 md:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
+            >
+              Add Crop
+            </button>
+          </form>
+
+          {/* Crop Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {crops.map((crop) => (
+              <div
+                key={crop._id}
+                className="bg-white border border-green-200 p-4 rounded-lg shadow hover:shadow-md transition"
+              >
+                {crop.image && (
+                  <img
+                    src={crop.image}
+                    alt={crop.name}
+                    className="w-full h-40 object-cover rounded mb-2"
+                  />
+                )}
+                <h3 className="text-lg font-bold text-green-700">{crop.name}</h3>
+                <p className="text-sm text-gray-600">Price: ₹{crop.price}</p>
+                <p className="text-sm text-gray-600">Quantity: {crop.quantity}</p>
+                <p className="text-sm text-gray-600">Type: {crop.type}</p>
+                <p className="text-sm text-gray-600">Availability: {crop.availability}</p>
+                <p className="text-sm text-gray-600">
+                  Regions: {crop.regionPincodes?.join(', ')}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Orders Received */}
         <section className="mb-10">
-          <h2 className="text-2xl font-semibold text-green-800 mb-4">Pending Orders</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-green-200 rounded-lg shadow">
-              <thead>
-                <tr className="bg-green-100 text-left">
-                  <th className="p-3">Crop</th>
-                  <th className="p-3">Quantity</th>
-                  <th className="p-3">Buyer</th>
-                  <th className="p-3">Delivery Date</th>
+          <h2 className="text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
+          {orders.length === 0 ? (
+            <p>No orders received yet.</p>
+          ) : (
+            <table className="w-full border border-green-300 rounded-md text-left">
+              <thead className="bg-green-200">
+                <tr>
+                  <th className="px-4 py-2 border border-green-300">Crop</th>
+                  <th className="px-4 py-2 border border-green-300">Quantity</th>
+                  <th className="px-4 py-2 border border-green-300">Buyer</th>
+                  <th className="px-4 py-2 border border-green-300">Delivery Date</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.map((order) => (
-                  <tr key={order._id} className="border-t border-green-100">
-                    <td className="p-3">{order.cropName}</td>
-                    <td className="p-3">{order.quantity} kg</td>
-                    <td className="p-3">{order.buyerName}</td>
-                    <td className="p-3">{order.deliveryDate}</td>
+                  <tr key={order._id} className="even:bg-green-50">
+                    <td className="px-4 py-2 border border-green-300">{order.cropName}</td>
+                    <td className="px-4 py-2 border border-green-300">{order.quantity}</td>
+                    <td className="px-4 py-2 border border-green-300">{order.buyerName}</td>
+                    <td className="px-4 py-2 border border-green-300">{order.deliveryDate}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          )}
         </section>
 
-        {/* Charts Section */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-          <div className="bg-white p-6 shadow rounded-lg border">
-            <h3 className="text-lg font-bold text-green-800 mb-4">Orders Over Last 30 Days</h3>
-            <Bar data={ordersChartData} options={chartOptions} />
-          </div>
-
-          <div className="bg-white p-6 shadow rounded-lg border">
-            <h3 className="text-lg font-bold text-green-800 mb-4">Earnings Over Last 30 Days</h3>
-            <Bar data={earningsChartData} options={chartOptions} />
+        {/* Statistics */}
+        <section>
+          <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
+              <Bar data={ordersChartData} options={chartOptions} />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
+              <Bar data={earningsChartData} options={chartOptions} />
+            </div>
           </div>
         </section>
       </div>
