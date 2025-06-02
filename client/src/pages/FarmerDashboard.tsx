@@ -445,9 +445,7 @@ const FarmerDashboard: React.FC = () => {
                   name="image"
                   type="file"
                   accept="image/*"
-                  className="col-span-1 md:col-span-3 rounded-lg border border-green-300
-               p-2 cursor-pointer shadow-sm focus:outline-none
-               focus:ring-2 focus:ring-green-500 transition"
+                  className="col-span-1 md:col-span-2 rounded-lg border border-green-300 p-2 cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
                 />
                 <button
                   type="submit"
