@@ -22,7 +22,7 @@ interface Order {
   tax: string;
   deliveryFee: number;
   createdAt: string;
-  
+  farmerId: string;
 }
 
 const downloadInvoice = (order: Order) => {

@@ -9,7 +9,7 @@ interface CartItem {
   price: number;
   quantityInCart: string;
   quantity: string;
-  farmerId: string;
+  farmer: string;
 }
 
 const CheckoutPage: React.FC = () => {
@@ -53,8 +53,8 @@ const CheckoutPage: React.FC = () => {
     return;
   }
 
-  const farmerId = cart[0]?.farmerId;
-  if (!farmerId) {
+  const farmer = cart[0]?.farmer;
+  if (!farmer) {
     toast.error('Missing farmer information.', toastStyle);
     return;
   }
@@ -67,7 +67,7 @@ const CheckoutPage: React.FC = () => {
 
     const orderData = {
       userId,
-      farmerId, 
+      farmer, 
       name,
       email,
       phone,

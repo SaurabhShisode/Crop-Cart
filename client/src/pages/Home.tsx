@@ -313,7 +313,7 @@ type Crop = {
   image?: string;
   availability: string;
   quantity: string;
-  farmerId: string; 
+  farmer: string; 
 };
 
 
@@ -330,12 +330,12 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  // Load user and cart from localStorage once
+  
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
       try {
-        const data = JSON.parse(storedUser); // expected: { token, user }
+        const data = JSON.parse(storedUser); 
         if (data.user && data.user.name && data.user.id) {
           setUserName(data.user.name);
 
@@ -386,7 +386,7 @@ const Home: React.FC = () => {
             localStorage.setItem(`cart_${data.user.id}`, JSON.stringify(cart));
           }
         } catch {
-          // ignore errors here
+       
         }
       }
     }
