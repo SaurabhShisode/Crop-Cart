@@ -303,7 +303,7 @@ const FarmerDashboard: React.FC = () => {
 
               const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-              const res = await fetch('/api/farmer/crops', {
+              const res = await fetch('/crops', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
