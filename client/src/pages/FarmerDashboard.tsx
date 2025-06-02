@@ -321,7 +321,7 @@ const FarmerDashboard: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen p-20 bg-green-50">
+      <div className="min-h-screen p-20 bg-customPurple">
         <h1 className="text-4xl font-bold text-green-900 mb-8">Farmer Dashboard</h1>
 
         {loading ? (

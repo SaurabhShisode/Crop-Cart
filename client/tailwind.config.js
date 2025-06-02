@@ -27,6 +27,9 @@ module.exports = {
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
       },
+      colors: {
+        customPurple: '#4908aa',
+      },
     },
   },
   plugins: [],
