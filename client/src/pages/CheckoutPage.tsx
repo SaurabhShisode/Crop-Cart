@@ -9,6 +9,7 @@ interface CartItem {
   price: number;
   quantityInCart: string;
   quantity: string;
+  farmerId: string;
 }
 
 const CheckoutPage: React.FC = () => {
@@ -47,56 +48,59 @@ const CheckoutPage: React.FC = () => {
   }, 0);
   const toastStyle = { style: { background: '#14532d', color: 'white' } };
   const handlePlaceOrder = async () => {
-    if (!name || !email || !address) {
-      toast.error('Please fill in all fields.', toastStyle);
-      return;
-    }
+  if (!name || !email || !address || !cart.length) {
+    toast.error('Please fill in all fields and add items to cart.', toastStyle);
+    return;
+  }
 
-    setLoading(true);
+  const farmerId = cart[0]?.farmerId;
+  if (!farmerId) {
+    toast.error('Missing farmer information.', toastStyle);
+    return;
+  }
 
-    try {
-      const storedUser = localStorage.getItem('cropcartUser');
-      const userId = storedUser ? JSON.parse(storedUser)?.user?.id : null;
+  setLoading(true);
 
-      const orderData = {
-        userId,
-        name,
-        email,
-        phone,
-        address,
-        items: cart,
-        total: (totalPrice * 1.18 + 50).toFixed(2),
-        tax: (totalPrice * 0.18).toFixed(2),
-        deliveryFee: 50,
-      };
+  try {
+    const storedUser = localStorage.getItem('cropcartUser');
+    const userId = storedUser ? JSON.parse(storedUser)?.user?.id : null;
 
-      
-      const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      });
+    const orderData = {
+      userId,
+      farmerId, 
+      name,
+      email,
+      phone,
+      address,
+      items: cart,
+      total: (totalPrice * 1.18 + 50).toFixed(2),
+      tax: (totalPrice * 0.18).toFixed(2),
+      deliveryFee: 50,
+    };
 
-      if (!response.ok) throw new Error('Failed to place order.');
+    const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData),
+    });
 
-      toast.success('Order placed successfully!', toastStyle);
-      if (userId) {
-        localStorage.removeItem(`cart_${userId}`);
-      }
-      setCart([]);
-      setName('');
-      setEmail('');
-      setAddress('');
-      navigate('/home');
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to place order. Please try again.', toastStyle);
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!response.ok) throw new Error('Failed to place order.');
+
+    toast.success('Order placed successfully!', toastStyle);
+    if (userId) localStorage.removeItem(`cart_${userId}`);
+    setCart([]);
+    setName('');
+    setEmail('');
+    setAddress('');
+    navigate('/home');
+  } catch (err) {
+    console.error(err);
+    toast.error('Failed to place order. Please try again.', toastStyle);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   if (cart.length === 0) {
     return (
