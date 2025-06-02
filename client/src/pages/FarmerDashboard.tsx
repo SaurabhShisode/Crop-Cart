@@ -163,41 +163,48 @@ const Navbar: React.FC = () => {
 };
 
 
+
 const FarmerDashboard: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(false);
-  // const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch logged-in user's farmerId
-        const storedUser = localStorage.getItem('cropcartUser');
-        const user = storedUser ? JSON.parse(storedUser) : null;
-        const farmerId = user?.user?.id;
+        const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-        if (farmerId) {
-          const [cropsRes, ordersRes, statsRes] = await Promise.all([
-            fetch(`/api/farmer/crops?farmerId=${farmerId}`),
-            fetch(`/api/farmer/orders?farmerId=${farmerId}`),
-            fetch(`/api/farmer/stats?farmerId=${farmerId}`),
-          ]);
+        const [cropsRes, ordersRes, statsRes] = await Promise.all([
+          fetch('/api/farmer/crops', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch('/api/farmer/orders', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch('/api/farmer/stats', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
 
-          if (cropsRes.ok) {
-            const cropsData = await cropsRes.json();
-            setCrops(cropsData);
-          }
-          if (ordersRes.ok) {
-            const ordersData = await ordersRes.json();
-            setOrders(ordersData);
-          }
-          if (statsRes.ok) {
-            const statsData = await statsRes.json();
-            setStats(statsData);
-          }
+        if (cropsRes.ok) {
+          const cropsData = await cropsRes.json();
+          setCrops(cropsData);
+        }
+        if (ordersRes.ok) {
+          const ordersData = await ordersRes.json();
+          setOrders(ordersData);
+        }
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          setStats(statsData);
         }
       } catch (error) {
         toast.error('Failed to fetch data');
@@ -208,7 +215,6 @@ const FarmerDashboard: React.FC = () => {
 
     fetchData();
   }, []);
-
 
   const ordersChartData = {
     labels: stats.map((item) => item.date),
@@ -251,11 +257,9 @@ const FarmerDashboard: React.FC = () => {
     },
   };
 
-  // CLOUDINARY UPLOAD CONFIG from your .env variables
   const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-  // Function to upload image to Cloudinary unsigned
   async function uploadImageToCloudinary(file: File): Promise<string> {
     const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
 
@@ -268,9 +272,7 @@ const FarmerDashboard: React.FC = () => {
       body: formData,
     });
 
-    if (!res.ok) {
-      throw new Error('Image upload failed');
-    }
+    if (!res.ok) throw new Error('Image upload failed');
 
     const data = await res.json();
     return data.secure_url;
@@ -283,10 +285,10 @@ const FarmerDashboard: React.FC = () => {
         <h1 className="text-4xl font-bold text-green-900 mb-8">Farmer Dashboard</h1>
 
         {loading ? (
-          <div className="text-center text-xl text-green-700">Loading data...</div> // Show loading text or spinner
+          <div className="text-center text-xl text-green-700">Loading data...</div>
         ) : (
           <>
-            {/* Crops Uploaded */}
+            {/* Crops Section */}
             <section className="mb-10">
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
 
@@ -343,94 +345,39 @@ const FarmerDashboard: React.FC = () => {
                 }}
                 className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end"
               >
-                <input
-                  name="name"
-                  type="text"
-                  required
-                  placeholder="Crop Name"
-                  className="p-2 border border-green-300 rounded-md"
-                />
-                <input
-                  name="price"
-                  type="number"
-                  required
-                  placeholder="Price (₹)"
-                  className="p-2 border border-green-300 rounded-md"
-                />
-                <input
-                  name="quantity"
-                  type="text"
-                  required
-                  placeholder="Quantity (e.g., 20 kg)"
-                  className="p-2 border border-green-300 rounded-md"
-                />
-                <select
-                  name="type"
-                  required
-                  className="p-2 border border-green-300 rounded-md"
-                >
+                <input name="name" required placeholder="Crop Name" className="p-2 border border-green-300 rounded-md" />
+                <input name="price" type="number" required placeholder="Price (₹)" className="p-2 border border-green-300 rounded-md" />
+                <input name="quantity" required placeholder="Quantity (e.g., 20 kg)" className="p-2 border border-green-300 rounded-md" />
+                <select name="type" required className="p-2 border border-green-300 rounded-md">
                   <option value="">Select Crop Type</option>
                   <option value="Vegetable">Vegetable</option>
                   <option value="Crop">Crop</option>
                   <option value="Dairy">Dairy</option>
                   <option value="Grocery">Grocery</option>
                 </select>
-                <input
-                  name="availability"
-                  type="text"
-                  required
-                  placeholder="Availability (e.g., Available, Out of stock)"
-                  className="p-2 border border-green-300 rounded-md"
-                />
-                <input
-                  name="regionPincodes"
-                  type="text"
-                  required
-                  placeholder="Region Pincodes (comma separated)"
-                  className="p-2 border border-green-300 rounded-md"
-                />
-                <input
-                  name="image"
-                  type="file"
-                  accept="image/*"
-                  className="col-span-1 md:col-span-3"
-                />
-                <button
-                  type="submit"
-                  className="col-span-1 md:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
-                >
-                  Add Crop
-                </button>
+                <input name="availability" required placeholder="Availability" className="p-2 border border-green-300 rounded-md" />
+                <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="p-2 border border-green-300 rounded-md" />
+                <input name="image" type="file" accept="image/*" className="col-span-1 md:col-span-3" />
+                <button type="submit" className="col-span-1 md:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md">Add Crop</button>
               </form>
 
               {/* Crop Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {crops.map((crop) => (
-                  <div
-                    key={crop._id}
-                    className="bg-white border border-green-200 p-4 rounded-lg shadow hover:shadow-md transition"
-                  >
-                    {crop.image && (
-                      <img
-                        src={crop.image}
-                        alt={crop.name}
-                        className="w-full h-40 object-cover rounded mb-2"
-                      />
-                    )}
+                  <div key={crop._id} className="bg-white border border-green-200 p-4 rounded-lg shadow hover:shadow-md transition">
+                    {crop.image && <img src={crop.image} alt={crop.name} className="w-full h-40 object-cover rounded mb-2" />}
                     <h3 className="text-lg font-bold text-green-700">{crop.name}</h3>
                     <p className="text-sm text-gray-600">Price: ₹{crop.price}</p>
                     <p className="text-sm text-gray-600">Quantity: {crop.quantity}</p>
                     <p className="text-sm text-gray-600">Type: {crop.type}</p>
                     <p className="text-sm text-gray-600">Availability: {crop.availability}</p>
-                    <p className="text-sm text-gray-600">
-                      Regions: {crop.regionPincodes?.join(', ')}
-                    </p>
+                    <p className="text-sm text-gray-600">Regions: {crop.regionPincodes?.join(', ')}</p>
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* Orders Received */}
+            {/* Orders Section */}
             <section className="mb-10">
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
               {orders.length === 0 ? (
@@ -459,7 +406,7 @@ const FarmerDashboard: React.FC = () => {
               )}
             </section>
 
-            {/* Statistics */}
+            {/* Stats Section */}
             <section>
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -480,5 +427,7 @@ const FarmerDashboard: React.FC = () => {
     </>
   );
 };
+
+
 
 export default FarmerDashboard;
