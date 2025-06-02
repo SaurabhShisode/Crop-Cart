@@ -4,7 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../components/Footer';
 
 interface CartItem {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   quantityInCart: string;
@@ -124,7 +124,7 @@ const CheckoutPage: React.FC = () => {
               {cart.map(item => {
                 const quantityNum = parseFloat(item.quantityInCart) || 0;
                 return (
-                  <li key={item.id} className="py-4 flex justify-between">
+                  <li key={item._id} className="py-4 flex justify-between">
                     <div>
                       <p className="font-semibold text-green-800">{item.name} ({item.quantity})</p>
                       <p className="text-sm text-green-700">Qty: {item.quantityInCart}</p>

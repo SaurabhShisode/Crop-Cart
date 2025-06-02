@@ -305,7 +305,7 @@ const Navbar: React.FC<{
     );
   };
 type Crop = {
-  id: string;
+  _id: string;
   name: string;
   type: string;
   price: number;
@@ -404,10 +404,10 @@ const Home: React.FC = () => {
 
   const addToCart = (crop: Crop) => {
   setCart((prev) => {
-    const exists = prev.find((item) => item.id === crop.id);
+    const exists = prev.find((item) => item._id === crop._id);
     if (exists) {
       return prev.map((item) =>
-        item.id === crop.id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
+        item._id === crop._id ? { ...item, quantityInCart: item.quantityInCart + 1 } : item
       );
     } else {
       return [...prev, { ...crop, quantityInCart: 1 }]; 
@@ -418,7 +418,7 @@ const Home: React.FC = () => {
 
 
   const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+    setCart((prev) => prev.filter((item) => item._id !== id));
   };
 
   const totalPrice = cart.reduce(
@@ -566,7 +566,7 @@ const Home: React.FC = () => {
                 <ScrollableSection sectionId={`section-${type}`}>
                   {products.map((crop) => (
                     <div
-                      key={crop.id}
+                      key={crop._id}
                       className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
                       <img
@@ -642,7 +642,7 @@ const Home: React.FC = () => {
             <div className="flex-grow overflow-y-auto">
               {cart.map((item) => (
                 <div
-                  key={item.id}
+                  key={item._id}
                   className="flex items-center justify-between mb-4 border-b pb-2"
                 >
                   <div>
@@ -655,7 +655,7 @@ const Home: React.FC = () => {
 
                   </div>
                   <button
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => removeFromCart(item._id)}
                     className="text-red-500 font-semibold hover:text-red-700"
                     aria-label={`Remove ${item.name} from cart`}
                   >
