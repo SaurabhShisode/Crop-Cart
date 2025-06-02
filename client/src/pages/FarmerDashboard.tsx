@@ -321,252 +321,250 @@ const FarmerDashboard: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen p-20 bg-customPurple">
-        <h1 className="text-4xl font-bold text-green-900 mb-8">Farmer Dashboard</h1>
+      <div className="min-h-screen p-20 bg-purple-900">
+  <h1 className="text-4xl font-bold text-purple-300 mb-8">Farmer Dashboard</h1>
 
-        {loading ? (
-          <div className="text-center text-xl text-green-700">Loading data...</div>
-        ) : (
-          <>
-            {/* Crops Section */}
-            <section className="mb-10">
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
+  {loading ? (
+    <div className="text-center text-xl text-purple-400">Loading data...</div>
+  ) : (
+    <>
+      {/* Crops Section */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-semibold text-purple-300 mb-4">Your Crops</h2>
 
-              {/* Add Crop Form */}
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  const form = e.currentTarget;
-                  const formData = new FormData(form);
+        {/* Add Crop Form */}
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.currentTarget;
+            const formData = new FormData(form);
 
-                  const imageFile = formData.get('image') as File | null;
+            const imageFile = formData.get('image') as File | null;
 
-                  let imageUrl = '';
+            let imageUrl = '';
+            try {
+              if (imageFile && imageFile.name) {
+                imageUrl = await uploadImageToCloudinary(imageFile);
+              }
+            } catch (error) {
+              toast.error('Image upload failed');
+              return;
+            }
+
+            const newCrop = {
+              name: formData.get('name'),
+              price: Number(formData.get('price')),
+              quantity: formData.get('quantity'),
+              type: formData.get('type'),
+              availability: formData.get('availability'),
+              regionPincodes: (formData.get('regionPincodes') as string)
+                .split(',')
+                .map((p) => p.trim()),
+              image: imageUrl,
+            };
+
+            const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+
+            const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(newCrop),
+            });
+
+            if (res.ok) {
+              const addedCrop = await res.json();
+              setCrops((prev) => [...prev, addedCrop]);
+              form.reset();
+              toast.success('Crop added successfully');
+            } else {
+              toast.error('Failed to add crop');
+            }
+          }}
+          className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          <input
+            name="name"
+            required
+            placeholder="Crop Name"
+            className="w-full p-3 rounded-lg border border-purple-700 shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-purple-500
+              placeholder-purple-400 bg-purple-800 text-purple-100 transition"
+          />
+          <input
+            name="price"
+            type="number"
+            required
+            placeholder="Price (₹)"
+            className="w-full p-3 rounded-lg border border-purple-700 shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-purple-500
+              placeholder-purple-400 bg-purple-800 text-purple-100 transition"
+          />
+          <input
+            name="quantity"
+            required
+            placeholder="Quantity (e.g., 20 kg)"
+            className="w-full p-3 rounded-lg border border-purple-700 shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-purple-500
+              placeholder-purple-400 bg-purple-800 text-purple-100 transition"
+          />
+          <select
+            name="type"
+            required
+            className="w-full p-3 rounded-lg border border-purple-700 shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-purple-500
+              bg-purple-800 text-purple-100 transition"
+          >
+            <option value="" disabled>
+              Select Crop Type
+            </option>
+
+            <option value="Crop">Crop</option>
+            <option value="Dairy">Dairy</option>
+            <option value="Grocery">Grocery</option>
+          </select>
+          <input
+            name="availability"
+            required
+            placeholder="Availability"
+            className="w-full p-3 rounded-lg border border-purple-700 shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-purple-500
+              placeholder-purple-400 bg-purple-800 text-purple-100 transition"
+          />
+          <input
+            name="regionPincodes"
+            required
+            placeholder="Region Pincodes (comma separated)"
+            className="w-full p-3 rounded-lg border border-purple-700 shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-purple-500
+              placeholder-purple-400 bg-purple-800 text-purple-100 transition"
+          />
+          <input
+            name="image"
+            type="file"
+            accept="image/*"
+            className="col-span-1 md:col-span-1 max-w-xs rounded-lg border border-purple-700 p-2 cursor-pointer shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-purple-500 transition bg-purple-800 text-purple-100"
+          />
+          <button
+            type="submit"
+            className="col-span-1 md:col-span-1 max-w-xs bg-purple-600 hover:bg-purple-700
+              text-white py-3 rounded-lg font-semibold shadow-md
+              transition duration-300 ease-in-out"
+          >
+            Add Crop
+          </button>
+        </form>
+
+        {/* Crop Cards */}
+        <ScrollableSection sectionId="crops-section">
+          {crops.map((crop) => (
+            <div
+              key={crop._id}
+              className="snap-start bg-purple-800 border border-purple-700 p-3 rounded-md shadow hover:shadow-lg transition flex flex-col w-56 flex-shrink-0"
+              style={{ maxWidth: '220px' }}
+            >
+              {crop.image && (
+                <img
+                  src={crop.image}
+                  alt={crop.name}
+                  className="w-full h-32 object-cover rounded mb-2"
+                />
+              )}
+              <h3 className="text-md font-semibold text-purple-300 mb-1 truncate">{crop.name}</h3>
+              <p className="text-xs text-purple-400">Price: ₹{crop.price}</p>
+              <p className="text-xs text-purple-400">Quantity: {crop.quantity}</p>
+              <p className="text-xs text-purple-400">Type: {crop.type}</p>
+              <p className="text-xs text-purple-400">Availability: {crop.availability}</p>
+              <p className="text-xs text-purple-400 mb-2 truncate">
+                Regions: {crop.regionPincodes?.join(', ')}
+              </p>
+              <button
+                onClick={async () => {
+                  if (!confirm(`Delete crop "${crop.name}"?`)) return;
+
                   try {
-                    if (imageFile && imageFile.name) {
-                      imageUrl = await uploadImageToCloudinary(imageFile);
+                    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+
+                    const res = await fetch(
+                      `https://crop-cart-backend.onrender.com/api/farmer/crops/${crop._id}`,
+                      {
+                        method: 'DELETE',
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
+                      }
+                    );
+
+                    if (res.ok) {
+                      setCrops((prev) => prev.filter((c) => c._id !== crop._id));
+                      toast.success('Crop deleted successfully');
+                    } else {
+                      const errorData = await res.json();
+                      toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
                     }
                   } catch (error) {
-                    toast.error('Image upload failed');
-                    return;
-                  }
-
-                  const newCrop = {
-                    name: formData.get('name'),
-                    price: Number(formData.get('price')),
-                    quantity: formData.get('quantity'),
-                    type: formData.get('type'),
-                    availability: formData.get('availability'),
-                    regionPincodes: (formData.get('regionPincodes') as string)
-                      .split(',')
-                      .map((p) => p.trim()),
-                    image: imageUrl,
-                  };
-
-                  const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
-
-                  const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(newCrop),
-                  });
-
-                  if (res.ok) {
-                    const addedCrop = await res.json();
-                    setCrops((prev) => [...prev, addedCrop]);
-                    form.reset();
-                    toast.success('Crop added successfully');
-                  } else {
-                    toast.error('Failed to add crop');
+                    toast.error('Failed to delete crop');
                   }
                 }}
-                className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1 rounded text-sm"
               >
-                <input
-                  name="name"
-                  required
-                  placeholder="Crop Name"
-                  className="w-full p-3 rounded-lg border border-green-300 shadow-sm
-               focus:outline-none focus:ring-2 focus:ring-green-500
-               placeholder-gray-400 transition"
-                />
-                <input
-                  name="price"
-                  type="number"
-                  required
-                  placeholder="Price (₹)"
-                  className="w-full p-3 rounded-lg border border-green-300 shadow-sm
-               focus:outline-none focus:ring-2 focus:ring-green-500
-               placeholder-gray-400 transition"
-                />
-                <input
-                  name="quantity"
-                  required
-                  placeholder="Quantity (e.g., 20 kg)"
-                  className="w-full p-3 rounded-lg border border-green-300 shadow-sm
-               focus:outline-none focus:ring-2 focus:ring-green-500
-               placeholder-gray-400 transition"
-                />
-                <select
-                  name="type"
-                  required
-                  className="w-full p-3 rounded-lg border border-green-300 shadow-sm
-               focus:outline-none focus:ring-2 focus:ring-green-500
-               bg-white text-gray-700 transition"
-                >
-                  <option value="" disabled>
-                    Select Crop Type
-                  </option>
+                Remove
+              </button>
+            </div>
+          ))}
+        </ScrollableSection>
+      </section>
 
-                  <option value="Crop">Crop</option>
-                  <option value="Dairy">Dairy</option>
-                  <option value="Grocery">Grocery</option>
-                </select>
-                <input
-                  name="availability"
-                  required
-                  placeholder="Availability"
-                  className="w-full p-3 rounded-lg border border-green-300 shadow-sm
-               focus:outline-none focus:ring-2 focus:ring-green-500
-               placeholder-gray-400 transition"
-                />
-                <input
-                  name="regionPincodes"
-                  required
-                  placeholder="Region Pincodes (comma separated)"
-                  className="w-full p-3 rounded-lg border border-green-300 shadow-sm
-               focus:outline-none focus:ring-2 focus:ring-green-500
-               placeholder-gray-400 transition"
-                />
-                <input
-                  name="image"
-                  type="file"
-                  accept="image/*"
-                  className="col-span-1 md:col-span-1 max-w-xs rounded-lg border border-green-300 p-2 cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-                />
-                <button
-                  type="submit"
-                  className="col-span-1 md:col-span-1 max-w-xs bg-green-600 hover:bg-green-700
-  text-white py-3 rounded-lg font-semibold shadow-md
-  transition duration-300 ease-in-out"
-                >
-                  Add Crop
-                </button>
-
-              </form>
-
-
-              {/* Crop Cards */}
-              <ScrollableSection sectionId="crops-section">
-                {crops.map((crop) => (
-                  <div
-                    key={crop._id}
-                    className="snap-start bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-md transition flex flex-col w-56 flex-shrink-0"
-                    style={{ maxWidth: '220px' }}
-                  >
-                    {crop.image && (
-                      <img
-                        src={crop.image}
-                        alt={crop.name}
-                        className="w-full h-32 object-cover rounded mb-2"
-                      />
-                    )}
-                    <h3 className="text-md font-semibold text-green-700 mb-1 truncate">{crop.name}</h3>
-                    <p className="text-xs text-gray-600">Price: ₹{crop.price}</p>
-                    <p className="text-xs text-gray-600">Quantity: {crop.quantity}</p>
-                    <p className="text-xs text-gray-600">Type: {crop.type}</p>
-                    <p className="text-xs text-gray-600">Availability: {crop.availability}</p>
-                    <p className="text-xs text-gray-600 mb-2 truncate">
-                      Regions: {crop.regionPincodes?.join(', ')}
-                    </p>
-                    <button
-                      onClick={async () => {
-                        if (!confirm(`Delete crop "${crop.name}"?`)) return;
-
-                        try {
-                          const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
-
-                          const res = await fetch(
-                            `https://crop-cart-backend.onrender.com/api/farmer/crops/${crop._id}`,
-                            {
-                              method: 'DELETE',
-                              headers: {
-                                Authorization: `Bearer ${token}`,
-                              },
-                            }
-                          );
-
-                          if (res.ok) {
-                            setCrops((prev) => prev.filter((c) => c._id !== crop._id));
-                            toast.success('Crop deleted successfully');
-                          } else {
-                            const errorData = await res.json();
-                            toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
-                          }
-                        } catch (error) {
-                          toast.error('Failed to delete crop');
-                        }
-                      }}
-                      className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1 rounded text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </ScrollableSection>
-
-
-            </section>
-
-            {/* Orders Section */}
-            <section className="mb-10">
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
-              {orders.length === 0 ? (
-                <p>No orders received yet.</p>
-              ) : (
-                <table className="w-full border border-green-300 rounded-md text-left">
-                  <thead className="bg-green-200">
-                    <tr>
-                      <th className="px-4 py-2 border border-green-300">Crop</th>
-                      <th className="px-4 py-2 border border-green-300">Quantity</th>
-                      <th className="px-4 py-2 border border-green-300">Buyer</th>
-                      <th className="px-4 py-2 border border-green-300">Delivery Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.map((order) => (
-                      <tr key={order._id} className="even:bg-green-50">
-                        <td className="px-4 py-2 border border-green-300">{order.cropName}</td>
-                        <td className="px-4 py-2 border border-green-300">{order.quantity}</td>
-                        <td className="px-4 py-2 border border-green-300">{order.buyerName}</td>
-                        <td className="px-4 py-2 border border-green-300">{order.deliveryDate}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </section>
-
-            {/* Stats Section */}
-            <section>
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
-                  <Bar data={ordersChartData} options={chartOptions} />
-                </div>
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
-                  <Bar data={earningsChartData} options={chartOptions} />
-                </div>
-              </div>
-            </section>
-          </>
+      {/* Orders Section */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-semibold text-purple-300 mb-4">Orders Received</h2>
+        {orders.length === 0 ? (
+          <p className="text-purple-400">No orders received yet.</p>
+        ) : (
+          <table className="w-full border border-purple-700 rounded-md text-left">
+            <thead className="bg-purple-700">
+              <tr>
+                <th className="px-4 py-2 border border-purple-800 text-purple-300">Crop</th>
+                <th className="px-4 py-2 border border-purple-800 text-purple-300">Quantity</th>
+                <th className="px-4 py-2 border border-purple-800 text-purple-300">Buyer</th>
+                <th className="px-4 py-2 border border-purple-800 text-purple-300">Delivery Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order._id} className="even:bg-purple-800">
+                  <td className="px-4 py-2 border border-purple-700 text-purple-400">{order.cropName}</td>
+                  <td className="px-4 py-2 border border-purple-700 text-purple-400">{order.quantity}</td>
+                  <td className="px-4 py-2 border border-purple-700 text-purple-400">{order.buyerName}</td>
+                  <td className="px-4 py-2 border border-purple-700 text-purple-400">{order.deliveryDate}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
-      </div>
+      </section>
+
+      {/* Stats Section */}
+      <section>
+        <h2 className="text-2xl font-semibold text-purple-300 mb-4">Statistics</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-purple-800 p-4 rounded-lg shadow">
+            <h3 className="text-lg font-bold mb-2 text-purple-300">Orders Over Time</h3>
+            <Bar data={ordersChartData} options={chartOptions} />
+          </div>
+          <div className="bg-purple-800 p-4 rounded-lg shadow">
+            <h3 className="text-lg font-bold mb-2 text-purple-300">Earnings Over Time</h3>
+            <Bar data={earningsChartData} options={chartOptions} />
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+</div>
+
       <Footer />
     </>
   );
