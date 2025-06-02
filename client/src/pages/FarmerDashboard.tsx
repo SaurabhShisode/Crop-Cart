@@ -14,7 +14,49 @@ import { UserPlusIcon } from '@heroicons/react/24/outline';
 import { User } from 'lucide-react';
 import logo from '../assets/logo.png';
 import Footer from '../components/Footer';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
+const ScrollableSection: React.FC<{
+  children: React.ReactNode;
+  sectionId: string;
+}> = ({ children, sectionId }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const amount = scrollRef.current.clientWidth * 0.8;
+      scrollRef.current.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div className="relative group">
+      <button
+        onClick={() => scroll('left')}
+        aria-label="Scroll left"
+        className="hidden group-hover:flex absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 shadow-md hover:bg-white rounded-full z-10 p-2"
+      >
+        <ArrowLeft className="text-green-800 w-5 h-5" />
+      </button>
+
+      <div
+        ref={scrollRef}
+        id={sectionId}
+        className="overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide flex gap-4 py-2 px-1"
+      >
+        {children}
+      </div>
+
+      <button
+        onClick={() => scroll('right')}
+        aria-label="Scroll right"
+        className="hidden group-hover:flex absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 shadow-md hover:bg-white rounded-full z-10 p-2"
+      >
+        <ArrowRight className="text-green-800 w-5 h-5" />
+      </button>
+    </div>
+  );
+};
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 interface Crop {
@@ -360,11 +402,11 @@ const FarmerDashboard: React.FC = () => {
               </form>
 
               {/* Crop Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <ScrollableSection sectionId="crops-section">
                 {crops.map((crop) => (
                   <div
                     key={crop._id}
-                    className="bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-md transition flex flex-col"
+                    className="snap-start bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-md transition flex flex-col w-56 flex-shrink-0"
                     style={{ maxWidth: '220px' }}
                   >
                     {crop.image && (
@@ -374,12 +416,12 @@ const FarmerDashboard: React.FC = () => {
                         className="w-full h-32 object-cover rounded mb-2"
                       />
                     )}
-                    <h3 className="text-md font-semibold text-green-700 mb-1">{crop.name}</h3>
+                    <h3 className="text-md font-semibold text-green-700 mb-1 truncate">{crop.name}</h3>
                     <p className="text-xs text-gray-600">Price: ₹{crop.price}</p>
                     <p className="text-xs text-gray-600">Quantity: {crop.quantity}</p>
                     <p className="text-xs text-gray-600">Type: {crop.type}</p>
                     <p className="text-xs text-gray-600">Availability: {crop.availability}</p>
-                    <p className="text-xs text-gray-600 mb-2">
+                    <p className="text-xs text-gray-600 mb-2 truncate">
                       Regions: {crop.regionPincodes?.join(', ')}
                     </p>
                     <button
@@ -389,12 +431,15 @@ const FarmerDashboard: React.FC = () => {
                         try {
                           const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-                          const res = await fetch(`https://crop-cart-backend.onrender.com/api/farmer/crops/${crop._id}`, {
-                            method: 'DELETE',
-                            headers: {
-                              Authorization: `Bearer ${token}`,
-                            },
-                          });
+                          const res = await fetch(
+                            `https://crop-cart-backend.onrender.com/api/farmer/crops/${crop._id}`,
+                            {
+                              method: 'DELETE',
+                              headers: {
+                                Authorization: `Bearer ${token}`,
+                              },
+                            }
+                          );
 
                           if (res.ok) {
                             setCrops((prev) => prev.filter((c) => c._id !== crop._id));
@@ -413,7 +458,8 @@ const FarmerDashboard: React.FC = () => {
                     </button>
                   </div>
                 ))}
-              </div>
+              </ScrollableSection>
+
 
             </section>
 
