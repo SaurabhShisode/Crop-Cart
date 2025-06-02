@@ -344,13 +344,17 @@ const FarmerDashboard: React.FC = () => {
               placeholder="Quantity (e.g., 20 kg)"
               className="p-2 border border-green-300 rounded-md"
             />
-            <input
+            <select
               name="type"
-              type="text"
               required
-              placeholder="Crop Type (e.g., Vegetable)"
               className="p-2 border border-green-300 rounded-md"
-            />
+            >
+              <option value="">Select Crop Type</option>
+              <option value="Vegetable">Vegetable</option>
+              <option value="Crop">Crop</option>
+              <option value="Dairy">Dairy</option>
+              <option value="Grocery">Grocery</option>
+            </select>
             <input
               name="availability"
               type="text"
