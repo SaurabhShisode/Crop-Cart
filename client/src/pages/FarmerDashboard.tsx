@@ -8,7 +8,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-
+import Navbar from "../components/Navbar";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -107,6 +107,7 @@ const FarmerDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen p-8 bg-green-50">
+      <Navbar />
       <h1 className="text-4xl font-bold text-green-900 mb-8">Farmer Dashboard</h1>
 
       {/* Crops Uploaded */}
