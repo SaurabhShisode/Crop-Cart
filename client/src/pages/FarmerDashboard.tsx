@@ -360,19 +360,61 @@ const FarmerDashboard: React.FC = () => {
               </form>
 
               {/* Crop Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {crops.map((crop) => (
-                  <div key={crop._id} className="bg-white border border-green-200 p-4 rounded-lg shadow hover:shadow-md transition">
-                    {crop.image && <img src={crop.image} alt={crop.name} className="w-full h-40 object-cover rounded mb-2" />}
-                    <h3 className="text-lg font-bold text-green-700">{crop.name}</h3>
-                    <p className="text-sm text-gray-600">Price: ₹{crop.price}</p>
-                    <p className="text-sm text-gray-600">Quantity: {crop.quantity}</p>
-                    <p className="text-sm text-gray-600">Type: {crop.type}</p>
-                    <p className="text-sm text-gray-600">Availability: {crop.availability}</p>
-                    <p className="text-sm text-gray-600">Regions: {crop.regionPincodes?.join(', ')}</p>
+                  <div
+                    key={crop._id}
+                    className="bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-md transition flex flex-col"
+                    style={{ maxWidth: '220px' }}
+                  >
+                    {crop.image && (
+                      <img
+                        src={crop.image}
+                        alt={crop.name}
+                        className="w-full h-32 object-cover rounded mb-2"
+                      />
+                    )}
+                    <h3 className="text-md font-semibold text-green-700 mb-1">{crop.name}</h3>
+                    <p className="text-xs text-gray-600">Price: ₹{crop.price}</p>
+                    <p className="text-xs text-gray-600">Quantity: {crop.quantity}</p>
+                    <p className="text-xs text-gray-600">Type: {crop.type}</p>
+                    <p className="text-xs text-gray-600">Availability: {crop.availability}</p>
+                    <p className="text-xs text-gray-600 mb-2">
+                      Regions: {crop.regionPincodes?.join(', ')}
+                    </p>
+                    <button
+                      onClick={async () => {
+                        if (!confirm(`Delete crop "${crop.name}"?`)) return;
+
+                        try {
+                          const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+
+                          const res = await fetch(`https://crop-cart-backend.onrender.com/api/farmer/crops/${crop._id}`, {
+                            method: 'DELETE',
+                            headers: {
+                              Authorization: `Bearer ${token}`,
+                            },
+                          });
+
+                          if (res.ok) {
+                            setCrops((prev) => prev.filter((c) => c._id !== crop._id));
+                            toast.success('Crop deleted successfully');
+                          } else {
+                            const errorData = await res.json();
+                            toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
+                          }
+                        } catch (error) {
+                          toast.error('Failed to delete crop');
+                        }
+                      }}
+                      className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1 rounded text-sm"
+                    >
+                      Remove
+                    </button>
                   </div>
                 ))}
               </div>
+
             </section>
 
             {/* Orders Section */}
