@@ -72,11 +72,14 @@ interface Crop {
 
 interface Order {
   _id: string;
-  cropName: string;
-  quantity: number;
-  buyerName: string;
-  deliveryDate: string;
+  buyer: { name: string; email: string };
+  createdAt: string;
+  items: {
+    crop: { name: string };
+    quantity: number;
+  }[];
 }
+
 
 interface StatsData {
   date: string;
@@ -212,7 +215,7 @@ const FarmerDashboard: React.FC = () => {
   const [stats, setStats] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -222,12 +225,12 @@ const FarmerDashboard: React.FC = () => {
           fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch('/api/farmer/orders', {
+          fetch('https://crop-cart-backend.onrender.com/api/farmer/orders', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch('/api/farmer/stats', {
+          fetch('https://crop-cart-backend.onrender.com/api/farmer/stats', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -238,10 +241,22 @@ const FarmerDashboard: React.FC = () => {
           const cropsData = await cropsRes.json();
           setCrops(cropsData);
         }
+
         if (ordersRes.ok) {
           const ordersData = await ordersRes.json();
-          setOrders(ordersData);
+          // Flatten orders with items into your simple Order interface
+          const flatOrders: Order[] = ordersData.flatMap((order: any) =>
+            order.items.map((item: any) => ({
+              _id: order._id + '-' + item.crop._id, // unique key per order item
+              cropName: item.crop?.name || 'Unknown Crop',
+              quantity: item.quantity,
+              buyerName: order.buyer?.name || 'Unknown Buyer',
+              deliveryDate: new Date(order.createdAt).toLocaleDateString(),
+            }))
+          );
+          setOrders(flatOrders);
         }
+
         if (statsRes.ok) {
           const statsData = await statsRes.json();
           setStats(statsData);
@@ -255,7 +270,6 @@ const FarmerDashboard: React.FC = () => {
 
     fetchData();
   }, []);
-
   const ordersChartData = {
     labels: stats.map((item) => item.date),
     datasets: [
@@ -533,18 +547,22 @@ const FarmerDashboard: React.FC = () => {
                       <th className="px-4 py-2 border border-green-300">Crop</th>
                       <th className="px-4 py-2 border border-green-300">Quantity</th>
                       <th className="px-4 py-2 border border-green-300">Buyer</th>
-                      <th className="px-4 py-2 border border-green-300">Delivery Date</th>
+                      <th className="px-4 py-2 border border-green-300">Order Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.map((order) => (
-                      <tr key={order._id} className="even:bg-green-50">
-                        <td className="px-4 py-2 border border-green-300">{order.cropName}</td>
-                        <td className="px-4 py-2 border border-green-300">{order.quantity}</td>
-                        <td className="px-4 py-2 border border-green-300">{order.buyerName}</td>
-                        <td className="px-4 py-2 border border-green-300">{order.deliveryDate}</td>
-                      </tr>
-                    ))}
+                    {orders.map((order) =>
+                      order.items.map((item, idx) => (
+                        <tr key={`${order._id}-${idx}`} className="even:bg-green-50">
+                          <td className="px-4 py-2 border border-green-300">{item.crop?.name || 'Unknown Crop'}</td>
+                          <td className="px-4 py-2 border border-green-300">{item.quantity}</td>
+                          <td className="px-4 py-2 border border-green-300">{order.buyer?.name || 'Unknown Buyer'}</td>
+                          <td className="px-4 py-2 border border-green-300">
+                            {new Date(order.createdAt).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               )}
