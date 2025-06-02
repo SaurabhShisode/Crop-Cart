@@ -445,16 +445,17 @@ const FarmerDashboard: React.FC = () => {
                   name="image"
                   type="file"
                   accept="image/*"
-                  className="col-span-1 md:col-span-2 rounded-lg border border-green-300 p-2 cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                  className="col-span-1 md:col-span-1 max-w-xs rounded-lg border border-green-300 p-2 cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
                 />
                 <button
                   type="submit"
-                  className="col-span-1 md:col-span-3 bg-green-600 hover:bg-green-700
-               text-white py-3 rounded-lg font-semibold shadow-md
-               transition duration-300 ease-in-out"
+                  className="col-span-1 md:col-span-1 max-w-xs bg-green-600 hover:bg-green-700
+  text-white py-3 rounded-lg font-semibold shadow-md
+  transition duration-300 ease-in-out"
                 >
                   Add Crop
                 </button>
+
               </form>
 
 
