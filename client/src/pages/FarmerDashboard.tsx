@@ -121,7 +121,7 @@ const Navbar: React.FC = () => {
                       My Orders
                     </button>
                   </li>
-                  
+
                   <li>
                     <button
                       onClick={() => {
@@ -167,7 +167,7 @@ const FarmerDashboard: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
-   // const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCrops = async () => {
@@ -303,7 +303,7 @@ const FarmerDashboard: React.FC = () => {
 
               const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-              const res = await fetch('/crops', {
+              const res = await fetch('/api/farmer/crop', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
