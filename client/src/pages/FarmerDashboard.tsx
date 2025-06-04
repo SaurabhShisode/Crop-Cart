@@ -256,9 +256,9 @@ const FarmerDashboard: React.FC = () => {
               _id: order._id + '-' + item.cropId,
               cropName: item.name || 'Unknown Crop',
               quantity: item.quantity,
-              buyerName: order.userId?.name || 'Unknown Buyer', // if you populated userId in backend
+              buyerName: order.userId?.name || 'Unknown Buyer', 
               deliveryDate: new Date(order.createdAt).toLocaleDateString(),
-              toLocaleDateString(),
+
             }))
           );
           setOrders(flatOrders);
