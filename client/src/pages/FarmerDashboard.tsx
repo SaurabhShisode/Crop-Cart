@@ -411,7 +411,7 @@ const FarmerDashboard: React.FC = () => {
                     });
                   }
                 }}
-                className="bg-white p-8 md:p-10 rounded-2xl shadow-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300"
+                className="bg-white p-8 md:p-10 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 shadow hover:shadow-lg transition-all duration-300"
               >
                 <h2 className="col-span-full text-2xl font-semibold text-green-700">Add New Crop</h2>
 
