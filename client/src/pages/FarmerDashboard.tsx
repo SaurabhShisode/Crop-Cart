@@ -15,6 +15,7 @@ import { User } from 'lucide-react';
 import logo from '../assets/logo.png';
 import Footer from '../components/Footer';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal'; 
 
 const ScrollableSection: React.FC<{
   children: React.ReactNode;
@@ -214,6 +215,8 @@ const FarmerDashboard: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+const [cropToDelete, setCropToDelete] = useState<any>(null); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -464,29 +467,27 @@ const FarmerDashboard: React.FC = () => {
                       onClick={async () => {
                         if (!confirm(`Delete crop "${crop.name}"?`)) return;
 
-                        try {
-                          const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+                         try {
+    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-                          const res = await fetch(
-                            `https://crop-cart-backend.onrender.com/api/farmer/crops/${crop._id}`,
-                            {
-                              method: 'DELETE',
-                              headers: {
-                                Authorization: `Bearer ${token}`,
-                              },
-                            }
-                          );
+    const res = await fetch(`https://crop-cart-backend.onrender.com/api/farmer/crops/${crop._id}`, {
+  method: 'DELETE',
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
 
-                          if (res.ok) {
-                            setCrops((prev) => prev.filter((c) => c._id !== crop._id));
-                            toast.success('Crop deleted successfully');
-                          } else {
-                            const errorData = await res.json();
-                            toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
-                          }
-                        } catch (error) {
-                          toast.error('Failed to delete crop');
-                        }
+
+    if (res.ok) {
+      setCrops((prev) => prev.filter((c) => c._id !== cropId));
+      toast.success('Crop deleted successfully');
+    } else {
+      const errorData = await res.json();
+      toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
+    }
+  } catch (error) {
+    toast.error('Failed to delete crop');
+  }
                       }}
                       className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1 rounded text-sm"
                     >
