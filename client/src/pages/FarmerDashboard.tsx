@@ -231,7 +231,7 @@ const FarmerDashboard: React.FC = () => {
           fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch('https://crop-cart-backend.onrender.com/api/farmer/farmer-orders', {
+          fetch('https://crop-cart-backend.onrender.com/api/farmer/orders', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
