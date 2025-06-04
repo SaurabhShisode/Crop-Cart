@@ -442,7 +442,7 @@ const FarmerDashboard: React.FC = () => {
                 {crops.map((crop) => (
                   <div
                     key={crop._id}
-                    className="snap-start bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-md transition flex flex-col w-56 flex-shrink-0"
+                    className="mt-6 snap-start bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-md transition flex flex-col w-56 flex-shrink-0"
                     style={{ maxWidth: '220px' }}
                   >
                     {crop.image && (
