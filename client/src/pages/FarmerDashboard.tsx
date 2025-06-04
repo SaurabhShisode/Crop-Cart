@@ -236,7 +236,7 @@ const FarmerDashboard: React.FC = () => {
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch('https://crop-cart-backend.onrender.com/api/farmer/stats', {
+          fetch('https://crop-cart-backend.onrender.com/api/farmer/analytics', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -280,18 +280,18 @@ const FarmerDashboard: React.FC = () => {
     fetchData();
   }, []);
   const ordersChartData = {
-    labels: stats.map((item) => item.date),
+    labels: stats?.map((item) => item.date),
     datasets: [
       {
         label: 'Orders',
-        data: stats.map((item) => item.orders),
+        data: stats?.map((item) => item.orders),
         backgroundColor: '#34d399',
       },
     ],
   };
 
   const earningsChartData = {
-    labels: stats.map((item) => item.date),
+    labels: stats?.map((item) => item.date),
     datasets: [
       {
         label: 'Earnings (₹)',
