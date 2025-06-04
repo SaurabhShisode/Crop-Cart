@@ -253,11 +253,12 @@ const FarmerDashboard: React.FC = () => {
           // Flatten orders with items into your simple Order interface
           const flatOrders: Order[] = ordersData.flatMap((order: any) =>
             order.items.map((item: any) => ({
-              _id: order._id + '-' + item.crop._id, // unique key per order item
-              cropName: item.crop?.name || 'Unknown Crop',
+              _id: order._id + '-' + item.cropId,
+              cropName: item.name || 'Unknown Crop',
               quantity: item.quantity,
-              buyerName: order.buyer?.name || 'Unknown Buyer',
+              buyerName: order.userId?.name || 'Unknown Buyer', // if you populated userId in backend
               deliveryDate: new Date(order.createdAt).toLocaleDateString(),
+              toLocaleDateString(),
             }))
           );
           setOrders(flatOrders);
