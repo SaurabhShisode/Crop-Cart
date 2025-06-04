@@ -215,7 +215,7 @@ const FarmerDashboard: React.FC = () => {
   const [stats, setStats] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(false);
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -348,92 +348,92 @@ const FarmerDashboard: React.FC = () => {
 
               {/* Add Crop Form */}
               <form
-  onSubmit={async (e) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.currentTarget;
+                  const formData = new FormData(form);
 
-    const imageFile = formData.get('image') as File | null;
+                  const imageFile = formData.get('image') as File | null;
 
-    let imageUrl = '';
-    try {
-      if (imageFile && imageFile.name) {
-        imageUrl = await uploadImageToCloudinary(imageFile);
-      }
-    } catch (error) {
-      toast.error('Image upload failed');
-      return;
-    }
+                  let imageUrl = '';
+                  try {
+                    if (imageFile && imageFile.name) {
+                      imageUrl = await uploadImageToCloudinary(imageFile);
+                    }
+                  } catch (error) {
+                    toast.error('Image upload failed');
+                    return;
+                  }
 
-    const newCrop = {
-      name: formData.get('name'),
-      price: Number(formData.get('price')),
-      quantity: formData.get('quantity'),
-      type: formData.get('type'),
-      availability: formData.get('availability'),
-      regionPincodes: (formData.get('regionPincodes') as string)
-        .split(',')
-        .map((p) => p.trim()),
-      image: imageUrl,
-    };
+                  const newCrop = {
+                    name: formData.get('name'),
+                    price: Number(formData.get('price')),
+                    quantity: formData.get('quantity'),
+                    type: formData.get('type'),
+                    availability: formData.get('availability'),
+                    regionPincodes: (formData.get('regionPincodes') as string)
+                      .split(',')
+                      .map((p) => p.trim()),
+                    image: imageUrl,
+                  };
 
-    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+                  const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-    const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(newCrop),
-    });
+                  const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(newCrop),
+                  });
 
-    if (res.ok) {
-      const addedCrop = await res.json();
-      setCrops((prev) => [...prev, addedCrop]);
-      form.reset();
-      toast.success('Crop added successfully');
-    } else {
-      toast.error('Failed to add crop');
-    }
-  }}
-  className="bg-white p-8 md:p-10 rounded-2xl shadow-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300"
->
-  <h2 className="col-span-full text-2xl font-semibold text-green-700">Add New Crop</h2>
+                  if (res.ok) {
+                    const addedCrop = await res.json();
+                    setCrops((prev) => [...prev, addedCrop]);
+                    form.reset();
+                    toast.success('Crop added successfully');
+                  } else {
+                    toast.error('Failed to add crop');
+                  }
+                }}
+                className="bg-white p-8 md:p-10 rounded-2xl shadow-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300"
+              >
+                <h2 className="col-span-full text-2xl font-semibold text-green-700">Add New Crop</h2>
 
-  <input name="name" required placeholder="Crop Name" className="input-field" />
-  <input name="price" type="number" required placeholder="Price (₹)" className="input-field" />
-  <input name="quantity" required placeholder="Quantity (e.g., 20 kg)" className="input-field" />
+                <input name="name" required placeholder="Crop Name" className="input-field" />
+                <input name="price" type="number" required placeholder="Price (₹)" className="input-field" />
+                <input name="quantity" required placeholder="Quantity (e.g., 20 kg)" className="input-field" />
 
-  <select name="type" required className="input-field bg-white text-gray-700">
-    <option value="" disabled>Select Crop Type</option>
-    <option value="Crop">Crop</option>
-    <option value="Dairy">Dairy</option>
-    <option value="Grocery">Grocery</option>
-  </select>
+                <select name="type" required className="input-field bg-white text-gray-700">
+                  <option value="" disabled>Select Crop Type</option>
+                  <option value="Crop">Crop</option>
+                  <option value="Dairy">Dairy</option>
+                  <option value="Grocery">Grocery</option>
+                </select>
 
-  <input name="availability" required placeholder="Availability" className="input-field" />
-  <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="input-field" />
+                <input name="availability" required placeholder="Availability" className="input-field" />
+                <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="input-field" />
 
-  <div className="flex flex-col col-span-full sm:col-span-1">
-    <label className="text-gray-600 font-medium mb-1">Upload Image</label>
-    <input
-      name="image"
-      type="file"
-      accept="image/*"
-      className="rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-    />
-  </div>
+                <div className="flex flex-col col-span-full sm:col-span-1">
+                  <label className="text-gray-600 font-medium mb-1">Upload Image</label>
+                  <input
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    className="rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                  />
+                </div>
 
-  <div className="col-span-full sm:col-span-1 flex items-end">
-    <button
-      type="submit"
-      className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 ease-in-out"
-    >
-      Add Crop
-    </button>
-  </div>
-</form>
+                <div className="col-span-full sm:col-span-1 flex items-end">
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 ease-in-out"
+                  >
+                    Add Crop
+                  </button>
+                </div>
+              </form>
 
 
 
