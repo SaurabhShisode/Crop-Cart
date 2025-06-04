@@ -114,7 +114,9 @@ const Navbar: React.FC = () => {
 
   const onLogout = () => {
     localStorage.removeItem('cropcartUser');
-    toast.success('Logged out successfully');
+    toast.success('Logged out successfully', {
+          style: { background: '#14532d', color: 'white' },
+        });
     navigate('/');
   };
 
@@ -266,7 +268,9 @@ const FarmerDashboard: React.FC = () => {
           setStats(statsData);
         }
       } catch (error) {
-        toast.error('Failed to fetch data');
+        toast.error('Failed to fetch data', {
+          style: { background: '#14532d', color: 'white' },
+        });
       } finally {
         setLoading(false);
       }
@@ -365,7 +369,9 @@ const FarmerDashboard: React.FC = () => {
                       imageUrl = await uploadImageToCloudinary(imageFile);
                     }
                   } catch (error) {
-                    toast.error('Image upload failed');
+                    toast.error('Image upload failed', {
+          style: { background: '#14532d', color: 'white' },
+        });
                     return;
                   }
 
@@ -396,9 +402,13 @@ const FarmerDashboard: React.FC = () => {
                     const addedCrop = await res.json();
                     setCrops((prev) => [...prev, addedCrop]);
                     form.reset();
-                    toast.success('Crop added successfully');
+                    toast.success('Crop added successfully', {
+          style: { background: '#14532d', color: 'white' },
+        });
                   } else {
-                    toast.error('Failed to add crop');
+                    toast.error('Failed to add crop', {
+          style: { background: '#14532d', color: 'white' },
+        });
                   }
                 }}
                 className="bg-white p-8 md:p-10 rounded-2xl shadow-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300"
@@ -550,13 +560,19 @@ const FarmerDashboard: React.FC = () => {
 
             if (res.ok) {
               setCrops((prev) => prev.filter((c) => c._id !== cropToDelete._id));
-              toast.success('Crop deleted successfully');
+              toast.success('Crop deleted successfully', {
+          style: { background: '#14532d', color: 'white' },
+        });
             } else {
               const errorData = await res.json();
-              toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
+              toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`, {
+          style: { background: '#14532d', color: 'white' },
+        });
             }
           } catch (error) {
-            toast.error('Failed to delete crop');
+            toast.error('Failed to delete crop', {
+          style: { background: '#14532d', color: 'white' },
+        });
           } finally {
             setDeleteModalOpen(false);
             setCropToDelete(null);

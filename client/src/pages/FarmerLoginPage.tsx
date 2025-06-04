@@ -26,7 +26,9 @@ const FarmerLoginPage: React.FC = () => {
 
       if (res.ok) {
         if (data.user.role !== 'farmer') {
-          toast.error('You are not registered as a farmer.');
+          toast.error('You are not registered as a farmer.', {
+          style: { background: '#14532d', color: 'white' },
+        });
           setLoading(false);
           return;
         }
