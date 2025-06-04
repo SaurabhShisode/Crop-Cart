@@ -466,8 +466,8 @@ const FarmerDashboard: React.FC = () => {
                     </p>
                     <button
                       onClick={() => {
-                        setCropToDelete(crop); 
-                        setDeleteModalOpen(true); 
+                        setCropToDelete(crop);
+                        setDeleteModalOpen(true);
                       }}
                       className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1 rounded text-sm"
                     >
@@ -533,37 +533,37 @@ const FarmerDashboard: React.FC = () => {
       </div>
       <Footer />
       <ConfirmDeleteModal
-  isOpen={isDeleteModalOpen}
-  onClose={() => setDeleteModalOpen(false)}
-  onConfirm={async () => {
-    if (!cropToDelete) return;
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={async () => {
+          if (!cropToDelete) return;
 
-    try {
-      const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+          try {
+            const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-      const res = await fetch(`https://crop-cart-backend.onrender.com/api/farmer/crops/${cropToDelete._id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+            const res = await fetch(`https://crop-cart-backend.onrender.com/api/farmer/crops/${cropToDelete._id}`, {
+              method: 'DELETE',
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
 
-      if (res.ok) {
-        setCrops((prev) => prev.filter((c) => c._id !== cropToDelete._id));
-        toast.success('Crop deleted successfully');
-      } else {
-        const errorData = await res.json();
-        toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
-      }
-    } catch (error) {
-      toast.error('Failed to delete crop');
-    } finally {
-      setDeleteModalOpen(false);
-      setCropToDelete(null);
-    }
-  }}
-  cropName={cropToDelete?.name || ''}
-/>
+            if (res.ok) {
+              setCrops((prev) => prev.filter((c) => c._id !== cropToDelete._id));
+              toast.success('Crop deleted successfully');
+            } else {
+              const errorData = await res.json();
+              toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
+            }
+          } catch (error) {
+            toast.error('Failed to delete crop');
+          } finally {
+            setDeleteModalOpen(false);
+            setCropToDelete(null);
+          }
+        }}
+        cropName={cropToDelete?.name || ''}
+      />
 
     </>
   );
