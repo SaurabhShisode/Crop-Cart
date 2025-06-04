@@ -28,3 +28,9 @@
 .animate-scroll-slow {
   animation: scroll-slow 40s linear infinite;
 }
+
+.input-field {
+  @apply w-full p-3 rounded-lg border border-gray-300 shadow-sm 
+    focus:outline-none focus:ring-2 focus:ring-green-500 
+    placeholder-gray-400 transition bg-white;
+}
