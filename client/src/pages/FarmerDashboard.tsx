@@ -15,7 +15,7 @@ import { User } from 'lucide-react';
 import logo from '../assets/logo.png';
 import Footer from '../components/Footer';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import ConfirmDeleteModal from '../components/ConfirmDeleteModal'; 
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 
 const ScrollableSection: React.FC<{
   children: React.ReactNode;
@@ -215,8 +215,9 @@ const FarmerDashboard: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-const [cropToDelete, setCropToDelete] = useState<any>(null); 
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [cropToDelete, setCropToDelete] = useState<Crop | null>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -464,35 +465,15 @@ const [cropToDelete, setCropToDelete] = useState<any>(null);
                       Regions: {crop.regionPincodes?.join(', ')}
                     </p>
                     <button
-                      onClick={async () => {
-                        if (!confirm(`Delete crop "${crop.name}"?`)) return;
-
-                         try {
-    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
-
-    const res = await fetch(`https://crop-cart-backend.onrender.com/api/farmer/crops/${crop._id}`, {
-  method: 'DELETE',
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
-
-
-    if (res.ok) {
-      setCrops((prev) => prev.filter((c) => c._id !== cropId));
-      toast.success('Crop deleted successfully');
-    } else {
-      const errorData = await res.json();
-      toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
-    }
-  } catch (error) {
-    toast.error('Failed to delete crop');
-  }
+                      onClick={() => {
+                        setCropToDelete(crop); 
+                        setDeleteModalOpen(true); 
                       }}
                       className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1 rounded text-sm"
                     >
                       Remove
                     </button>
+
                   </div>
                 ))}
               </ScrollableSection>
@@ -551,6 +532,39 @@ const [cropToDelete, setCropToDelete] = useState<any>(null);
         )}
       </div>
       <Footer />
+      <ConfirmDeleteModal
+  isOpen={isDeleteModalOpen}
+  onClose={() => setDeleteModalOpen(false)}
+  onConfirm={async () => {
+    if (!cropToDelete) return;
+
+    try {
+      const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+
+      const res = await fetch(`https://crop-cart-backend.onrender.com/api/farmer/crops/${cropToDelete._id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        setCrops((prev) => prev.filter((c) => c._id !== cropToDelete._id));
+        toast.success('Crop deleted successfully');
+      } else {
+        const errorData = await res.json();
+        toast.error(`Failed to delete crop: ${errorData.message || res.statusText}`);
+      }
+    } catch (error) {
+      toast.error('Failed to delete crop');
+    } finally {
+      setDeleteModalOpen(false);
+      setCropToDelete(null);
+    }
+  }}
+  cropName={cropToDelete?.name || ''}
+/>
+
     </>
   );
 };
