@@ -715,7 +715,9 @@ const FarmerDashboard: React.FC = () => {
             {/* Stats Section */}
             <section>
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
-              <div className="flex justify-end mb-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex justify-end mb-4">
                 <button
                   onClick={() => setViewMode('monthly')}
                   className={`px-4 py-2 mr-2 rounded ${viewMode === 'monthly' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
@@ -730,8 +732,6 @@ const FarmerDashboard: React.FC = () => {
                 </button>
               </div>
 
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
                     <h3 className="text-xl font-bold text-green-900 mb-2">
