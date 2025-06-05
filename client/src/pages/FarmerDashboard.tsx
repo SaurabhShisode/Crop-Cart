@@ -738,7 +738,7 @@ const FarmerDashboard: React.FC = () => {
                       ₹{(viewMode === 'weekly' ? currentWeekEarnings : currentMonthEarnings).toLocaleString()}
                     </p>
                   </div>
-                  <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
+                  <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
                   <Bar data={earningsChartData} options={chartOptions} />
                 </div>
 
@@ -751,7 +751,7 @@ const FarmerDashboard: React.FC = () => {
                       {viewMode === 'weekly' ? currentWeekOrders : currentMonthOrders}
                     </p>
                   </div>
-                  <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
+                  <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
                   <Bar data={ordersChartData} options={chartOptions} />
                 </div>
               </div>
