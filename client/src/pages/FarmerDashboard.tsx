@@ -680,7 +680,7 @@ const FarmerDashboard: React.FC = () => {
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
+                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
                     <h3 className="text-xl font-bold text-green-900 mb-2">Earnings This Month</h3>
                     <p className="text-4xl font-extrabold text-green-800">
                       ₹{currentMonthEarnings.toLocaleString()}
@@ -690,7 +690,7 @@ const FarmerDashboard: React.FC = () => {
                   <Bar data={ordersChartData} options={chartOptions} />
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
+                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
                   <h3 className="text-xl font-bold text-green-900 mb-2">Orders This Month</h3>
                   <p className="text-4xl font-extrabold text-green-800">{currentMonthOrders}</p>
                 </div>
