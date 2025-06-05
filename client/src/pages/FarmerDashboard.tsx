@@ -122,7 +122,7 @@ interface StatsData {
 interface MostSoldCrop {
   cropName: string;
   totalSold: number;
-  image: string;
+  
 }
 
 
@@ -545,25 +545,16 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               {/* Most Sold Crop */}
-              <div
-                className="col-span-3 row-span-6 col-start-4 row-start-1 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md"
-                style={{
-                  backgroundImage: mostSoldCrop ? `url(${mostSoldCrop.image})` : undefined,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
-                <h3 className="text-xl font-semibold text-white bg-green-900 bg-opacity-60 rounded p-1 inline-block">
-                  Most Sold Crop
-                </h3>
-                <div className="mt-4 text-center text-white bg-green-900 bg-opacity-60 rounded p-3">
+              <div className="col-span-3 row-span-6 col-start-4 row-start-1 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
+                <h3 className="text-xl font-semibold">Most Sold Crop</h3>
+                <div className="mt-4 text-center">
                   {mostSoldCrop ? (
                     <>
                       <p className="text-2xl font-bold">{mostSoldCrop.cropName}</p>
-                      <p className="text-sm">Sold {mostSoldCrop.totalSold} times</p>
+                      <p className="text-sm text-green-100">Sold {mostSoldCrop.totalSold} times</p>
                     </>
                   ) : (
-                    <p>No crop sales data yet.</p>
+                    <p className="text-green-100">No crop sales data yet.</p>
                   )}
                 </div>
               </div>
