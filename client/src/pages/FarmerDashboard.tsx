@@ -260,147 +260,148 @@ const FarmerDashboard: React.FC = () => {
   };
 
 
- useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-      const [cropsRes, ordersRes, statsRes] = await Promise.all([
-        fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch('https://crop-cart-backend.onrender.com/api/farmer/orders', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch('https://crop-cart-backend.onrender.com/api/farmer/analytics', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ]);
+        const [cropsRes, ordersRes, statsRes] = await Promise.all([
+          fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch('https://crop-cart-backend.onrender.com/api/farmer/orders', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch('https://crop-cart-backend.onrender.com/api/farmer/analytics', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-    
-      if (cropsRes.ok) {
-        const cropsData = await cropsRes.json();
-        setCrops(cropsData);
-      }
 
-     
-      if (ordersRes.ok) {
-        const ordersData = await ordersRes.json();
+        if (cropsRes.ok) {
+          const cropsData = await cropsRes.json();
+          setCrops(cropsData);
+        }
 
-        const formattedOrders: Order[] = ordersData.map((order: any) => {
-          const items = order.items.map((item: any) => ({
-            _id: item._id,
-            cropId: item.cropId,
-            crop: { name: item.name },
-            price: item.price,
-            quantity: item.quantity,
-            quantityInCart: Number(item.quantityInCart),
+
+        if (ordersRes.ok) {
+          const ordersData = await ordersRes.json();
+
+          const formattedOrders: Order[] = ordersData.map((order: any) => {
+            const items = order.items.map((item: any) => ({
+              _id: item._id,
+              cropId: item.cropId,
+              crop: { name: item.name },
+              price: item.price,
+              quantity: item.quantity,
+              quantityInCart: Number(item.quantityInCart),
+            }));
+
+            const basePrice = items.reduce(
+              (total: number, item: any) => total + item.price * item.quantityInCart,
+              0
+            );
+
+            return {
+              _id: order._id,
+              buyer: { name: order.name, email: order.email },
+              userId: {
+                _id: order.userId?._id || '',
+                name: order.userId?.name || '',
+                email: order.userId?.email || '',
+              },
+              farmerId: order.farmerId,
+              address: order.address,
+              phone: order.phone,
+              email: order.email,
+              createdAt: order.createdAt,
+              updatedAt: order.updatedAt,
+              items,
+              tax: order.tax,
+              deliveryFee: order.deliveryFee,
+              total: order.total,
+              basePrice,
+            };
+          });
+
+          setOrders(formattedOrders);
+
+          const cropSalesMap = new Map<string, number>();
+          formattedOrders.forEach(order => {
+            order.items.forEach(item => {
+              const cropName = item.crop.name;
+              const quantity = item.quantityInCart;
+              cropSalesMap.set(cropName, (cropSalesMap.get(cropName) || 0) + quantity);
+            });
+          });
+
+          let topCrop: { name: string; count: number } | null = null;
+          cropSalesMap.forEach((count, name) => {
+            if (!topCrop || count > topCrop.count) {
+              topCrop = { name, count };
+            }
+          });
+
+          setMostSoldCrop(topCrop);
+        }
+
+
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+
+          setCurrentMonthEarnings(statsData.currentMonthEarnings);
+          setCurrentMonthOrders(statsData.currentMonthOrders);
+
+
+          const totalWeeklyEarnings = statsData.weeklyEarnings.reduce((sum: number, val: number) => sum + val, 0);
+          const totalWeeklyOrders = statsData.weeklyOrders.reduce((sum: number, val: number) => sum + val, 0);
+
+          setCurrentWeekEarnings(totalWeeklyEarnings);
+          setCurrentWeekOrders(totalWeeklyOrders);
+
+
+          const earningsPercentChange =
+            statsData.lastMonthEarnings === 0
+              ? 0
+              : ((statsData.currentMonthEarnings - statsData.lastMonthEarnings) / statsData.lastMonthEarnings) * 100;
+
+          const ordersPercentChange =
+            statsData.lastMonthOrders === 0
+              ? 0
+              : ((statsData.currentMonthOrders - statsData.lastMonthOrders) / statsData.lastMonthOrders) * 100;
+
+
+          setEarningsChange(parseFloat(earningsPercentChange.toFixed(2)));
+          setOrdersChange(parseFloat(ordersPercentChange.toFixed(2)));
+
+
+          const labels = viewMode === 'weekly'
+            ? statsData.weeklyLabels
+            : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+          const statsFormatted = labels.map((label: string, idx: number) => ({
+            date: label,
+            earnings: viewMode === 'weekly' ? statsData.weeklyEarnings[idx] : statsData.monthlyEarnings[idx],
+            orders: viewMode === 'weekly' ? statsData.weeklyOrders[idx] : statsData.monthlyOrders[idx],
           }));
 
-          const basePrice = items.reduce(
-            (total: number, item: any) => total + item.price * item.quantityInCart,
-            0
-          );
-
-          return {
-            _id: order._id,
-            buyer: { name: order.name, email: order.email },
-            userId: {
-              _id: order.userId?._id || '',
-              name: order.userId?.name || '',
-              email: order.userId?.email || '',
-            },
-            farmerId: order.farmerId,
-            address: order.address,
-            phone: order.phone,
-            email: order.email,
-            createdAt: order.createdAt,
-            updatedAt: order.updatedAt,
-            items,
-            tax: order.tax,
-            deliveryFee: order.deliveryFee,
-            total: order.total,
-            basePrice,
-          };
+          setStats(statsFormatted);
+          setWeeklyLabels(statsData.weeklyLabels || []);
+          setWeeklyEarnings(statsData.weeklyEarnings || []);
+          setWeeklyOrders(statsData.weeklyOrders || []);
+        }
+      } catch (error) {
+        toast.error('Failed to fetch data', {
+          style: { background: '#14532d', color: 'white' },
         });
-
-        setOrders(formattedOrders);
-
-        const cropSalesMap = new Map<string, number>();
-        formattedOrders.forEach(order => {
-          order.items.forEach(item => {
-            const cropName = item.crop.name;
-            const quantity = item.quantityInCart;
-            cropSalesMap.set(cropName, (cropSalesMap.get(cropName) || 0) + quantity);
-          });
-        });
-
-        let topCrop: { name: string; count: number } | null = null;
-        cropSalesMap.forEach((count, name) => {
-          if (!topCrop || count > topCrop.count) {
-            topCrop = { name, count };
-          }
-        });
-
-        setMostSoldCrop(topCrop);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-
-        setCurrentMonthEarnings(statsData.currentMonthEarnings);
-        setCurrentMonthOrders(statsData.currentMonthOrders);
-
-        
-        const totalWeeklyEarnings = statsData.weeklyEarnings.reduce((sum: number, val: number) => sum + val, 0);
-        const totalWeeklyOrders = statsData.weeklyOrders.reduce((sum: number, val: number) => sum + val, 0);
-
-        setCurrentWeekEarnings(totalWeeklyEarnings);
-        setCurrentWeekOrders(totalWeeklyOrders);
-
-        
-        const earningsPercentChange =
-          statsData.currentMonthEarnings === 0
-            ? 0
-            : ((totalWeeklyEarnings - statsData.currentMonthEarnings) / statsData.currentMonthEarnings) * 100;
-
-        const ordersPercentChange =
-          statsData.currentMonthOrders === 0
-            ? 0
-            : ((totalWeeklyOrders - statsData.currentMonthOrders) / statsData.currentMonthOrders) * 100;
-
-        setEarningsChange(parseFloat(earningsPercentChange.toFixed(2)));
-        setOrdersChange(parseFloat(ordersPercentChange.toFixed(2)));
-
-      
-        const labels = viewMode === 'weekly'
-          ? statsData.weeklyLabels
-          : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-        const statsFormatted = labels.map((label: string, idx: number) => ({
-          date: label,
-          earnings: viewMode === 'weekly' ? statsData.weeklyEarnings[idx] : statsData.monthlyEarnings[idx],
-          orders: viewMode === 'weekly' ? statsData.weeklyOrders[idx] : statsData.monthlyOrders[idx],
-        }));
-
-        setStats(statsFormatted);
-        setWeeklyLabels(statsData.weeklyLabels || []);
-        setWeeklyEarnings(statsData.weeklyEarnings || []);
-        setWeeklyOrders(statsData.weeklyOrders || []);
-      }
-    } catch (error) {
-      toast.error('Failed to fetch data', {
-        style: { background: '#14532d', color: 'white' },
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, [viewMode]); 
+    fetchData();
+  }, [viewMode]);
 
 
   const chartLabels = viewMode === 'monthly'
@@ -502,14 +503,10 @@ const FarmerDashboard: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-6 grid-rows-6 gap-4 text-white">
-              {/* This Month/Week's Earnings */}
+
               <div className="col-span-3 row-span-3 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">
-                  {viewMode === 'weekly' ? "This Week's Earnings" : "This Month's Earnings"}
-                </h3>
-                <p className="text-3xl font-bold mt-2">
-                  ₹{(viewMode === 'weekly' ? currentWeekEarnings : currentMonthEarnings).toLocaleString()}
-                </p>
+                <h3 className="text-xl font-semibold">This Month's Earnings</h3>
+                <p className="text-3xl font-bold mt-2">₹{currentMonthEarnings.toLocaleString()}</p>
                 <p
                   className={`text-sm mt-1 ${earningsChange > 0
                     ? 'text-green-100'
@@ -520,18 +517,16 @@ const FarmerDashboard: React.FC = () => {
                 >
                   {earningsChange > 0 && '📈 '}
                   {earningsChange < 0 && '📉 '}
-                  {earningsChange === 0 ? '⏸ No change' : `${earningsChange > 0 ? '+' : ''}${earningsChange}% from last ${viewMode === 'weekly' ? 'week' : 'month'}`}
+                  {earningsChange === 0
+                    ? '⏸ No change'
+                    : `${earningsChange > 0 ? '+' : ''}${earningsChange}% from last month`}
                 </p>
               </div>
 
-              {/* This Month/Week's Orders */}
+              {/* This Month's Orders */}
               <div className="col-span-3 row-span-3 col-start-1 row-start-4 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">
-                  {viewMode === 'weekly' ? "This Week's Orders" : "This Month's Orders"}
-                </h3>
-                <p className="text-3xl font-bold mt-2">
-                  {viewMode === 'weekly' ? currentWeekOrders : currentMonthOrders}
-                </p>
+                <h3 className="text-xl font-semibold">This Month's Orders</h3>
+                <p className="text-3xl font-bold mt-2">{currentMonthOrders}</p>
                 <p
                   className={`text-sm mt-1 ${ordersChange > 0
                     ? 'text-blue-100'
@@ -542,7 +537,9 @@ const FarmerDashboard: React.FC = () => {
                 >
                   {ordersChange > 0 && '📈 '}
                   {ordersChange < 0 && '📉 '}
-                  {ordersChange === 0 ? '⏸ No change' : `${ordersChange > 0 ? '+' : ''}${ordersChange}% from last ${viewMode === 'weekly' ? 'week' : 'month'}`}
+                  {ordersChange === 0
+                    ? '⏸ No change'
+                    : `${ordersChange > 0 ? '+' : ''}${ordersChange}% from last month`}
                 </p>
               </div>
 
@@ -566,8 +563,8 @@ const FarmerDashboard: React.FC = () => {
                   </div>
                 )}
               </div>
-
             </div>
+
 
 
 
