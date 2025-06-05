@@ -594,8 +594,7 @@ const FarmerDashboard: React.FC = () => {
                         </p>
 
                         {/* Toggleable Expanded Details */}
-                        {isExpanded && (
-                          <div
+                        <div
   className={`transition-all duration-500 ease-in-out overflow-hidden ${
     isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
   }`}
@@ -644,8 +643,6 @@ const FarmerDashboard: React.FC = () => {
   </div>
 </div>
 
-
-                        )}
                       </div>
                     );
                   })}
