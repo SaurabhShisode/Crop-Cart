@@ -498,7 +498,7 @@ const FarmerDashboard: React.FC = () => {
           <div className="text-center text-xl text-green-700">Loading data...</div>
         ) : (
           <>
-            <div className="grid grid-cols-8 grid-rows-8 gap-4 text-white">
+            <div className="grid grid-cols-6 grid-rows-8 gap-4 text-white">
               {/* This Month's Earnings */}
               <div className="col-span-3 row-span-4 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
                 <div>
