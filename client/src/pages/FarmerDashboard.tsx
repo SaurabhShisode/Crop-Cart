@@ -388,30 +388,30 @@ const FarmerDashboard: React.FC = () => {
   const ordersChartData = {
     labels: chartLabels,
     datasets: [
-  {
-    label: 'Orders',
-    data: ordersData,
-    borderColor: '#34d399',
-    backgroundColor: '#34d399',
-    fill: false,
-    tension: 0.4,
-  },
-],
+      {
+        label: 'Orders',
+        data: ordersData,
+        borderColor: '#34d399',
+        backgroundColor: '#34d399',
+        fill: false,
+        tension: 0.4,
+      },
+    ],
 
   };
 
   const earningsChartData = {
     labels: chartLabels,
     datasets: [
-  {
-    label: 'Earnings (₹)',
-    data: earningsData,
-    borderColor: '#059669',
-    backgroundColor: '#059669',
-    fill: false,
-    tension: 0.4,
-  },
-],
+      {
+        label: 'Earnings (₹)',
+        data: earningsData,
+        borderColor: '#059669',
+        backgroundColor: '#059669',
+        fill: false,
+        tension: 0.4,
+      },
+    ],
 
   };
 
@@ -716,8 +716,8 @@ const FarmerDashboard: React.FC = () => {
             <section>
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex justify-end mb-4">
+
+              <div className="flex justify-start mb-4">
                 <button
                   onClick={() => setViewMode('monthly')}
                   className={`px-4 py-2 mr-2 rounded ${viewMode === 'monthly' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
@@ -731,7 +731,7 @@ const FarmerDashboard: React.FC = () => {
                   Weekly
                 </button>
               </div>
-
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
                     <h3 className="text-xl font-bold text-green-900 mb-2">
