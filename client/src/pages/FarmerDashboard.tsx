@@ -354,11 +354,9 @@ const FarmerDashboard: React.FC = () => {
           setCurrentMonthOrders(statsData.currentMonthOrders);
 
 
-          const totalWeeklyEarnings = statsData.weeklyEarnings.reduce((sum: number, val: number) => sum + val, 0);
-          const totalWeeklyOrders = statsData.weeklyOrders.reduce((sum: number, val: number) => sum + val, 0);
+          setCurrentWeekEarnings(statsData.totalWeeklyEarnings);
+          setCurrentWeekOrders(statsData.totalWeeklyOrders);
 
-          setCurrentWeekEarnings(totalWeeklyEarnings);
-          setCurrentWeekOrders(totalWeeklyOrders);
 
 
           const earningsPercentChange =
