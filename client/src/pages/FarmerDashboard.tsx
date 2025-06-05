@@ -244,6 +244,8 @@ const FarmerDashboard: React.FC = () => {
   const [weeklyEarnings, setWeeklyEarnings] = useState<number[]>([]);
   const [weeklyOrders, setWeeklyOrders] = useState<number[]>([]);
   const [weeklyLabels, setWeeklyLabels] = useState<string[]>([]);
+  const [currentWeekEarnings, setCurrentWeekEarnings] = useState(0);
+  const [currentWeekOrders, setCurrentWeekOrders] = useState(0);
   const [viewMode, setViewMode] = useState<'monthly' | 'weekly'>('monthly');
 
   const [loading, setLoading] = useState(false);
@@ -337,15 +339,21 @@ const FarmerDashboard: React.FC = () => {
           setCurrentMonthEarnings(statsData.currentMonthEarnings);
           setCurrentMonthOrders(statsData.currentMonthOrders);
 
-          const months = [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-          ];
 
-          const statsFormatted = months.map((month, idx) => ({
-            date: month,
-            earnings: statsData.monthlyEarnings[idx] || 0,
-            orders: statsData.monthlyOrders[idx] || 0,
+          const totalWeeklyEarnings = statsData.weeklyEarnings.reduce((sum: number, val: number) => sum + val, 0);
+          const totalWeeklyOrders = statsData.weeklyOrders.reduce((sum: number, val: number) => sum + val, 0);
+
+          setCurrentWeekEarnings(totalWeeklyEarnings);
+          setCurrentWeekOrders(totalWeeklyOrders);
+
+          const labels = viewMode === 'weekly'
+            ? statsData.weeklyLabels
+            : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+          const statsFormatted = labels.map((label: string, idx: number) => ({
+            date: label,
+            earnings: viewMode === 'weekly' ? statsData.weeklyEarnings[idx] : statsData.monthlyEarnings[idx],
+            orders: viewMode === 'weekly' ? statsData.weeklyOrders[idx] : statsData.monthlyOrders[idx],
           }));
 
           setStats(statsFormatted);
@@ -704,37 +712,50 @@ const FarmerDashboard: React.FC = () => {
             {/* Stats Section */}
             <section>
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
-              <div className="mb-4">
-                <select
-                  value={viewMode}
-                  onChange={(e) => setViewMode(e.target.value as 'monthly' | 'weekly')}
-                  className="p-2 border border-gray-300 rounded-md"
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={() => setViewMode('monthly')}
+                  className={`px-4 py-2 mr-2 rounded ${viewMode === 'monthly' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
                 >
-                  <option value="monthly">Monthly</option>
-                  <option value="weekly">Weekly</option>
-                </select>
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setViewMode('weekly')}
+                  className={`px-4 py-2 rounded ${viewMode === 'weekly' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
+                >
+                  Weekly
+                </button>
               </div>
+
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
-                    <h3 className="text-xl font-bold text-green-900 mb-2">Earnings This Month</h3>
+                    <h3 className="text-xl font-bold text-green-900 mb-2">
+                      Earnings This {viewMode === 'weekly' ? 'Week' : 'Month'}
+                    </h3>
                     <p className="text-4xl font-extrabold text-green-800">
-                      ₹{currentMonthEarnings.toLocaleString()}
+                      ₹{(viewMode === 'weekly' ? currentWeekEarnings : currentMonthEarnings).toLocaleString()}
                     </p>
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
                   <Bar data={ordersChartData} options={chartOptions} />
                 </div>
+
                 <div className="bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
-                    <h3 className="text-xl font-bold text-green-900 mb-2">Orders This Month</h3>
-                    <p className="text-4xl font-extrabold text-green-800">{currentMonthOrders}</p>
+                    <h3 className="text-xl font-bold text-green-900 mb-2">
+                      Orders This {viewMode === 'weekly' ? 'Week' : 'Month'}
+                    </h3>
+                    <p className="text-4xl font-extrabold text-green-800">
+                      {viewMode === 'weekly' ? currentWeekOrders : currentMonthOrders}
+                    </p>
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
                   <Bar data={earningsChartData} options={chartOptions} />
                 </div>
               </div>
+
             </section>
 
           </>
