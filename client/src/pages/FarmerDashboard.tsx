@@ -247,11 +247,14 @@ const FarmerDashboard: React.FC = () => {
   const [currentWeekOrders, setCurrentWeekOrders] = useState(0);
   const [viewMode, setViewMode] = useState<'monthly' | 'weekly'>('monthly');
 
+
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [cropToDelete, setCropToDelete] = useState<Crop | null>(null);
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
-
+  const [earningsChange, setEarningsChange] = useState(0);
+  const [ordersChange, setOrdersChange] = useState(0);
+  const [mostSoldCrop, setMostSoldCrop] = useState<{ name: string; count: number; image?: string } | null>(null);
   const toggleOrderDetails = (orderId: string) => {
     setExpandedOrderId((prevId) => (prevId === orderId ? null : orderId));
   };
@@ -328,6 +331,32 @@ const FarmerDashboard: React.FC = () => {
           });
 
           setOrders(formattedOrders);
+
+          const cropSalesMap = new Map<string, { count: number; image?: string }>();
+
+          formattedOrders.forEach(order => {
+            order.items.forEach(item => {
+              const cropName = item.crop.name;
+
+              const quantity = item.quantityInCart;
+
+              if (cropSalesMap.has(cropName)) {
+                cropSalesMap.get(cropName)!.count += quantity;
+              } else {
+                cropSalesMap.set(cropName, { count: quantity });
+              }
+            });
+          });
+          let topCrop: { name: string; count: number; image?: string } | null = null;
+
+          cropSalesMap.forEach((value, key) => {
+            if (!topCrop || value.count > topCrop.count) {
+              topCrop = { name: key, count: value.count, image: value.image };
+            }
+          });
+
+          setMostSoldCrop(topCrop);
+
         }
 
 
@@ -344,6 +373,24 @@ const FarmerDashboard: React.FC = () => {
 
           setCurrentWeekEarnings(totalWeeklyEarnings);
           setCurrentWeekOrders(totalWeeklyOrders);
+
+
+
+          const earningsPercentChange =
+            statsData.currentMonthEarnings === 0
+              ? 0
+              : ((totalWeeklyEarnings - statsData.currentMonthEarnings) /
+                statsData.currentMonthEarnings) * 100;
+
+          const ordersPercentChange =
+            statsData.currentMonthOrders === 0
+              ? 0
+              : ((totalWeeklyOrders - statsData.currentMonthOrders) /
+                statsData.currentMonthOrders) * 100;
+
+          setEarningsChange(parseFloat(earningsPercentChange.toFixed(2)));
+          setOrdersChange(parseFloat(ordersPercentChange.toFixed(2)));
+
 
           const labels = viewMode === 'weekly'
             ? statsData.weeklyLabels
@@ -472,30 +519,73 @@ const FarmerDashboard: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-6 grid-rows-6 gap-4 text-white">
-              {/* This Month's Earnings */}
+              {/* This Month/Week's Earnings */}
               <div className="col-span-3 row-span-3 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">This Month's Earnings</h3>
-                <p className="text-3xl font-bold mt-2">{currentMonthEarnings}</p>
-                <p className="text-sm text-green-100 mt-1">+15% from last month</p>
+                <h3 className="text-xl font-semibold">
+                  {viewMode === 'weekly' ? "This Week's Earnings" : "This Month's Earnings"}
+                </h3>
+                <p className="text-3xl font-bold mt-2">
+                  ₹{(viewMode === 'weekly' ? currentWeekEarnings : currentMonthEarnings).toLocaleString()}
+                </p>
+                <p
+                  className={`text-sm mt-1 ${earningsChange > 0
+                    ? 'text-green-100'
+                    : earningsChange < 0
+                      ? 'text-red-200'
+                      : 'text-white'
+                    }`}
+                >
+                  {earningsChange > 0 && '📈 '}
+                  {earningsChange < 0 && '📉 '}
+                  {earningsChange === 0 ? '⏸ No change' : `${earningsChange > 0 ? '+' : ''}${earningsChange}% from last ${viewMode === 'weekly' ? 'week' : 'month'}`}
+                </p>
               </div>
 
-              {/* This Month's Orders */}
+              {/* This Month/Week's Orders */}
               <div className="col-span-3 row-span-3 col-start-1 row-start-4 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">This Month's Orders</h3>
-                <p className="text-3xl font-bold mt-2">{currentMonthOrders}</p>
-                <p className="text-sm text-blue-100 mt-1">+8% from last month</p>
+                <h3 className="text-xl font-semibold">
+                  {viewMode === 'weekly' ? "This Week's Orders" : "This Month's Orders"}
+                </h3>
+                <p className="text-3xl font-bold mt-2">
+                  {viewMode === 'weekly' ? currentWeekOrders : currentMonthOrders}
+                </p>
+                <p
+                  className={`text-sm mt-1 ${ordersChange > 0
+                    ? 'text-blue-100'
+                    : ordersChange < 0
+                      ? 'text-red-200'
+                      : 'text-white'
+                    }`}
+                >
+                  {ordersChange > 0 && '📈 '}
+                  {ordersChange < 0 && '📉 '}
+                  {ordersChange === 0 ? '⏸ No change' : `${ordersChange > 0 ? '+' : ''}${ordersChange}% from last ${viewMode === 'weekly' ? 'week' : 'month'}`}
+                </p>
               </div>
 
               {/* Most Sold Crop */}
               <div className="col-span-3 row-span-6 col-start-4 row-start-1 bg-yellow-500 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">Most Sold Crop</h3>
-                <div className="mt-4 text-center">
-                  <img src="/images/tomato.png" alt="Tomato" className="w-20 mx-auto mb-2" />
-                  <p className="text-2xl font-bold">Tomato</p>
-                  <p className="text-sm text-yellow-100">Sold 452 times</p>
-                </div>
+                <h3 className="text-xl font-semibold text-white">Most Sold Crop</h3>
+
+                {mostSoldCrop ? (
+                  <div className="mt-4 text-center">
+                    <p className="text-2xl font-bold text-white">{mostSoldCrop.name}</p>
+                    <p className="text-sm text-yellow-100">Sold {mostSoldCrop.count} times</p>
+                  </div>
+                ) : (
+                  <div className="mt-4 text-center text-yellow-100">
+                    <p className="text-lg font-medium">No sales data yet</p>
+                    <img
+                      src="/images/default.png"
+                      alt="No crop"
+                      className="w-20 h-20 mx-auto mt-2 opacity-70"
+                    />
+                  </div>
+                )}
               </div>
+
             </div>
+
 
 
 
