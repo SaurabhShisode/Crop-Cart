@@ -246,6 +246,8 @@ const FarmerDashboard: React.FC = () => {
   const [currentWeekEarnings, setCurrentWeekEarnings] = useState(0);
   const [currentWeekOrders, setCurrentWeekOrders] = useState(0);
   const [viewMode, setViewMode] = useState<'monthly' | 'weekly'>('monthly');
+  const [orderGrowth, setOrderGrowth] = useState(0);
+  const [earningsGrowth, setEarningsGrowth] = useState(0);
 
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -332,6 +334,29 @@ const FarmerDashboard: React.FC = () => {
           setCurrentMonthEarnings(statsData.currentMonthEarnings);
           setCurrentMonthOrders(statsData.currentMonthOrders);
 
+          const currentMonthIndex = new Date().getMonth();
+          const lastMonthIndex = currentMonthIndex - 1;
+
+          const lastMonthOrders =
+            lastMonthIndex >= 0 ? statsData.monthlyOrders[lastMonthIndex] : 0;
+          const lastMonthEarnings =
+            lastMonthIndex >= 0 ? statsData.monthlyEarnings[lastMonthIndex] : 0;
+
+          const orderPercentChange =
+            lastMonthOrders === 0
+              ? statsData.currentMonthOrders > 0 ? 100 : 0
+              : ((statsData.currentMonthOrders - lastMonthOrders) / lastMonthOrders) * 100;
+
+          const earningsPercentChange =
+            lastMonthEarnings === 0
+              ? statsData.currentMonthEarnings > 0 ? 100 : 0
+              : ((statsData.currentMonthEarnings - lastMonthEarnings) / lastMonthEarnings) * 100;
+
+          const orderChangeRounded = Math.round(orderPercentChange * 10) / 10;
+          const earningsChangeRounded = Math.round(earningsPercentChange * 10) / 10;
+
+          setOrderGrowth(orderChangeRounded);
+          setEarningsGrowth(earningsChangeRounded);
 
           const totalWeeklyEarnings = statsData.weeklyEarnings.reduce((sum: number, val: number) => sum + val, 0);
           const totalWeeklyOrders = statsData.weeklyOrders.reduce((sum: number, val: number) => sum + val, 0);
@@ -466,30 +491,63 @@ const FarmerDashboard: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-6 grid-rows-6 gap-4 text-white">
-              {/* This Month's Earnings */}
-              <div className="col-span-3 row-span-3 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">This Month's Earnings</h3>
-                <p className="text-3xl font-bold mt-2">{currentMonthEarnings}</p>
-                <p className="text-sm text-green-100 mt-1">+15% from last month</p>
-              </div>
+  {/* This Month's Earnings */}
+  <div className="col-span-3 row-span-3 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
+    <div>
+      <h3 className="text-xl font-semibold">This Month's Earnings</h3>
+      <p className="text-3xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
+    </div>
+    <p
+      className={`text-sm font-medium mt-1 ${
+        earningsGrowth > 0
+          ? 'text-green-100'
+          : earningsGrowth < 0
+          ? 'text-red-200'
+          : 'text-white'
+      }`}
+    >
+      {earningsGrowth > 0
+        ? `↑ ${Math.abs(earningsGrowth)}% from last month`
+        : earningsGrowth < 0
+        ? `↓ ${Math.abs(earningsGrowth)}% from last month`
+        : `→ 0% change from last month`}
+    </p>
+  </div>
 
-              {/* This Month's Orders */}
-              <div className="col-span-3 row-span-3 col-start-1 row-start-4 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">This Month's Orders</h3>
-                <p className="text-3xl font-bold mt-2">{currentMonthOrders}</p>
-                <p className="text-sm text-blue-100 mt-1">+8% from last month</p>
-              </div>
+  {/* This Month's Orders */}
+  <div className="col-span-3 row-span-3 col-start-1 row-start-4 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
+    <div>
+      <h3 className="text-xl font-semibold">This Month's Orders</h3>
+      <p className="text-3xl font-bold mt-2">{currentMonthOrders}</p>
+    </div>
+    <p
+      className={`text-sm font-medium mt-1 ${
+        orderGrowth > 0
+          ? 'text-blue-100'
+          : orderGrowth < 0
+          ? 'text-red-200'
+          : 'text-white'
+      }`}
+    >
+      {orderGrowth > 0
+        ? `↑ ${Math.abs(orderGrowth)}% from last month`
+        : orderGrowth < 0
+        ? `↓ ${Math.abs(orderGrowth)}% from last month`
+        : `→ 0% change from last month`}
+    </p>
+  </div>
 
-              {/* Most Sold Crop */}
-              <div className="col-span-3 row-span-6 col-start-4 row-start-1 bg-yellow-500 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">Most Sold Crop</h3>
-                <div className="mt-4 text-center">
-                  <img src="/images/tomato.png" alt="Tomato" className="w-20 mx-auto mb-2" />
-                  <p className="text-2xl font-bold">Tomato</p>
-                  <p className="text-sm text-yellow-100">Sold 452 times</p>
-                </div>
-              </div>
-            </div>
+  {/* Most Sold Crop */}
+  <div className="col-span-3 row-span-6 col-start-4 row-start-1 bg-yellow-500 rounded-xl p-4 flex flex-col justify-between shadow-md">
+    <h3 className="text-xl font-semibold">Most Sold Crop</h3>
+    <div className="mt-4 text-center">
+      <img src="/images/tomato.png" alt="Tomato" className="w-20 mx-auto mb-2 drop-shadow-md" />
+      <p className="text-2xl font-bold">Tomato</p>
+      <p className="text-sm text-yellow-100">Sold 452 times</p>
+    </div>
+  </div>
+</div>
+
 
 
 
