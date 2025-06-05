@@ -636,9 +636,9 @@ const FarmerDashboard: React.FC = () => {
 
                 <select name="type" required className="input-field bg-white text-gray-700">
                   <option value="" disabled>Select Crop Type</option>
-                  <option value="Crop">Crop</option>
-                  <option value="Dairy">Dairy</option>
-                  <option value="Grocery">Grocery</option>
+                  <option value="crop">Crop</option>
+                  <option value="dairy">Dairy</option>
+                  <option value="grocery">Grocery</option>
                 </select>
 
                 <input name="availability" required placeholder="Availability" className="input-field" />
