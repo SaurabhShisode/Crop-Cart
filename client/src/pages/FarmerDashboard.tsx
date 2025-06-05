@@ -241,6 +241,11 @@ const FarmerDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [cropToDelete, setCropToDelete] = useState<Crop | null>(null);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+
+  const toggleOrderDetails = (orderId: string) => {
+    setExpandedOrderId((prevId) => (prevId === orderId ? null : orderId));
+  };
 
 
   useEffect(() => {
@@ -550,91 +555,99 @@ const FarmerDashboard: React.FC = () => {
 
             {/* Orders Section */}
             <section className="mb-10">
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
+  <h2 className="text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
 
-              {orders.length === 0 ? (
-                <p>No orders received yet.</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                  {orders.map((order) => {
-                
-                    const basePrice = order.basePrice;
-                    const tax = order.tax;
-                    const delivery = order.deliveryFee;
-                    const total = basePrice + tax + delivery;
+  {orders.length === 0 ? (
+    <p>No orders received yet.</p>
+  ) : (
+    <div className="grid grid-cols-1 gap-6">
+      {orders.map((order) => {
+        const isExpanded = expandedOrderId === order._id;
 
-                    return (
-                      <div
-                        key={order._id}
-                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300"
-                      >
-                        <div className="flex justify-between items-center mb-4">
-                          <div>
-                            <p className="text-sm text-gray-500">Order ID:</p>
-                            <p className="text-lg font-semibold text-green-800 dark:text-green-300">{order._id}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm text-gray-500">Placed on</p>
-                            <p className="text-md font-medium">
-                              {new Date(order.createdAt).toLocaleString('en-GB')}
-                            </p>
-                          </div>
-                        </div>
+        return (
+          <div
+            key={order._id}
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300 cursor-pointer"
+            onClick={() => toggleOrderDetails(order._id)}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <p className="text-sm text-gray-500">Order ID:</p>
+                <p className="text-lg font-semibold text-green-800 dark:text-green-300">
+                  {order._id}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Placed on</p>
+                <p className="text-md font-medium">
+                  {new Date(order.createdAt).toLocaleString("en-GB")}
+                </p>
+              </div>
+            </div>
 
-                        <p className="mb-2">
-                          <span className="font-medium">Buyer:</span> {order.buyer?.name}
-                        </p>
-                        <p className="mb-2">
-                          <span className="font-medium">Email:</span> {order.buyer?.email}
-                        </p>
+            {/* Always-visible Info */}
+            <p className="mb-2">
+              <span className="font-medium">Buyer:</span> {order.buyer?.name}
+            </p>
+            <p className="mb-2">
+              <span className="font-medium">Email:</span> {order.buyer?.email}
+            </p>
 
-                      
-                        {order.address && (
-                          <p className="mb-2">
-                            <span className="font-medium">Delivery Address:</span> {order.address}
-                          </p>
-                        )}
-                        {order.phone && (
-                          <p className="mb-2">
-                            <span className="font-medium">Phone:</span> {order.phone}
-                          </p>
-                        )}
+            {/* Toggleable Expanded Details */}
+            {isExpanded && (
+              <div>
+                {order.address && (
+                  <p className="mb-2">
+                    <span className="font-medium">Delivery Address:</span> {order.address}
+                  </p>
+                )}
+                {order.phone && (
+                  <p className="mb-2">
+                    <span className="font-medium">Phone:</span> {order.phone}
+                  </p>
+                )}
 
-                        <div className="mb-4">
-                          <p className="font-medium mb-1">Items:</p>
-                          <ul className="list-disc ml-6 space-y-1 text-sm">
-                            {order.items.map((item, idx) => (
-                              <li key={idx}>
-                                <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity})
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                          <div>
-                            <p className="text-gray-500">Base Price</p>
-                            <p className="font-semibold">₹{basePrice.toFixed(2)}</p>
-                          </div>
-                          <div>
-                            <p className="text-gray-500">Tax</p>
-                            <p className="font-semibold">₹{tax.toFixed(2)}</p>
-                          </div>
-                          <div>
-                            <p className="text-gray-500">Delivery</p>
-                            <p className="font-semibold">₹{delivery.toFixed(2)}</p>
-                          </div>
-                          <div>
-                            <p className="text-gray-500">Total</p>
-                            <p className="font-bold text-green-700 dark:text-green-300">₹{total.toFixed(2)}</p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="mb-4">
+                  <p className="font-medium mb-1">Items:</p>
+                  <ul className="list-disc ml-6 space-y-1 text-sm">
+                    {order.items.map((item, idx) => (
+                      <li key={idx}>
+                        <span className="font-medium">{item.crop?.name || "Unknown Crop"}</span> —{" "}
+                        {item.quantityInCart} ({item.quantity})
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              )}
-            </section>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <div>
+                    <p className="text-gray-500">Base Price</p>
+                    <p className="font-semibold">₹{order.basePrice.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Tax</p>
+                    <p className="font-semibold">₹{order.tax.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Delivery</p>
+                    <p className="font-semibold">₹{order.deliveryFee.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Total</p>
+                    <p className="font-bold text-green-700 dark:text-green-300">
+                      ₹{(order.basePrice + order.tax + order.deliveryFee).toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  )}
+</section>
+
 
 
 
