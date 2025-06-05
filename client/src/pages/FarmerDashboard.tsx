@@ -279,13 +279,13 @@ const FarmerDashboard: React.FC = () => {
               cropId: item.cropId,
               crop: { name: item.name },
               price: item.price,
-              quantity: Number(item.quantity),
-              quantityInCart: Number(item.quantity),
+              quantity: item.quantity,
+              quantityInCart: Number(item.quantityInCart),
             }));
 
 
             const basePrice = items.reduce((total: number, item: any) => {
-              return total + item.price * item.quantity;
+              return total + item.price * item.quantityInCart;
             }, 0);
 
             return {
