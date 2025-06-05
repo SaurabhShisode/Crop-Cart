@@ -406,8 +406,8 @@ const FarmerDashboard: React.FC = () => {
       {
         label: 'Earnings (₹)',
         data: earningsData,
-        borderColor: '#059669',
-        backgroundColor: '#059669',
+        borderColor: '#34d399',
+        backgroundColor: '#34d399',
         fill: false,
         tension: 0.4,
       },
@@ -471,6 +471,12 @@ const FarmerDashboard: React.FC = () => {
           <div className="text-center text-xl text-green-700">Loading data...</div>
         ) : (
           <>
+            <div className="grid grid-cols-5 grid-rows-6 gap-4">
+              <div className="col-span-2 row-span-3">1</div>
+              <div className="col-span-2 row-span-3 col-start-1 row-start-4">6</div>
+              <div className="col-span-2 row-span-6 col-start-3 row-start-1">7</div>
+            </div>
+
             {/* Crops Section */}
             <section className="mb-10">
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
@@ -733,7 +739,7 @@ const FarmerDashboard: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
+                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-10">
                     <h3 className="text-xl font-bold text-green-900 mb-2">
                       Earnings This {viewMode === 'weekly' ? 'Week' : 'Month'}
                     </h3>
@@ -746,7 +752,7 @@ const FarmerDashboard: React.FC = () => {
                 </div>
 
                 <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
+                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-10">
                     <h3 className="text-xl font-bold text-green-900 mb-2">
                       Orders This {viewMode === 'weekly' ? 'Week' : 'Month'}
                     </h3>
