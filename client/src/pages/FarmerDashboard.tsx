@@ -241,6 +241,11 @@ const FarmerDashboard: React.FC = () => {
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
+  const [weeklyEarnings, setWeeklyEarnings] = useState<number[]>([]);
+  const [weeklyOrders, setWeeklyOrders] = useState<number[]>([]);
+  const [weeklyLabels, setWeeklyLabels] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<'monthly' | 'weekly'>('monthly');
+
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [cropToDelete, setCropToDelete] = useState<Crop | null>(null);
@@ -344,6 +349,9 @@ const FarmerDashboard: React.FC = () => {
           }));
 
           setStats(statsFormatted);
+          setWeeklyLabels(statsData.weeklyLabels || []);
+          setWeeklyEarnings(statsData.weeklyEarnings || []);
+          setWeeklyOrders(statsData.weeklyOrders || []);
         }
 
       } catch (error) {
@@ -357,27 +365,45 @@ const FarmerDashboard: React.FC = () => {
 
     fetchData();
   }, []);
+
+  const chartLabels = viewMode === 'monthly'
+    ? stats.map((item) => item.date)
+    : weeklyLabels;
+
+  const earningsData = viewMode === 'monthly'
+    ? stats.map((item) => item.earnings)
+    : weeklyEarnings;
+
+  const ordersData = viewMode === 'monthly'
+    ? stats.map((item) => item.orders)
+    : weeklyOrders;
+
   const ordersChartData = {
-    labels: stats?.map((item) => item.date),
+    labels: chartLabels,
     datasets: [
       {
         label: 'Orders',
-        data: stats?.map((item) => item.orders),
+        data: ordersData,
         backgroundColor: '#34d399',
+        borderColor: '#059669',
+        tension: 0.4,
       },
     ],
   };
 
   const earningsChartData = {
-    labels: stats?.map((item) => item.date),
+    labels: chartLabels,
     datasets: [
       {
         label: 'Earnings (₹)',
-        data: stats.map((item) => item.earnings),
+        data: earningsData,
         backgroundColor: '#059669',
+        borderColor: '#34d399',
+        tension: 0.4,
       },
     ],
   };
+
 
   const chartOptions = {
     responsive: true,
@@ -678,6 +704,17 @@ const FarmerDashboard: React.FC = () => {
             {/* Stats Section */}
             <section>
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
+              <div className="mb-4">
+                <select
+                  value={viewMode}
+                  onChange={(e) => setViewMode(e.target.value as 'monthly' | 'weekly')}
+                  className="p-2 border border-gray-300 rounded-md"
+                >
+                  <option value="monthly">Monthly</option>
+                  <option value="weekly">Weekly</option>
+                </select>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
@@ -691,9 +728,9 @@ const FarmerDashboard: React.FC = () => {
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center mb-10">
-                  <h3 className="text-xl font-bold text-green-900 mb-2">Orders This Month</h3>
-                  <p className="text-4xl font-extrabold text-green-800">{currentMonthOrders}</p>
-                </div>
+                    <h3 className="text-xl font-bold text-green-900 mb-2">Orders This Month</h3>
+                    <p className="text-4xl font-extrabold text-green-800">{currentMonthOrders}</p>
+                  </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
                   <Bar data={earningsChartData} options={chartOptions} />
                 </div>
