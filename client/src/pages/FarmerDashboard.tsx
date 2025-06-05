@@ -236,8 +236,9 @@ const Navbar: React.FC = () => {
 
 const FarmerDashboard: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
-    const [lastMonthEarnings, setLastMonthEarnings] = useState(0);
-  const [lastMonthOrders, setLastMonthOrders] = useState(0);
+  const [currentMonthEarnings, setCurrentMonthEarnings] = useState(0);
+  const [currentMonthOrders, setCurrentMonthOrders] = useState(0);
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -328,8 +329,9 @@ const FarmerDashboard: React.FC = () => {
 
         if (statsRes.ok) {
           const statsData = await statsRes.json();
-           setLastMonthEarnings(statsData.lastMonthEarnings); 
-  setLastMonthOrders(statsData.lastMonthOrders); 
+          setCurrentMonthEarnings(statsData.currentMonthEarnings);
+          setCurrentMonthOrders(statsData.currentMonthOrders);
+
           const months = [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -677,22 +679,22 @@ const FarmerDashboard: React.FC = () => {
             <section>
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
 
-              
+
               <div className="flex flex-col md:flex-row gap-6 mb-8">
                 <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
                   <h3 className="text-xl font-bold text-green-900 mb-2">Earnings This Month</h3>
                   <p className="text-4xl font-extrabold text-green-800">
-                    ₹{lastMonthEarnings.toLocaleString()}
+                    ₹{currentMonthEarnings.toLocaleString()}
                   </p>
                 </div>
 
                 <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
                   <h3 className="text-xl font-bold text-green-900 mb-2">Orders This Month</h3>
-                  <p className="text-4xl font-extrabold text-green-800">{lastMonthOrders}</p>
+                  <p className="text-4xl font-extrabold text-green-800">{currentMonthOrders}</p>
                 </div>
               </div>
 
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
                   <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
