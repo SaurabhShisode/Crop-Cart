@@ -514,7 +514,7 @@ const FarmerDashboard: React.FC = () => {
 
               {/* Crop Cards */}
               <ScrollableSection sectionId="crops-section">
-                {crops.map((crop) => (
+                {[...crops].reverse().map((crop) => (
                   <div
                     key={crop._id}
                     className="mt-6 snap-start bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-lg transition-all duration-300 flex flex-col w-56 flex-shrink-0"
@@ -561,7 +561,7 @@ const FarmerDashboard: React.FC = () => {
                 <p>No orders received yet.</p>
               ) : (
                 <div className="grid grid-cols-1 gap-6">
-                  {orders.map((order) => {
+                  {[...orders].reverse().map((order)=> {
                     const isExpanded = expandedOrderId === order._id;
 
                     return (
