@@ -260,198 +260,148 @@ const FarmerDashboard: React.FC = () => {
   };
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+ useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
 
-        const [cropsRes, ordersRes, statsRes] = await Promise.all([
-          fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch('https://crop-cart-backend.onrender.com/api/farmer/orders', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-          fetch('https://crop-cart-backend.onrender.com/api/farmer/analytics', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
+      const [cropsRes, ordersRes, statsRes] = await Promise.all([
+        fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch('https://crop-cart-backend.onrender.com/api/farmer/orders', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch('https://crop-cart-backend.onrender.com/api/farmer/analytics', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
 
-        if (cropsRes.ok) {
-          const cropsData = await cropsRes.json();
-          setCrops(cropsData);
-        }
+    
+      if (cropsRes.ok) {
+        const cropsData = await cropsRes.json();
+        setCrops(cropsData);
+      }
 
-        if (ordersRes.ok) {
-          const ordersData = await ordersRes.json();
+     
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
 
-          const formattedOrders: Order[] = ordersData.map((order: any) => {
-            const items = order.items.map((item: any) => ({
-              _id: item._id,
-              cropId: item.cropId,
-              crop: { name: item.name },
-              price: item.price,
-              quantity: item.quantity,
-              quantityInCart: Number(item.quantityInCart),
-            }));
-
-            const basePrice = items.reduce((total: number, item: any) => {
-              return total + item.price * item.quantityInCart;
-            }, 0);
-
-            return {
-              _id: order._id,
-              buyer: {
-                name: order.name,
-                email: order.email,
-              },
-              userId: {
-                _id: order.userId?._id || '',
-                name: order.userId?.name || '',
-                email: order.userId?.email || '',
-              },
-              farmerId: order.farmerId,
-              address: order.address,
-              phone: order.phone,
-              email: order.email,
-              createdAt: order.createdAt,
-              updatedAt: order.updatedAt,
-              items: items,
-              tax: order.tax,
-              deliveryFee: order.deliveryFee,
-              total: order.total,
-              basePrice: basePrice,
-            };
-          });
-
-          setOrders(formattedOrders);
-
-          const cropSalesMap = new Map<string, { count: number }>();
-
-          formattedOrders.forEach(order => {
-            order.items.forEach(item => {
-              const cropName = item.crop.name;
-              const quantity = item.quantityInCart;
-
-              if (cropSalesMap.has(cropName)) {
-                cropSalesMap.get(cropName)!.count += quantity;
-              } else {
-                cropSalesMap.set(cropName, { count: quantity });
-              }
-            });
-          });
-
-          let topCrop: { name: string; count: number } | null = null;
-
-          cropSalesMap.forEach((value, key) => {
-            if (!topCrop || value.count > topCrop.count) {
-              topCrop = { name: key, count: value.count };
-            }
-          });
-
-          setMostSoldCrop(topCrop);
-
-
-
-          const monthlyEarnings = Array(12).fill(0);
-          const monthlyOrders = Array(12).fill(0);
-
-          formattedOrders.forEach(order => {
-            const date = new Date(order.createdAt);
-            const month = date.getMonth(); // 0-indexed: Jan = 0
-
-            monthlyEarnings[month] += order.total;
-            monthlyOrders[month] += 1;
-          });
-
-          const currentMonth = new Date().getMonth();
-          const thisMonthEarnings = monthlyEarnings[currentMonth];
-          const lastMonthEarnings = monthlyEarnings[currentMonth - 1] || 0;
-
-          const thisMonthOrders = monthlyOrders[currentMonth];
-          const lastMonthOrders = monthlyOrders[currentMonth - 1] || 0;
-
-          // 📈 3. Compute percent changes
-          const earningsPercentChange =
-            lastMonthEarnings === 0
-              ? 0
-              : ((thisMonthEarnings - lastMonthEarnings) / lastMonthEarnings) * 100;
-
-          const ordersPercentChange =
-            lastMonthOrders === 0
-              ? 0
-              : ((thisMonthOrders - lastMonthOrders) / lastMonthOrders) * 100;
-
-          setEarningsChange(parseFloat(earningsPercentChange.toFixed(2)));
-          setOrdersChange(parseFloat(ordersPercentChange.toFixed(2)));
-        }
-
-
-
-
-
-        if (statsRes.ok) {
-          const statsData = await statsRes.json();
-          setCurrentMonthEarnings(statsData.currentMonthEarnings);
-          setCurrentMonthOrders(statsData.currentMonthOrders);
-
-
-          const totalWeeklyEarnings = statsData.weeklyEarnings.reduce((sum: number, val: number) => sum + val, 0);
-          const totalWeeklyOrders = statsData.weeklyOrders.reduce((sum: number, val: number) => sum + val, 0);
-
-          setCurrentWeekEarnings(totalWeeklyEarnings);
-          setCurrentWeekOrders(totalWeeklyOrders);
-
-
-
-          const earningsPercentChange =
-            statsData.currentMonthEarnings === 0
-              ? 0
-              : ((totalWeeklyEarnings - statsData.currentMonthEarnings) /
-                statsData.currentMonthEarnings) * 100;
-
-          const ordersPercentChange =
-            statsData.currentMonthOrders === 0
-              ? 0
-              : ((totalWeeklyOrders - statsData.currentMonthOrders) /
-                statsData.currentMonthOrders) * 100;
-
-          setEarningsChange(parseFloat(earningsPercentChange.toFixed(2)));
-          setOrdersChange(parseFloat(ordersPercentChange.toFixed(2)));
-
-
-          const labels = viewMode === 'weekly'
-            ? statsData.weeklyLabels
-            : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-          const statsFormatted = labels.map((label: string, idx: number) => ({
-            date: label,
-            earnings: viewMode === 'weekly' ? statsData.weeklyEarnings[idx] : statsData.monthlyEarnings[idx],
-            orders: viewMode === 'weekly' ? statsData.weeklyOrders[idx] : statsData.monthlyOrders[idx],
+        const formattedOrders: Order[] = ordersData.map((order: any) => {
+          const items = order.items.map((item: any) => ({
+            _id: item._id,
+            cropId: item.cropId,
+            crop: { name: item.name },
+            price: item.price,
+            quantity: item.quantity,
+            quantityInCart: Number(item.quantityInCart),
           }));
 
-          setStats(statsFormatted);
-          setWeeklyLabels(statsData.weeklyLabels || []);
-          setWeeklyEarnings(statsData.weeklyEarnings || []);
-          setWeeklyOrders(statsData.weeklyOrders || []);
-        }
+          const basePrice = items.reduce(
+            (total: number, item: any) => total + item.price * item.quantityInCart,
+            0
+          );
 
-      } catch (error) {
-        toast.error('Failed to fetch data', {
-          style: { background: '#14532d', color: 'white' },
+          return {
+            _id: order._id,
+            buyer: { name: order.name, email: order.email },
+            userId: {
+              _id: order.userId?._id || '',
+              name: order.userId?.name || '',
+              email: order.userId?.email || '',
+            },
+            farmerId: order.farmerId,
+            address: order.address,
+            phone: order.phone,
+            email: order.email,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
+            items,
+            tax: order.tax,
+            deliveryFee: order.deliveryFee,
+            total: order.total,
+            basePrice,
+          };
         });
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchData();
-  }, []);
+        setOrders(formattedOrders);
+
+        const cropSalesMap = new Map<string, number>();
+        formattedOrders.forEach(order => {
+          order.items.forEach(item => {
+            const cropName = item.crop.name;
+            const quantity = item.quantityInCart;
+            cropSalesMap.set(cropName, (cropSalesMap.get(cropName) || 0) + quantity);
+          });
+        });
+
+        let topCrop: { name: string; count: number } | null = null;
+        cropSalesMap.forEach((count, name) => {
+          if (!topCrop || count > topCrop.count) {
+            topCrop = { name, count };
+          }
+        });
+
+        setMostSoldCrop(topCrop);
+      }
+
+      
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+
+        setCurrentMonthEarnings(statsData.currentMonthEarnings);
+        setCurrentMonthOrders(statsData.currentMonthOrders);
+
+        
+        const totalWeeklyEarnings = statsData.weeklyEarnings.reduce((sum: number, val: number) => sum + val, 0);
+        const totalWeeklyOrders = statsData.weeklyOrders.reduce((sum: number, val: number) => sum + val, 0);
+
+        setCurrentWeekEarnings(totalWeeklyEarnings);
+        setCurrentWeekOrders(totalWeeklyOrders);
+
+        
+        const earningsPercentChange =
+          statsData.currentMonthEarnings === 0
+            ? 0
+            : ((totalWeeklyEarnings - statsData.currentMonthEarnings) / statsData.currentMonthEarnings) * 100;
+
+        const ordersPercentChange =
+          statsData.currentMonthOrders === 0
+            ? 0
+            : ((totalWeeklyOrders - statsData.currentMonthOrders) / statsData.currentMonthOrders) * 100;
+
+        setEarningsChange(parseFloat(earningsPercentChange.toFixed(2)));
+        setOrdersChange(parseFloat(ordersPercentChange.toFixed(2)));
+
+      
+        const labels = viewMode === 'weekly'
+          ? statsData.weeklyLabels
+          : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        const statsFormatted = labels.map((label: string, idx: number) => ({
+          date: label,
+          earnings: viewMode === 'weekly' ? statsData.weeklyEarnings[idx] : statsData.monthlyEarnings[idx],
+          orders: viewMode === 'weekly' ? statsData.weeklyOrders[idx] : statsData.monthlyOrders[idx],
+        }));
+
+        setStats(statsFormatted);
+        setWeeklyLabels(statsData.weeklyLabels || []);
+        setWeeklyEarnings(statsData.weeklyEarnings || []);
+        setWeeklyOrders(statsData.weeklyOrders || []);
+      }
+    } catch (error) {
+      toast.error('Failed to fetch data', {
+        style: { background: '#14532d', color: 'white' },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [viewMode]); 
+
 
   const chartLabels = viewMode === 'monthly'
     ? stats.map((item) => item.date)
