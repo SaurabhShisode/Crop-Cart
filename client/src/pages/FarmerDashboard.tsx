@@ -73,13 +73,35 @@ interface Crop {
 
 interface Order {
   _id: string;
-  buyer: { name: string; email: string };
+  buyer: {
+    name: string;
+    email: string;
+  };
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  farmerId: string;
+  address: string;
+  phone: string;
+  email: string;
   createdAt: string;
+  updatedAt: string;
   items: {
+    _id: string;
+    cropId: string;
     crop: { name: string };
-    quantity: number;
+    price: number;
+    quantity: string;
+    quantityInCart: number;
   }[];
+  tax: number;
+  deliveryFee: number;
+  total: number;
+  basePrice: number;
 }
+
 
 
 interface StatsData {
@@ -251,21 +273,50 @@ const FarmerDashboard: React.FC = () => {
         if (ordersRes.ok) {
           const ordersData = await ordersRes.json();
 
-          const formattedOrders: Order[] = ordersData.map((order: any) => ({
-            _id: order._id,
-            buyer: {
-              name: order.name,
-              email: order.email,
-            },
-            createdAt: order.createdAt,
-            items: order.items.map((item: any) => ({
+          const formattedOrders: Order[] = ordersData.map((order: any) => {
+            const items = order.items.map((item: any) => ({
+              _id: item._id,
+              cropId: item.cropId,
               crop: { name: item.name },
+              price: item.price,
               quantity: Number(item.quantity),
-            })),
-          }));
+              quantityInCart: Number(item.quantity),
+            }));
+
+
+            const basePrice = items.reduce((total: number, item: any) => {
+              return total + item.price * item.quantity;
+            }, 0);
+
+            return {
+              _id: order._id,
+              buyer: {
+                name: order.name,
+                email: order.email,
+              },
+              userId: {
+                _id: order.userId?._id || '',
+                name: order.userId?.name || '',
+                email: order.userId?.email || '',
+              },
+              farmerId: order.farmerId,
+              address: order.address,
+              phone: order.phone,
+              email: order.email,
+              createdAt: order.createdAt,
+              updatedAt: order.updatedAt,
+              items: items,
+              tax: order.tax,
+              deliveryFee: order.deliveryFee,
+              total: order.total,
+              basePrice: basePrice,
+            };
+          });
 
           setOrders(formattedOrders);
         }
+
+
 
 
         if (statsRes.ok) {
@@ -500,35 +551,92 @@ const FarmerDashboard: React.FC = () => {
             {/* Orders Section */}
             <section className="mb-10">
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
+
               {orders.length === 0 ? (
                 <p>No orders received yet.</p>
               ) : (
-                <table className="w-full border border-green-300 rounded-md text-left">
-                  <thead className="bg-green-200">
-                    <tr>
-                      <th className="px-4 py-2 border border-green-300">Crop</th>
-                      <th className="px-4 py-2 border border-green-300">Quantity</th>
-                      <th className="px-4 py-2 border border-green-300">Buyer</th>
-                      <th className="px-4 py-2 border border-green-300">Order Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.map((order) =>
-                      order.items.map((item, idx) => (
-                        <tr key={`${order._id}-${idx}`} className="even:bg-green-50">
-                          <td className="px-4 py-2 border border-green-300">{item.crop?.name || 'Unknown Crop'}</td>
-                          <td className="px-4 py-2 border border-green-300">{item.quantity}</td>
-                          <td className="px-4 py-2 border border-green-300">{order.buyer?.name || 'Unknown Buyer'}</td>
-                          <td className="px-4 py-2 border border-green-300">
-                            {new Date(order.createdAt).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                  {orders.map((order) => {
+                
+                    const basePrice = order.basePrice;
+                    const tax = order.tax;
+                    const delivery = order.deliveryFee;
+                    const total = basePrice + tax + delivery;
+
+                    return (
+                      <div
+                        key={order._id}
+                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300"
+                      >
+                        <div className="flex justify-between items-center mb-4">
+                          <div>
+                            <p className="text-sm text-gray-500">Order ID:</p>
+                            <p className="text-lg font-semibold text-green-800 dark:text-green-300">{order._id}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500">Placed on</p>
+                            <p className="text-md font-medium">
+                              {new Date(order.createdAt).toLocaleString('en-GB')}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p className="mb-2">
+                          <span className="font-medium">Buyer:</span> {order.buyer?.name}
+                        </p>
+                        <p className="mb-2">
+                          <span className="font-medium">Email:</span> {order.buyer?.email}
+                        </p>
+
+                      
+                        {order.address && (
+                          <p className="mb-2">
+                            <span className="font-medium">Delivery Address:</span> {order.address}
+                          </p>
+                        )}
+                        {order.phone && (
+                          <p className="mb-2">
+                            <span className="font-medium">Phone:</span> {order.phone}
+                          </p>
+                        )}
+
+                        <div className="mb-4">
+                          <p className="font-medium mb-1">Items:</p>
+                          <ul className="list-disc ml-6 space-y-1 text-sm">
+                            {order.items.map((item, idx) => (
+                              <li key={idx}>
+                                <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantity}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                          <div>
+                            <p className="text-gray-500">Base Price</p>
+                            <p className="font-semibold">₹{basePrice.toFixed(2)}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Tax</p>
+                            <p className="font-semibold">₹{tax.toFixed(2)}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Delivery</p>
+                            <p className="font-semibold">₹{delivery.toFixed(2)}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Total</p>
+                            <p className="font-bold text-green-700 dark:text-green-300">₹{total.toFixed(2)}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </section>
+
+
 
             {/* Stats Section */}
             <section>
