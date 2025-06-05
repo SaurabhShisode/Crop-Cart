@@ -499,68 +499,68 @@ const FarmerDashboard: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-6 grid-rows-6 gap-4 text-white">
-              {/* This Month's Earnings */}
-              <div className="col-span-3 row-span-3 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <div>
-                  <h3 className="text-xl font-semibold">This Month's Earnings</h3>
-                  <p className="text-3xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
-                </div>
-                <p
-                  className={`text-sm font-medium mt-1 ${earningsGrowth > 0
-                    ? 'text-green-100'
-                    : earningsGrowth < 0
-                      ? 'text-red-200'
-                      : 'text-white'
-                    }`}
-                >
-                  {earningsGrowth > 0
-                    ? `↑ ${Math.abs(earningsGrowth)}% from last month`
-                    : earningsGrowth < 0
-                      ? `↓ ${Math.abs(earningsGrowth)}% from last month`
-                      : `→ 0% change from last month`}
-                </p>
-              </div>
+  {/* This Month's Earnings */}
+  <div className="col-span-3 row-span-3 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
+    <div>
+      <h3 className="text-xl font-semibold">This Month's Earnings</h3>
+      <p className="text-3xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
+    </div>
+    <p
+      className={`text-sm font-medium mt-1 ${
+        earningsGrowth > 0
+          ? 'text-blue-100'
+          : earningsGrowth < 0
+          ? 'text-red-200'
+          : 'text-white'
+      }`}
+    >
+      {earningsGrowth > 0
+        ? `↑ ${Math.abs(earningsGrowth)}% from last month`
+        : earningsGrowth < 0
+        ? `↓ ${Math.abs(earningsGrowth)}% from last month`
+        : `→ 0% change from last month`}
+    </p>
+  </div>
 
-              {/* This Month's Orders */}
-              <div className="col-span-3 row-span-3 col-start-1 row-start-4 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <div>
-                  <h3 className="text-xl font-semibold">This Month's Orders</h3>
-                  <p className="text-3xl font-bold mt-2">{currentMonthOrders}</p>
-                </div>
-                <p
-                  className={`text-sm font-medium mt-1 ${orderGrowth > 0
-                    ? 'text-blue-100'
-                    : orderGrowth < 0
-                      ? 'text-red-200'
-                      : 'text-white'
-                    }`}
-                >
-                  {orderGrowth > 0
-                    ? `↑ ${Math.abs(orderGrowth)}% from last month`
-                    : orderGrowth < 0
-                      ? `↓ ${Math.abs(orderGrowth)}% from last month`
-                      : `→ 0% change from last month`}
-                </p>
-              </div>
+  {/* This Month's Orders */}
+  <div className="col-span-3 row-span-3 col-start-1 row-start-4 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
+    <div>
+      <h3 className="text-xl font-semibold">This Month's Orders</h3>
+      <p className="text-3xl font-bold mt-2">{currentMonthOrders}</p>
+    </div>
+    <p
+      className={`text-sm font-medium mt-1 ${
+        orderGrowth > 0
+          ? 'text-blue-100'
+          : orderGrowth < 0
+          ? 'text-red-200'
+          : 'text-white'
+      }`}
+    >
+      {orderGrowth > 0
+        ? `↑ ${Math.abs(orderGrowth)}% from last month`
+        : orderGrowth < 0
+        ? `↓ ${Math.abs(orderGrowth)}% from last month`
+        : `→ 0% change from last month`}
+    </p>
+  </div>
 
-              {/* Most Sold Crop */}
-              <div className="col-span-3 row-span-6 col-start-4 row-start-1 bg-yellow-500 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">Most Sold Crop</h3>
-                <div className="mt-4 text-center">
-                  {mostSoldCrop ? (
-                    <>
-                      <p className="text-2xl font-bold">{mostSoldCrop.cropName}</p>
-                      <p className="text-sm text-yellow-100">
-                        Sold {mostSoldCrop.totalSold} times
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-yellow-100">No crop sales data yet.</p>
-                  )}
-                </div>
-              </div>
+  {/* Most Sold Crop */}
+  <div className="col-span-3 row-span-6 col-start-4 row-start-1 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
+    <h3 className="text-xl font-semibold">Most Sold Crop</h3>
+    <div className="mt-4 text-center">
+      {mostSoldCrop ? (
+        <>
+          <p className="text-2xl font-bold">{mostSoldCrop.cropName}</p>
+          <p className="text-sm text-blue-100">Sold {mostSoldCrop.totalSold} times</p>
+        </>
+      ) : (
+        <p className="text-blue-100">No crop sales data yet.</p>
+      )}
+    </div>
+  </div>
+</div>
 
-            </div>
 
 
 
