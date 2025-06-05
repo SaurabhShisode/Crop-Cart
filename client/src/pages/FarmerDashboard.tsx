@@ -612,9 +612,10 @@ const FarmerDashboard: React.FC = () => {
                               <ul className="list-disc ml-6 space-y-1 text-sm">
                                 {order.items.map((item, idx) => (
                                   <li key={idx}>
-                                    <span className="font-medium">{item.crop?.name || "Unknown Crop"}</span> — Quantity: {item.quantity}
+                                    <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity})
                                   </li>
                                 ))}
+
                               </ul>
 
                             </div>
