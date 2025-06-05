@@ -561,7 +561,7 @@ const FarmerDashboard: React.FC = () => {
                 <p>No orders received yet.</p>
               ) : (
                 <div className="grid grid-cols-1 gap-6">
-                  {[...orders].reverse().map((order)=> {
+                  {[...orders].reverse().map((order) => {
                     const isExpanded = expandedOrderId === order._id;
 
                     return (
@@ -595,7 +595,9 @@ const FarmerDashboard: React.FC = () => {
 
                         {/* Toggleable Expanded Details */}
                         {isExpanded && (
-                          <div>
+                          <div
+                            className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                              }`}>
                             {order.address && (
                               <p className="mb-2">
                                 <span className="font-medium">Delivery Address:</span> {order.address}
