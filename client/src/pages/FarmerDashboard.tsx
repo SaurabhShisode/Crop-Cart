@@ -251,17 +251,22 @@ const FarmerDashboard: React.FC = () => {
         if (ordersRes.ok) {
           const ordersData = await ordersRes.json();
 
-          const flatOrders: Order[] = ordersData.flatMap((order: any) =>
-            order.items.map((item: any) => ({
-              _id: order._id + '-' + item.crop._id, 
-              cropName: item.crop?.name || 'Unknown Crop',
-              quantity: item.quantity,
-              buyerName: order.buyer?.name || 'Unknown Buyer',
-              deliveryDate: new Date(order.createdAt).toLocaleDateString(),
-            }))
-          );
-          setOrders(flatOrders);
+          const formattedOrders: Order[] = ordersData.map((order: any) => ({
+            _id: order._id,
+            buyer: {
+              name: order.name,
+              email: order.email,
+            },
+            createdAt: order.createdAt,
+            items: order.items.map((item: any) => ({
+              crop: { name: item.name },
+              quantity: Number(item.quantity),
+            })),
+          }));
+
+          setOrders(formattedOrders);
         }
+
 
         if (statsRes.ok) {
           const statsData = await statsRes.json();
