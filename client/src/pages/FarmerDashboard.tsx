@@ -739,7 +739,7 @@ const FarmerDashboard: React.FC = () => {
                     </p>
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
-                  <Bar data={ordersChartData} options={chartOptions} />
+                  <Bar data={earningsChartData} options={chartOptions} />
                 </div>
 
                 <div className="bg-white p-4 rounded-lg shadow">
@@ -752,7 +752,7 @@ const FarmerDashboard: React.FC = () => {
                     </p>
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
-                  <Bar data={earningsChartData} options={chartOptions} />
+                  <Bar data={ordersChartData} options={chartOptions} />
                 </div>
               </div>
 
