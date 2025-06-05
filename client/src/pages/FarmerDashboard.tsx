@@ -300,7 +300,6 @@ const FarmerDashboard: React.FC = () => {
               quantityInCart: Number(item.quantityInCart),
             }));
 
-
             const basePrice = items.reduce((total: number, item: any) => {
               return total + item.price * item.quantityInCart;
             }, 0);
@@ -332,12 +331,11 @@ const FarmerDashboard: React.FC = () => {
 
           setOrders(formattedOrders);
 
-          const cropSalesMap = new Map<string, { count: number; image?: string }>();
+          const cropSalesMap = new Map<string, { count: number }>();
 
           formattedOrders.forEach(order => {
             order.items.forEach(item => {
               const cropName = item.crop.name;
-
               const quantity = item.quantityInCart;
 
               if (cropSalesMap.has(cropName)) {
@@ -347,17 +345,52 @@ const FarmerDashboard: React.FC = () => {
               }
             });
           });
-          let topCrop: { name: string; count: number; image?: string } | null = null;
+
+          let topCrop: { name: string; count: number } | null = null;
 
           cropSalesMap.forEach((value, key) => {
             if (!topCrop || value.count > topCrop.count) {
-              topCrop = { name: key, count: value.count, image: value.image };
+              topCrop = { name: key, count: value.count };
             }
           });
 
           setMostSoldCrop(topCrop);
 
+
+
+          const monthlyEarnings = Array(12).fill(0);
+          const monthlyOrders = Array(12).fill(0);
+
+          formattedOrders.forEach(order => {
+            const date = new Date(order.createdAt);
+            const month = date.getMonth(); // 0-indexed: Jan = 0
+
+            monthlyEarnings[month] += order.total;
+            monthlyOrders[month] += 1;
+          });
+
+          const currentMonth = new Date().getMonth();
+          const thisMonthEarnings = monthlyEarnings[currentMonth];
+          const lastMonthEarnings = monthlyEarnings[currentMonth - 1] || 0;
+
+          const thisMonthOrders = monthlyOrders[currentMonth];
+          const lastMonthOrders = monthlyOrders[currentMonth - 1] || 0;
+
+          // 📈 3. Compute percent changes
+          const earningsPercentChange =
+            lastMonthEarnings === 0
+              ? 0
+              : ((thisMonthEarnings - lastMonthEarnings) / lastMonthEarnings) * 100;
+
+          const ordersPercentChange =
+            lastMonthOrders === 0
+              ? 0
+              : ((thisMonthOrders - lastMonthOrders) / lastMonthOrders) * 100;
+
+          setEarningsChange(parseFloat(earningsPercentChange.toFixed(2)));
+          setOrdersChange(parseFloat(ordersPercentChange.toFixed(2)));
         }
+
 
 
 
