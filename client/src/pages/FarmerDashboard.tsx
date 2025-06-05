@@ -678,15 +678,6 @@ const FarmerDashboard: React.FC = () => {
             {/* Stats Section */}
             <section>
               <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
-
-
-              <div className="flex flex-col md:flex-row gap-6 mb-8">
-
-
-
-              </div>
-
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
