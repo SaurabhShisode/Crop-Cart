@@ -681,26 +681,28 @@ const FarmerDashboard: React.FC = () => {
 
 
               <div className="flex flex-col md:flex-row gap-6 mb-8">
-                <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
-                  <h3 className="text-xl font-bold text-green-900 mb-2">Earnings This Month</h3>
-                  <p className="text-4xl font-extrabold text-green-800">
-                    ₹{currentMonthEarnings.toLocaleString()}
-                  </p>
-                </div>
 
-                <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
-                  <h3 className="text-xl font-bold text-green-900 mb-2">Orders This Month</h3>
-                  <p className="text-4xl font-extrabold text-green-800">{currentMonthOrders}</p>
-                </div>
+
+
               </div>
 
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-4 rounded-lg shadow">
+                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
+                    <h3 className="text-xl font-bold text-green-900 mb-2">Earnings This Month</h3>
+                    <p className="text-4xl font-extrabold text-green-800">
+                      ₹{currentMonthEarnings.toLocaleString()}
+                    </p>
+                  </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
                   <Bar data={ordersChartData} options={chartOptions} />
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow">
+                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
+                  <h3 className="text-xl font-bold text-green-900 mb-2">Orders This Month</h3>
+                  <p className="text-4xl font-extrabold text-green-800">{currentMonthOrders}</p>
+                </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
                   <Bar data={earningsChartData} options={chartOptions} />
                 </div>
