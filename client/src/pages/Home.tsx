@@ -404,7 +404,7 @@ const Home: React.FC = () => {
   }, []);
 
   const addToCart = (crop: Crop) => {
-    console.log("Adding crop to cart:", crop); // 👈 See if farmer is present here
+    
 
     setCart((prev) => {
       const exists = prev.find((item) => item._id === crop._id);

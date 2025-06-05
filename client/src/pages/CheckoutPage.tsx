@@ -4,13 +4,13 @@ import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../components/Footer';
 
 interface CartItem {
-  _id: string; 
+  _id: string;
   name: string;
   price: number;
   quantityInCart: string;
   quantity: string;
   farmer: string;
-  cropId: string; 
+  cropId: string;
 }
 
 const CheckoutPage: React.FC = () => {
@@ -46,7 +46,7 @@ const CheckoutPage: React.FC = () => {
     const quantityNum = parseFloat(item.quantityInCart) || 0;
     return total + item.price * quantityNum;
   }, 0);
-  
+
   const toastStyle = { style: { background: '#14532d', color: 'white' } };
 
   const handlePlaceOrder = async () => {
@@ -69,18 +69,19 @@ const CheckoutPage: React.FC = () => {
 
       const orderData = {
         userId,
-        farmerId: farmer, 
+        farmerId: farmer,
         name,
         email,
         phone,
         address,
         items: cart.map((item) => ({
-          cropId: item._id, 
+          cropId: item._id,
           name: item.name,
           price: item.price,
-          quantity: item.quantityInCart, 
+          quantity: item.quantity,
+          quantityInCart: item.quantityInCart,
         })),
-        total: (totalPrice * 1.18 + 50).toFixed(2), 
+        total: (totalPrice * 1.18 + 50).toFixed(2),
         tax: (totalPrice * 0.18).toFixed(2),
         deliveryFee: 50,
       };
@@ -95,7 +96,7 @@ const CheckoutPage: React.FC = () => {
 
       toast.success('Order placed successfully!', toastStyle);
       if (userId) localStorage.removeItem(`cart_${userId}`);
-      setCart([]); 
+      setCart([]);
       setName('');
       setEmail('');
       setAddress('');
@@ -121,7 +122,7 @@ const CheckoutPage: React.FC = () => {
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-green-50 flex items-center justify-center px-6 py-10">
-        
+
         <div className="max-w-6xl w-full bg-white rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-8 p-10">
           {/* Order Summary */}
           <section className="md:col-span-1 bg-green-100 border border-green-200 rounded-xl p-6">
