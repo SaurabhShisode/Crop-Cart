@@ -1,13 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
-  BarElement,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
   Tooltip,
   Legend,
 } from 'chart.js';
+
+
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
@@ -58,8 +61,15 @@ const ScrollableSection: React.FC<{
     </div>
   );
 };
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend
+);
 interface Crop {
   _id: string;
   name: string;
@@ -179,18 +189,7 @@ const Navbar: React.FC = () => {
                   aria-orientation="vertical"
                   aria-labelledby="user-menu"
                 >
-                  <li>
-                    <button
-                      onClick={() => {
-                        navigate('/myorders');
-                        setDropdownOpen(false);
-                      }}
-                      className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                      role="menuitem"
-                    >
-                      My Orders
-                    </button>
-                  </li>
+
 
                   <li>
                     <button
@@ -389,27 +388,31 @@ const FarmerDashboard: React.FC = () => {
   const ordersChartData = {
     labels: chartLabels,
     datasets: [
-      {
-        label: 'Orders',
-        data: ordersData,
-        backgroundColor: '#34d399',
-        borderColor: '#059669',
-        tension: 0.4,
-      },
-    ],
+  {
+    label: 'Orders',
+    data: ordersData,
+    borderColor: '#34d399',
+    backgroundColor: '#34d399',
+    fill: false,
+    tension: 0.4,
+  },
+],
+
   };
 
   const earningsChartData = {
     labels: chartLabels,
     datasets: [
-      {
-        label: 'Earnings (₹)',
-        data: earningsData,
-        backgroundColor: '#059669',
-        borderColor: '#34d399',
-        tension: 0.4,
-      },
-    ],
+  {
+    label: 'Earnings (₹)',
+    data: earningsData,
+    borderColor: '#059669',
+    backgroundColor: '#059669',
+    fill: false,
+    tension: 0.4,
+  },
+],
+
   };
 
 
@@ -739,7 +742,7 @@ const FarmerDashboard: React.FC = () => {
                     </p>
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
-                  <Bar data={earningsChartData} options={chartOptions} />
+                  <Line data={earningsChartData} options={chartOptions} />
                 </div>
 
                 <div className="bg-white p-4 rounded-lg shadow">
@@ -752,7 +755,7 @@ const FarmerDashboard: React.FC = () => {
                     </p>
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
-                  <Bar data={ordersChartData} options={chartOptions} />
+                  <Line data={ordersChartData} options={chartOptions} />
                 </div>
               </div>
 
