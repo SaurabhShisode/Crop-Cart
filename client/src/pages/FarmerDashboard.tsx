@@ -326,8 +326,21 @@ const FarmerDashboard: React.FC = () => {
 
         if (statsRes.ok) {
           const statsData = await statsRes.json();
-          setStats(statsData);
+
+          const months = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+          ];
+
+          const statsFormatted = months.map((month, idx) => ({
+            date: month,
+            earnings: statsData.monthlyEarnings[idx] || 0,
+            orders: statsData.monthlyOrders[idx] || 0,
+          }));
+
+          setStats(statsFormatted);
         }
+
       } catch (error) {
         toast.error('Failed to fetch data', {
           style: { background: '#14532d', color: 'white' },
@@ -362,23 +375,28 @@ const FarmerDashboard: React.FC = () => {
   };
 
   const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      tooltip: {
-        callbacks: {
-          label: (ctx: any) => `${ctx.dataset.label}: ₹${ctx.parsed.y}`,
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    tooltip: {
+      callbacks: {
+        label: (ctx: any) => {
+          const label = ctx.dataset.label || '';
+          const value = ctx.parsed.y;
+          return label.includes('Earnings') ? `${label}: ₹${value}` : `${label}: ${value}`;
         },
       },
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
     },
-  };
+  },
+};
+
 
   const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -595,7 +613,7 @@ const FarmerDashboard: React.FC = () => {
 
                         {/* Toggleable Expanded Details */}
                         <div
-                          className={`transition-all duration-400 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                          className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
                             }`}
                         >
                           {order.address && (
