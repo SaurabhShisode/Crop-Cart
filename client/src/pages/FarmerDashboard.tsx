@@ -471,11 +471,32 @@ const FarmerDashboard: React.FC = () => {
           <div className="text-center text-xl text-green-700">Loading data...</div>
         ) : (
           <>
-            <div className="grid grid-cols-5 grid-rows-6 gap-4">
-              <div className="col-span-2 row-span-3">1</div>
-              <div className="col-span-2 row-span-3 col-start-1 row-start-4">6</div>
-              <div className="col-span-2 row-span-6 col-start-3 row-start-1">7</div>
+            <div className="grid grid-cols-5 grid-rows-6 gap-4 text-white">
+              {/* This Month's Earnings */}
+              <div className="col-span-2 row-span-3 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
+                <h3 className="text-xl font-semibold">This Month's Earnings</h3>
+                <p className="text-3xl font-bold mt-2">₹12,400</p>
+                <p className="text-sm text-green-100 mt-1">+15% from last month</p>
+              </div>
+
+              {/* This Month's Orders */}
+              <div className="col-span-2 row-span-3 col-start-1 row-start-4 bg-blue-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
+                <h3 className="text-xl font-semibold">This Month's Orders</h3>
+                <p className="text-3xl font-bold mt-2">128</p>
+                <p className="text-sm text-blue-100 mt-1">+8% from last month</p>
+              </div>
+
+              {/* Most Sold Crop */}
+              <div className="col-span-2 row-span-6 col-start-3 row-start-1 bg-yellow-500 rounded-xl p-4 flex flex-col justify-between shadow-md">
+                <h3 className="text-xl font-semibold">Most Sold Crop</h3>
+                <div className="mt-4 text-center">
+                  <img src="/images/tomato.png" alt="Tomato" className="w-20 mx-auto mb-2" />
+                  <p className="text-2xl font-bold">Tomato</p>
+                  <p className="text-sm text-yellow-100">Sold 452 times</p>
+                </div>
+              </div>
             </div>
+
 
             {/* Crops Section */}
             <section className="mb-10">
