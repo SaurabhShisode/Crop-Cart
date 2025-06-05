@@ -596,8 +596,9 @@ const FarmerDashboard: React.FC = () => {
                         {/* Toggleable Expanded Details */}
                         {isExpanded && (
                           <div
-                            className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
-                              }`}>
+                            className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                              }`}
+                          >
                             {order.address && (
                               <p className="mb-2">
                                 <span className="font-medium">Delivery Address:</span> {order.address}
@@ -617,9 +618,7 @@ const FarmerDashboard: React.FC = () => {
                                     <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity})
                                   </li>
                                 ))}
-
                               </ul>
-
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
@@ -643,6 +642,7 @@ const FarmerDashboard: React.FC = () => {
                               </div>
                             </div>
                           </div>
+
                         )}
                       </div>
                     );
