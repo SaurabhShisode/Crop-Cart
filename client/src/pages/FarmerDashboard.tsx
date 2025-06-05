@@ -595,53 +595,52 @@ const FarmerDashboard: React.FC = () => {
 
                         {/* Toggleable Expanded Details */}
                         <div
-  className={`transition-all duration-500 ease-in-out overflow-hidden ${
-    isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
-  }`}
->
-  {order.address && (
-    <p className="mb-2">
-      <span className="font-medium">Delivery Address:</span> {order.address}
-    </p>
-  )}
-  {order.phone && (
-    <p className="mb-2">
-      <span className="font-medium">Phone:</span> {order.phone}
-    </p>
-  )}
+                          className={`transition-all duration-400 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                            }`}
+                        >
+                          {order.address && (
+                            <p className="mb-2">
+                              <span className="font-medium">Delivery Address:</span> {order.address}
+                            </p>
+                          )}
+                          {order.phone && (
+                            <p className="mb-2">
+                              <span className="font-medium">Phone:</span> {order.phone}
+                            </p>
+                          )}
 
-  <div className="mb-4">
-    <p className="font-medium mb-1">Items:</p>
-    <ul className="list-disc ml-6 space-y-1 text-sm">
-      {order.items.map((item, idx) => (
-        <li key={idx}>
-          <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity})
-        </li>
-      ))}
-    </ul>
-  </div>
+                          <div className="mb-4">
+                            <p className="font-medium mb-1">Items:</p>
+                            <ul className="list-disc ml-6 space-y-1 text-sm">
+                              {order.items.map((item, idx) => (
+                                <li key={idx}>
+                                  <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity})
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
 
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-    <div>
-      <p className="text-gray-500">Base Price</p>
-      <p className="font-semibold">₹{order.basePrice.toFixed(2)}</p>
-    </div>
-    <div>
-      <p className="text-gray-500">Tax</p>
-      <p className="font-semibold">₹{order.tax.toFixed(2)}</p>
-    </div>
-    <div>
-      <p className="text-gray-500">Delivery</p>
-      <p className="font-semibold">₹{order.deliveryFee.toFixed(2)}</p>
-    </div>
-    <div>
-      <p className="text-gray-500">Total</p>
-      <p className="font-bold text-green-700 dark:text-green-300">
-        ₹{(order.basePrice + order.tax + order.deliveryFee).toFixed(2)}
-      </p>
-    </div>
-  </div>
-</div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <div>
+                              <p className="text-gray-500">Base Price</p>
+                              <p className="font-semibold">₹{order.basePrice.toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <p className="text-gray-500">Tax</p>
+                              <p className="font-semibold">₹{order.tax.toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <p className="text-gray-500">Delivery</p>
+                              <p className="font-semibold">₹{order.deliveryFee.toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <p className="text-gray-500">Total</p>
+                              <p className="font-bold text-green-700 dark:text-green-300">
+                                ₹{(order.basePrice + order.tax + order.deliveryFee).toFixed(2)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
 
                       </div>
                     );
