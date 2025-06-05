@@ -17,7 +17,7 @@ interface Order {
   email: string;
   phone: string;
   address: string;
-  items: Array<{ name: string; quantity: number; quantityInCart: string; }>;
+  items: Array<{ name: string; quantity: string; quantityInCart: string; }>;
   total: string;
   tax: string;
   deliveryFee: number;

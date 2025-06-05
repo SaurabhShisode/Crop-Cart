@@ -250,10 +250,10 @@ const FarmerDashboard: React.FC = () => {
 
         if (ordersRes.ok) {
           const ordersData = await ordersRes.json();
-          // Flatten orders with items into your simple Order interface
+
           const flatOrders: Order[] = ordersData.flatMap((order: any) =>
             order.items.map((item: any) => ({
-              _id: order._id + '-' + item.crop._id, // unique key per order item
+              _id: order._id + '-' + item.crop._id, 
               cropName: item.crop?.name || 'Unknown Crop',
               quantity: item.quantity,
               buyerName: order.buyer?.name || 'Unknown Buyer',
