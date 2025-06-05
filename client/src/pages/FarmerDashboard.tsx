@@ -119,6 +119,11 @@ interface StatsData {
   orders: number;
   earnings: number;
 }
+interface MostSoldCrop {
+  cropName: string;
+  totalSold: number;
+}
+
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -237,6 +242,7 @@ const FarmerDashboard: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [currentMonthEarnings, setCurrentMonthEarnings] = useState(0);
   const [currentMonthOrders, setCurrentMonthOrders] = useState(0);
+  const [mostSoldCrop, setMostSoldCrop] = useState<MostSoldCrop | null>(null);
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
@@ -378,6 +384,8 @@ const FarmerDashboard: React.FC = () => {
           setWeeklyLabels(statsData.weeklyLabels || []);
           setWeeklyEarnings(statsData.weeklyEarnings || []);
           setWeeklyOrders(statsData.weeklyOrders || []);
+          setMostSoldCrop(statsData.mostSoldCrop || null);
+
         }
       } catch (error) {
         toast.error('Failed to fetch data', {
@@ -499,10 +507,10 @@ const FarmerDashboard: React.FC = () => {
                 </div>
                 <p
                   className={`text-sm font-medium mt-1 ${earningsGrowth > 0
-                      ? 'text-green-100'
-                      : earningsGrowth < 0
-                        ? 'text-red-200'
-                        : 'text-white'
+                    ? 'text-green-100'
+                    : earningsGrowth < 0
+                      ? 'text-red-200'
+                      : 'text-white'
                     }`}
                 >
                   {earningsGrowth > 0
@@ -521,10 +529,10 @@ const FarmerDashboard: React.FC = () => {
                 </div>
                 <p
                   className={`text-sm font-medium mt-1 ${orderGrowth > 0
-                      ? 'text-blue-100'
-                      : orderGrowth < 0
-                        ? 'text-red-200'
-                        : 'text-white'
+                    ? 'text-blue-100'
+                    : orderGrowth < 0
+                      ? 'text-red-200'
+                      : 'text-white'
                     }`}
                 >
                   {orderGrowth > 0
@@ -539,10 +547,19 @@ const FarmerDashboard: React.FC = () => {
               <div className="col-span-3 row-span-6 col-start-4 row-start-1 bg-yellow-500 rounded-xl p-4 flex flex-col justify-between shadow-md">
                 <h3 className="text-xl font-semibold">Most Sold Crop</h3>
                 <div className="mt-4 text-center">
-                  <p className="text-2xl font-bold">Tomato</p>
-                  <p className="text-sm text-yellow-100">Sold 452 times</p>
+                  {mostSoldCrop ? (
+                    <>
+                      <p className="text-2xl font-bold">{mostSoldCrop.cropName}</p>
+                      <p className="text-sm text-yellow-100">
+                        Sold {mostSoldCrop.totalSold} times
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-yellow-100">No crop sales data yet.</p>
+                  )}
                 </div>
               </div>
+
             </div>
 
 
