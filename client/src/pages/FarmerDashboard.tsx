@@ -401,7 +401,7 @@ const FarmerDashboard: React.FC = () => {
     };
 
     fetchData();
-  });
+  }, [viewMode]);
 
 
   const chartLabels = viewMode === 'monthly'
