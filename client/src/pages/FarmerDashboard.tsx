@@ -292,52 +292,63 @@ const FarmerDashboard: React.FC = () => {
 
 
         if (ordersRes.ok) {
-          const ordersData = await ordersRes.json();
+  const ordersData = await ordersRes.json();
 
-          const formattedOrders: Order[] = ordersData
-            .map((order: any) => {
-              const items = order.items
-                .filter((item: any) => item.farmerId === JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.user?.id)
-                .map((item: any) => ({
-                  _id: item._id,
-                  cropId: item.cropId,
-                  crop: { name: item.name },
-                  price: item.price,
-                  quantity: item.quantity,
-                  quantityInCart: Number(item.quantityInCart),
-                }));
+  const formattedOrders: Order[] = ordersData
+    .map((order: any) => {
+      const items = order.items
+        .filter(
+          (item: any) =>
+            item.farmerId ===
+            JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.user?.id
+        )
+        .map((item: any) => ({
+          _id: item._id,
+          cropId: item.cropId,
+          crop: { name: item.name },
+          price: item.price,
+          quantity: item.quantity,
+          quantityInCart: Number(item.quantityInCart),
+        }));
 
-              if (items.length === 0) return null;
+      if (items.length === 0) return null;
 
-              const basePrice = items.reduce(
-                (total: number, item: any) => total + item.price * item.quantityInCart,
-                0
-              );
+      const basePrice = items.reduce(
+        (total: number, item: any) =>
+          total + item.price * item.quantityInCart,
+        0
+      );
 
-              return {
-                _id: order._id,
-                buyer: { name: order.name, email: order.email },
-                userId: {
-                  _id: order.userId?._id || '',
-                  name: order.userId?.name || '',
-                  email: order.userId?.email || '',
-                },
-                farmerId: order.farmerId,
-                address: order.address,
-                phone: order.phone,
-                email: order.email,
-                createdAt: order.createdAt,
-                updatedAt: order.updatedAt,
-                items,
-                tax: order.tax,
-                deliveryFee: order.deliveryFee,
-                total: order.total,
-                basePrice,
-              };
-            });
+      const tax = parseFloat((basePrice * 0.18).toFixed(2)); 
+      const deliveryFee = 50;
+      const total = parseFloat((basePrice + tax + deliveryFee).toFixed(2));
 
-          setOrders(formattedOrders);
-        }
+      return {
+        _id: order._id,
+        buyer: { name: order.name, email: order.email },
+        userId: {
+          _id: order.userId?._id || '',
+          name: order.userId?.name || '',
+          email: order.userId?.email || '',
+        },
+        farmerId: order.farmerId,
+        address: order.address,
+        phone: order.phone,
+        email: order.email,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        items,
+        tax,
+        deliveryFee,
+        total,
+        basePrice,
+      };
+    })
+    .filter((order: any) => order !== null); 
+
+  setOrders(formattedOrders);
+}
+
 
 
         if (statsRes.ok) {
