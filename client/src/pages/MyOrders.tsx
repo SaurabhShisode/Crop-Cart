@@ -114,7 +114,7 @@ const MyOrders: React.FC = () => {
   const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
 
   const handleDeleteClick = (orderId: string) => {
-    const order = orders.find(o => o._id === orderId);
+    const order = orders.find((o) => o._id === orderId);
     if (order) {
       setOrderToDelete(order);
       setShowDeleteModal(true);
@@ -123,16 +123,19 @@ const MyOrders: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     if (!orderToDelete) return;
+
     try {
       const userData = localStorage.getItem('cropcartUser');
       if (!userData) throw new Error('User not authenticated');
 
-      const { token } = JSON.parse(userData);
+      const user = JSON.parse(userData);
+      const token = user.token;
 
       const res = await fetch(`https://crop-cart-backend.onrender.com/api/orders/${orderToDelete._id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json', 
         },
       });
 
@@ -142,14 +145,14 @@ const MyOrders: React.FC = () => {
       }
 
       toast.success('Order deleted successfully');
-      setOrders(prev => prev.filter(o => o._id !== orderToDelete._id));
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to delete order');
-    } finally {
+      setOrders((prev) => prev.filter((o) => o._id !== orderToDelete._id));
       setShowDeleteModal(false);
       setOrderToDelete(null);
+    } catch (err: any) {
+      toast.error(err.message || 'Error deleting order');
     }
   };
+
 
   useEffect(() => {
     const fetchOrders = async () => {
