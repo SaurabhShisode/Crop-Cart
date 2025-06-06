@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { User, } from 'lucide-react';
 import Footer from '../components/Footer';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 
 
 interface Order {
@@ -109,6 +110,46 @@ const MyOrders: React.FC = () => {
   const [userName, setUserName] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+
+  const handleDeleteClick = (orderId: string) => {
+    const order = orders.find(o => o._id === orderId);
+    if (order) {
+      setOrderToDelete(order);
+      setShowDeleteModal(true);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!orderToDelete) return;
+    try {
+      const userData = localStorage.getItem('cropcartUser');
+      if (!userData) throw new Error('User not authenticated');
+
+      const { token } = JSON.parse(userData);
+
+      const res = await fetch(`https://crop-cart-backend.onrender.com/api/orders/${orderToDelete._id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || 'Failed to delete order');
+      }
+
+      toast.success('Order deleted successfully');
+      setOrders(prev => prev.filter(o => o._id !== orderToDelete._id));
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to delete order');
+    } finally {
+      setShowDeleteModal(false);
+      setOrderToDelete(null);
+    }
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -328,12 +369,22 @@ const MyOrders: React.FC = () => {
                       <p className="text-gray-500">Total</p>
                       <p className="font-bold text-green-700 dark:text-green-300">₹{total.toFixed(2)}</p>
                     </div>
-                    <button
-                      onClick={() => downloadInvoice(order)}
-                      className="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300"
-                    >
-                      Download Invoice
-                    </button>
+                    <div className="flex justify-end space-x-4 mt-4">
+                      <button
+                        onClick={() => downloadInvoice(order)}
+                        className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300"
+                      >
+                        Download Invoice
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteClick(order._id)}
+                        className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300"
+                      >
+                        Delete Order
+                      </button>
+                    </div>
+
 
                   </div>
                 </div>
@@ -343,7 +394,16 @@ const MyOrders: React.FC = () => {
         )}
       </main>
       <Footer />
+      {showDeleteModal && orderToDelete && (
+        <ConfirmDeleteModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleConfirmDelete}
+          cropName={`Order ID: ${orderToDelete._id}`}
+        />
+      )}
     </div>
+
   );
 
 };
