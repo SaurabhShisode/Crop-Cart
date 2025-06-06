@@ -135,7 +135,7 @@ const MyOrders: React.FC = () => {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json', 
+          'Content-Type': 'application/json',
         },
       });
 
@@ -373,20 +373,20 @@ const MyOrders: React.FC = () => {
                       <p className="font-bold text-green-700 dark:text-green-300">₹{total.toFixed(2)}</p>
                     </div>
                     <div className="flex justify-end space-x-4 mt-4">
-  <button
-    onClick={() => downloadInvoice(order)}
-    className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300 whitespace-nowrap"
-  >
-    Download Invoice
-  </button>
+                      <button
+                        onClick={() => downloadInvoice(order)}
+                        className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300 whitespace-nowrap"
+                      >
+                        Download Invoice
+                      </button>
 
-  <button
-    onClick={() => handleDeleteClick(order._id)}
-    className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300 whitespace-nowrap"
-  >
-    Delete Order
-  </button>
-</div>
+                      <button
+                        onClick={() => handleDeleteClick(order._id)}
+                        className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300 whitespace-nowrap"
+                      >
+                        Cancel Order
+                      </button>
+                    </div>
 
 
 
