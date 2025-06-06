@@ -374,7 +374,7 @@ const MyOrders: React.FC = () => {
                     </div>
 
                   </div>
-                  <div className="flex justify-end space-x-4 mt-4">
+                  <div className="flex justify-start space-x-4 mt-4">
                     <button
                       onClick={() => downloadInvoice(order)}
                       className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300 whitespace-nowrap"
