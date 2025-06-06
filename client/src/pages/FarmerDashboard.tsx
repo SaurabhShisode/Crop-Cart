@@ -122,7 +122,7 @@ interface StatsData {
 interface MostSoldCrop {
   cropName: string;
   totalSold: number;
-  
+
 }
 
 
@@ -294,42 +294,47 @@ const FarmerDashboard: React.FC = () => {
         if (ordersRes.ok) {
           const ordersData = await ordersRes.json();
 
-          const formattedOrders: Order[] = ordersData.map((order: any) => {
-            const items = order.items.map((item: any) => ({
-              _id: item._id,
-              cropId: item.cropId,
-              crop: { name: item.name },
-              price: item.price,
-              quantity: item.quantity,
-              quantityInCart: Number(item.quantityInCart),
-            }));
+          const formattedOrders: Order[] = ordersData
+            .map((order: any) => {
+              const items = order.items
+                .filter((item: any) => item.farmerId === JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.user?.id)
+                .map((item: any) => ({
+                  _id: item._id,
+                  cropId: item.cropId,
+                  crop: { name: item.name },
+                  price: item.price,
+                  quantity: item.quantity,
+                  quantityInCart: Number(item.quantityInCart),
+                }));
 
-            const basePrice = items.reduce(
-              (total: number, item: any) => total + item.price * item.quantityInCart,
-              0
-            );
+              if (items.length === 0) return null;
 
-            return {
-              _id: order._id,
-              buyer: { name: order.name, email: order.email },
-              userId: {
-                _id: order.userId?._id || '',
-                name: order.userId?.name || '',
-                email: order.userId?.email || '',
-              },
-              farmerId: order.farmerId,
-              address: order.address,
-              phone: order.phone,
-              email: order.email,
-              createdAt: order.createdAt,
-              updatedAt: order.updatedAt,
-              items,
-              tax: order.tax,
-              deliveryFee: order.deliveryFee,
-              total: order.total,
-              basePrice,
-            };
-          });
+              const basePrice = items.reduce(
+                (total: number, item: any) => total + item.price * item.quantityInCart,
+                0
+              );
+
+              return {
+                _id: order._id,
+                buyer: { name: order.name, email: order.email },
+                userId: {
+                  _id: order.userId?._id || '',
+                  name: order.userId?.name || '',
+                  email: order.userId?.email || '',
+                },
+                farmerId: order.farmerId,
+                address: order.address,
+                phone: order.phone,
+                email: order.email,
+                createdAt: order.createdAt,
+                updatedAt: order.updatedAt,
+                items,
+                tax: order.tax,
+                deliveryFee: order.deliveryFee,
+                total: order.total,
+                basePrice,
+              };
+            });
 
           setOrders(formattedOrders);
         }
