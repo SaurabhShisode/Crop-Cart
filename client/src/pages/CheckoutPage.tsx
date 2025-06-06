@@ -55,11 +55,6 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    const farmer = cart[0]?.farmer;
-    if (!farmer) {
-      toast.error('Missing farmer information.', toastStyle);
-      return;
-    }
 
     setLoading(true);
 
@@ -69,7 +64,6 @@ const CheckoutPage: React.FC = () => {
 
       const orderData = {
         userId,
-        farmerId: farmer,
         name,
         email,
         phone,
@@ -80,11 +74,13 @@ const CheckoutPage: React.FC = () => {
           price: item.price,
           quantity: item.quantity,
           quantityInCart: item.quantityInCart,
+          farmerId: item.farmer,
         })),
-        total: (totalPrice * 1.18 + 50).toFixed(2),
-        tax: (totalPrice * 0.18).toFixed(2),
+        total: parseFloat((totalPrice * 1.18 + 50).toFixed(2)),
+        tax: parseFloat((totalPrice * 0.18).toFixed(2)),
         deliveryFee: 50,
       };
+
 
       const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
         method: 'POST',
