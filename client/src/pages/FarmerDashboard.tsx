@@ -792,7 +792,7 @@ const FarmerDashboard: React.FC = () => {
 
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                             <div>
-                              <p className="text-gray-500">Base Price</p>
+                              <p className="text-gray-500">Order Price</p>
                               <p className="font-semibold">₹{order.basePrice.toFixed(2)}</p>
                             </div>
                             <div>
