@@ -292,62 +292,62 @@ const FarmerDashboard: React.FC = () => {
 
 
         if (ordersRes.ok) {
-  const ordersData = await ordersRes.json();
+          const ordersData = await ordersRes.json();
 
-  const formattedOrders: Order[] = ordersData
-    .map((order: any) => {
-      const items = order.items
-        .filter(
-          (item: any) =>
-            item.farmerId ===
-            JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.user?.id
-        )
-        .map((item: any) => ({
-          _id: item._id,
-          cropId: item.cropId,
-          crop: { name: item.name },
-          price: item.price,
-          quantity: item.quantity,
-          quantityInCart: Number(item.quantityInCart),
-        }));
+          const formattedOrders: Order[] = ordersData
+            .map((order: any) => {
+              const items = order.items
+                .filter(
+                  (item: any) =>
+                    item.farmerId ===
+                    JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.user?.id
+                )
+                .map((item: any) => ({
+                  _id: item._id,
+                  cropId: item.cropId,
+                  crop: { name: item.name },
+                  price: item.price,
+                  quantity: item.quantity,
+                  quantityInCart: Number(item.quantityInCart),
+                }));
 
-      if (items.length === 0) return null;
+              if (items.length === 0) return null;
 
-      const basePrice = items.reduce(
-        (total: number, item: any) =>
-          total + item.price * item.quantityInCart,
-        0
-      );
+              const basePrice = items.reduce(
+                (total: number, item: any) =>
+                  total + item.price * item.quantityInCart,
+                0
+              );
 
-      const tax = parseFloat((basePrice * 0.18).toFixed(2)); 
-      const deliveryFee = 50;
-      const total = parseFloat((basePrice + tax + deliveryFee).toFixed(2));
+              const tax = parseFloat((basePrice * 0.18).toFixed(2));
+              const deliveryFee = 50;
+              const total = parseFloat((basePrice + tax + deliveryFee).toFixed(2));
 
-      return {
-        _id: order._id,
-        buyer: { name: order.name, email: order.email },
-        userId: {
-          _id: order.userId?._id || '',
-          name: order.userId?.name || '',
-          email: order.userId?.email || '',
-        },
-        farmerId: order.farmerId,
-        address: order.address,
-        phone: order.phone,
-        email: order.email,
-        createdAt: order.createdAt,
-        updatedAt: order.updatedAt,
-        items,
-        tax,
-        deliveryFee,
-        total,
-        basePrice,
-      };
-    })
-    .filter((order: any) => order !== null); 
+              return {
+                _id: order._id,
+                buyer: { name: order.name, email: order.email },
+                userId: {
+                  _id: order.userId?._id || '',
+                  name: order.userId?.name || '',
+                  email: order.userId?.email || '',
+                },
+                farmerId: order.farmerId,
+                address: order.address,
+                phone: order.phone,
+                email: order.email,
+                createdAt: order.createdAt,
+                updatedAt: order.updatedAt,
+                items,
+                tax,
+                deliveryFee,
+                total,
+                basePrice,
+              };
+            })
+            .filter((order: any) => order !== null);
 
-  setOrders(formattedOrders);
-}
+          setOrders(formattedOrders);
+        }
 
 
 
@@ -515,19 +515,20 @@ const FarmerDashboard: React.FC = () => {
           <div className="text-center text-xl text-green-700">Loading data...</div>
         ) : (
           <>
-            <div className="grid grid-cols-6 grid-rows-6 gap-4 text-white">
-              {/* This Month's Earnings */}
-              <div className="col-span-3 row-span-3 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <div>
+            <div className="grid grid-cols-6 gap-6 text-white">
+              
+              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
+                <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">This Month's Earnings</h3>
-                  <p className="text-3xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
+                  <span className="text-white/70 text-sm">💰</span>
                 </div>
+                <p className="text-4xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
                 <p
-                  className={`text-sm font-medium mt-1 ${earningsGrowth > 0
-                    ? 'text-green-100'
+                  className={`text-sm mt-3 font-medium ${earningsGrowth > 0
+                    ? 'text-lime-100'
                     : earningsGrowth < 0
                       ? 'text-red-200'
-                      : 'text-white'
+                      : 'text-white/90'
                     }`}
                 >
                   {earningsGrowth > 0
@@ -538,18 +539,19 @@ const FarmerDashboard: React.FC = () => {
                 </p>
               </div>
 
-              {/* This Month's Orders */}
-              <div className="col-span-3 row-span-3 col-start-1 row-start-4 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <div>
+              {/* Orders */}
+              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
+                <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">This Month's Orders</h3>
-                  <p className="text-3xl font-bold mt-2">{currentMonthOrders}</p>
+                  <span className="text-white/70 text-sm">📦</span>
                 </div>
+                <p className="text-4xl font-bold mt-2">{currentMonthOrders}</p>
                 <p
-                  className={`text-sm font-medium mt-1 ${orderGrowth > 0
-                    ? 'text-green-100'
+                  className={`text-sm mt-3 font-medium ${orderGrowth > 0
+                    ? 'text-lime-100'
                     : orderGrowth < 0
                       ? 'text-red-200'
-                      : 'text-white'
+                      : 'text-white/90'
                     }`}
                 >
                   {orderGrowth > 0
@@ -561,20 +563,22 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               {/* Most Sold Crop */}
-              <div className="col-span-3 row-span-6 col-start-4 row-start-1 bg-green-600 rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <h3 className="text-xl font-semibold">Most Sold Crop</h3>
-                <div className="mt-4 text-center">
+              <div className="col-span-6 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl hover:scale-[1.02] transition">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-semibold">Most Sold Crop</h3>
+                  <span className="text-white/70 text-sm">🌾</span>
+                </div>
+                <div className="text-center">
                   {mostSoldCrop ? (
                     <>
-                      <p className="text-2xl font-bold">{mostSoldCrop.cropName}</p>
-                      <p className="text-sm text-green-100">Sold {mostSoldCrop.totalSold} times</p>
+                      <p className="text-3xl font-bold">{mostSoldCrop.cropName}</p>
+                      <p className="text-green-100 mt-1">Sold {mostSoldCrop.totalSold} times</p>
                     </>
                   ) : (
                     <p className="text-green-100">No crop sales data yet.</p>
                   )}
                 </div>
               </div>
-
             </div>
 
 
