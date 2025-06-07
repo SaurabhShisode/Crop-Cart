@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LockClosedIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
-import { signInWithPopup } from 'firebase/auth'; 
+import { LockClosedIcon, EnvelopeIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
+import { signInWithPopup } from 'firebase/auth';
 import { toast } from 'react-hot-toast';
 import { auth, provider } from '../firebase';
 
@@ -10,6 +10,7 @@ const FarmerLoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +28,8 @@ const FarmerLoginPage: React.FC = () => {
       if (res.ok) {
         if (data.user.role !== 'farmer') {
           toast.error('You are not registered as a farmer.', {
-          style: { background: '#14532d', color: 'white' },
-        });
+            style: { background: '#14532d', color: 'white' },
+          });
           setLoading(false);
           return;
         }
@@ -143,15 +144,26 @@ const FarmerLoginPage: React.FC = () => {
                 autoComplete="current-password"
                 disabled={loading}
               />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 focus:outline-none"
+                onClick={() => setShowPassword(prev => !prev)}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="w-5 h-5" />
+                ) : (
+                  <EyeIcon className="w-5 h-5" />
+                )}
+              </button>
             </div>
 
             <button
               type="submit"
-              className={`w-full py-3 rounded-lg font-semibold shadow-md transition-all ${
-                loading
+              className={`w-full py-3 rounded-lg font-semibold shadow-md transition-all ${loading
                   ? 'bg-green-900 text-white cursor-not-allowed'
                   : 'bg-green-900 text-white hover:scale-[1.02]'
-              }`}
+                }`}
               disabled={loading}
             >
               {loading ? 'Logging in...' : 'Login'}
@@ -164,11 +176,10 @@ const FarmerLoginPage: React.FC = () => {
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className={`w-full flex items-center justify-center gap-3 py-2 rounded-lg shadow-sm transition-all ${
-                loading
+              className={`w-full flex items-center justify-center gap-3 py-2 rounded-lg shadow-sm transition-all ${loading
                   ? 'bg-gray-300 cursor-not-allowed text-gray-500'
                   : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
+                }`}
             >
               <img
                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
