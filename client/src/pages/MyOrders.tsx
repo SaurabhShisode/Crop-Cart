@@ -377,14 +377,14 @@ const MyOrders: React.FC = () => {
                   <div className="flex justify-start space-x-4 mt-4">
                     <button
                       onClick={() => downloadInvoice(order)}
-                      className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300 whitespace-nowrap"
+                      className="bg-gradient-to-br from-green-900 to-emerald-800 hover:from-green-800 hover:to-emerald-700 text-white font-medium py-1.5 px-3 rounded text-sm transition duration-300 whitespace-nowrap"
                     >
                       Download Invoice
                     </button>
 
                     <button
                       onClick={() => handleDeleteClick(order._id)}
-                      className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300 whitespace-nowrap"
+                      className="bg-gradient-to-br from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white font-medium py-1.5 px-3 rounded text-sm transition duration-300 whitespace-nowrap"
                     >
                       Cancel Order
                     </button>
