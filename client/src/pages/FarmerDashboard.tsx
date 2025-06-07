@@ -793,11 +793,12 @@ const FarmerDashboard: React.FC = () => {
                             <ul className="list-disc ml-6 space-y-1 text-sm">
                               {order.items.map((item, idx) => (
                                 <li key={idx}>
-                                  <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity})
+                                  <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity}) × ₹{item.price.toFixed(2)} = ₹{(item.price * item.quantityInCart).toFixed(2)}
                                 </li>
                               ))}
                             </ul>
                           </div>
+
 
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                             <div>
