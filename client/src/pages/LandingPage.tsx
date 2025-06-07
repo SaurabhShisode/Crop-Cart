@@ -220,7 +220,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* SVG Bottom Wave */}
-                <div className="hidden sm:block absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
+                <div className=" absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
                     <svg
                         viewBox="0 0 1200 120"
                         preserveAspectRatio="none"

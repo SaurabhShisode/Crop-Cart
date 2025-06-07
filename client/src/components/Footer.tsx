@@ -42,7 +42,7 @@ const Footer = () => {
 
         {/* Socials */}
         <div className="flex flex-col items-start">
-          <h4 className="text-lg font-semibold mb-3">Follow Us</h4>
+          <h4 className="text-lg font-semibold mb-3">Follow Me</h4>
           <div className="flex space-x-4">
             <a href="#" aria-label="Instagram" className="hover:text-green-400 text-white transition">
               <img src={InstagramIcon} alt="Instagram" className="w-6 h-6 filter brightness-0 invert" />
