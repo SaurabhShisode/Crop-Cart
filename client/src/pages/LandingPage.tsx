@@ -196,7 +196,7 @@ export default function LandingPage() {
                         <div className="flex justify-center  md:justify-start">
                             <button
                                 onClick={() => navigate('/home')}
-                                className="w-30 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold mb-8 sm:mb-0"
+                                className="w-30 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold "
                             >
                                 Get Started
                             </button>
@@ -215,7 +215,7 @@ export default function LandingPage() {
                         <img
                             src={heroImage}
                             alt="Hero"
-                            className="w-5/5 sm:w-full object-contain drop-shadow-2xl scale-100 sm:scale-125 relative z-0"
+                            className="mt-4 sm:mt-0 w-5/5 sm:w-full object-contain drop-shadow-2xl scale-100 sm:scale-125 relative z-0"
                         />
                     </div>
                 </div>
