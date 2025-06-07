@@ -196,10 +196,11 @@ export default function LandingPage() {
                         <div className="flex justify-center md:justify-start">
                             <button
                                 onClick={() => navigate('/home')}
-                                className="w-48 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 sm:px-8 sm:py-4 text-lg sm:text-xl rounded-md font-semibold"
+                                className="w-40 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold"
                             >
                                 Get Started
                             </button>
+
                         </div>
                     </div>
 
@@ -207,7 +208,7 @@ export default function LandingPage() {
                     {/* Right Image */}
                     <div
                         className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
-                            ? 'translate-y-10 sm:translate-y-32 opacity-100'
+                            ? 'translate-y-70 sm:translate-y-32 opacity-100'
                             : 'translate-y-[150px] sm:translate-y-[150px] opacity-0'
                             }`}
                     >
