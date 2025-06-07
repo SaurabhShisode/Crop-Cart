@@ -516,11 +516,11 @@ const FarmerDashboard: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-6 gap-6 text-white">
-              
+
               <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">This Month's Earnings</h3>
-                  <span className="text-white/70 text-sm">💰</span>
+
                 </div>
                 <p className="text-4xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
                 <p
@@ -543,7 +543,7 @@ const FarmerDashboard: React.FC = () => {
               <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">This Month's Orders</h3>
-                  <span className="text-white/70 text-sm">📦</span>
+
                 </div>
                 <p className="text-4xl font-bold mt-2">{currentMonthOrders}</p>
                 <p
@@ -566,7 +566,7 @@ const FarmerDashboard: React.FC = () => {
               <div className="col-span-6 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold">Most Sold Crop</h3>
-                  <span className="text-white/70 text-sm">🌾</span>
+
                 </div>
                 <div className="text-center">
                   {mostSoldCrop ? (
@@ -586,8 +586,9 @@ const FarmerDashboard: React.FC = () => {
 
 
             {/* Crops Section */}
-            <section className="my-10">
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
+
+            <section className="my-12">
+              <h2 className="text-3xl font-bold text-green-800 mb-6">🌱 Your Crops</h2>
 
               {/* Add Crop Form */}
               <form
@@ -645,10 +646,10 @@ const FarmerDashboard: React.FC = () => {
                       style: { background: '#14532d', color: 'white' },
                     });
                   }
-                }}
-                className="bg-white p-8 md:p-10 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 shadow hover:shadow-lg transition-all duration-300"
+                }} // your logic remains unchanged
+                className="bg-gradient-to-br from-green-50 to-green-100 p-8 md:p-10 rounded-2xl shadow-lg border border-green-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
-                <h2 className="col-span-full text-2xl font-semibold text-green-700">Add New Crop</h2>
+                <h3 className="col-span-full text-2xl font-semibold text-green-800">➕ Add New Crop</h3>
 
                 <input name="name" required placeholder="Crop Name" className="input-field" />
                 <input name="price" type="number" required placeholder="Price (₹)" className="input-field" />
@@ -665,7 +666,7 @@ const FarmerDashboard: React.FC = () => {
                 <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="input-field" />
 
                 <div className="flex flex-col col-span-full sm:col-span-1">
-                  <label className="text-gray-600 font-medium mb-1">Upload Image</label>
+                  <label className="text-sm font-medium text-green-800 mb-1">Upload Image</label>
                   <input
                     name="image"
                     type="file"
@@ -677,55 +678,51 @@ const FarmerDashboard: React.FC = () => {
                 <div className="col-span-full sm:col-span-1 flex items-end">
                   <button
                     type="submit"
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300 ease-in-out"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold shadow-md transition duration-300"
                   >
                     Add Crop
                   </button>
                 </div>
               </form>
 
-
-
               {/* Crop Cards */}
               <ScrollableSection sectionId="crops-section">
-                {[...crops].reverse().map((crop) => (
-                  <div
-                    key={crop._id}
-                    className="mt-6 snap-start bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-lg transition-all duration-300 flex flex-col w-56 flex-shrink-0"
-                    style={{ maxWidth: '220px' }}
-                  >
-
-                    {crop.image && (
-                      <img
-                        src={crop.image}
-                        alt={crop.name}
-                        className="w-full h-32 object-cover rounded mb-2"
-                      />
-                    )}
-                    <h3 className="text-md font-semibold text-green-700 mb-1 truncate">{crop.name}</h3>
-                    <p className="text-xs text-gray-600">Price: ₹{crop.price}</p>
-                    <p className="text-xs text-gray-600">Quantity: {crop.quantity}</p>
-                    <p className="text-xs text-gray-600">Type: {crop.type}</p>
-                    <p className="text-xs text-gray-600">Availability: {crop.availability}</p>
-                    <p className="text-xs text-gray-600 mb-2 truncate">
-                      Regions: {crop.regionPincodes?.join(', ')}
-                    </p>
-                    <button
-                      onClick={() => {
-                        setCropToDelete(crop);
-                        setDeleteModalOpen(true);
-                      }}
-                      className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1 rounded text-sm"
+                <div className="flex flex-wrap gap-6 mt-10">
+                  {[...crops].reverse().map((crop) => (
+                    <div
+                      key={crop._id}
+                      className="w-56 bg-white rounded-2xl border border-green-200 shadow-md hover:shadow-xl transition-all duration-300 p-4 flex flex-col"
                     >
-                      Remove
-                    </button>
-
-                  </div>
-                ))}
+                      {crop.image && (
+                        <img
+                          src={crop.image}
+                          alt={crop.name}
+                          className="w-full h-32 object-cover rounded-lg mb-3"
+                        />
+                      )}
+                      <h4 className="text-lg font-semibold text-green-700 mb-1 truncate">{crop.name}</h4>
+                      <p className="text-sm text-gray-600">₹{crop.price}</p>
+                      <p className="text-sm text-gray-600">Qty: {crop.quantity}</p>
+                      <p className="text-sm text-gray-600">Type: {crop.type}</p>
+                      <p className="text-sm text-gray-600">Status: {crop.availability}</p>
+                      <p className="text-xs text-gray-500 mt-1 truncate">
+                        Regions: {crop.regionPincodes?.join(', ')}
+                      </p>
+                      <button
+                        onClick={() => {
+                          setCropToDelete(crop);
+                          setDeleteModalOpen(true);
+                        }}
+                        className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1.5 rounded-md text-sm font-medium transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </ScrollableSection>
-
-
             </section>
+
 
             {/* Orders Section */}
             <section className="mb-10">
@@ -925,3 +922,4 @@ const FarmerDashboard: React.FC = () => {
 
 
 export default FarmerDashboard;
+
