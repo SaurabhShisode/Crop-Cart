@@ -804,7 +804,7 @@ const FarmerDashboard: React.FC = () => {
                             <div>
                               <p className="text-gray-500">Total</p>
                               <p className="font-bold text-green-700 dark:text-green-300">
-                                ₹{(order.basePrice + order.tax + order.deliveryFee).toFixed(2)}
+                                ₹{(order.basePrice)}
                               </p>
                             </div>
                           </div>
