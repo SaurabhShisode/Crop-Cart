@@ -104,7 +104,7 @@ const Navbar: React.FC<{
         setLocation('Error fetching location');
       }
     };
-    
+
     useEffect(() => {
       function handleClickOutside(event: MouseEvent) {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -304,19 +304,19 @@ const Navbar: React.FC<{
           </div>
 
         </nav>
-        
-          <div className="bg-yellow-400 text-black py-2 overflow-hidden sticky top-[85px] z-40 shadow-md">
-            <div className="w-[200%] animate-marquee whitespace-nowrap font-semibold text-sm">
-              <span className="mx-10">🔥 10% off on all vegetables this week!</span>
-              <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
-              <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
-              
-              <span className="mx-10">🔥 10% off on all vegetables this week!</span>
-              <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
-              <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
-            </div>
+
+        <div className="bg-yellow-400 text-black py-2 overflow-hidden sticky top-[85px] z-40 shadow-md">
+          <div className="w-[200%] animate-marquee whitespace-nowrap font-semibold text-sm">
+            <span className="mx-10">🔥 10% off on all vegetables this week!</span>
+            <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
+            <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
+
+            <span className="mx-10">🔥 10% off on all vegetables this week!</span>
+            <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
+            <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
           </div>
-        
+        </div>
+
 
 
       </>
@@ -504,41 +504,41 @@ const Home: React.FC = () => {
 
 
 
-<div className='bg-white'>
-      <section
-        className="relative bg-green-900 text-white overflow-hidden w-full"
-        style={{ opacity: heroOpacity, transition: 'opacity 0.1s linear' }}
-      >
-        <div className="flex flex-col md:flex-row items-center justify-between px-10 py-24 w-full mx-auto">
-          <div className="w-full md:w-1/2 space-y-8 pl-24 md:pl-32 md:px-0">
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-              Products <br />nearby you.
-            </h1>
-            <p className="text-base md:text-lg text-gray-200 leading-relaxed font-semibold">
-              Order fresh, locally-sourced produce with ease and get it delivered straight to your doorstep.
-            </p>
+      <div className='bg-white'>
+        <section
+          className="relative bg-green-900 text-white overflow-hidden w-full"
+          style={{ opacity: heroOpacity, transition: 'opacity 0.1s linear' }}
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between px-10 py-24 w-full mx-auto">
+            <div className="w-full md:w-1/2 space-y-8 pl-24 md:pl-32 md:px-0">
+              <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+                Products <br />nearby you.
+              </h1>
+              <p className="text-base md:text-lg text-gray-200 leading-relaxed font-semibold">
+                Order fresh, locally-sourced produce with ease and get it delivered straight to your doorstep.
+              </p>
+            </div>
+            <div className="w-full md:w-1/2 max-w-sm mx-auto transition-all duration-700 ease-out transform">
+              <img
+                src={homeheroImage}
+                alt="Hero"
+                className="w-full object-contain drop-shadow-2xl scale-125 translate-y-20 rounded"
+              />
+            </div>
           </div>
-          <div className="w-full md:w-1/2 max-w-sm mx-auto transition-all duration-700 ease-out transform">
-            <img
-              src={homeheroImage}
-              alt="Hero"
-              className="w-full object-contain drop-shadow-2xl scale-125 translate-y-20 rounded"
-            />
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
+            <svg
+              className="relative block w-[calc(100%+1.3px)] h-[83px]"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 1200 120"
+              preserveAspectRatio="none"
+            >
+              <path d="M0 0 C 600 120 600 120 1200 0 L1200 120 L0 120 Z" fill="#FFFFFF" />
+            </svg>
           </div>
-        </div>
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
-          <svg
-            className="relative block w-[calc(100%+1.3px)] h-[83px]"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-          >
-            <path d="M0 0 C 600 120 600 120 1200 0 L1200 120 L0 120 Z" fill="#FFFFFF" />
-          </svg>
-        </div>
 
-      </section>
-</div>
+        </section>
+      </div>
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
         <div className="px-6 py-8 bg-white space-y-6">
 
