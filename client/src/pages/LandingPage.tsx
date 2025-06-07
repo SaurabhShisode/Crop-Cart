@@ -207,7 +207,7 @@ export default function LandingPage() {
 
                     {/* Right Image */}
                     <div
-                        className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
+                        className={`mt-12 sm:mt-0 relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
                             ? 'translate-y-22 sm:translate-y-32 opacity-100'
                             : 'translate-y-[150px] sm:translate-y-[150px] opacity-0'
                             }`}
@@ -215,7 +215,7 @@ export default function LandingPage() {
                         <img
                             src={heroImage}
                             alt="Hero"
-                            className="mt-4 sm:mt-0 w-5/5 sm:w-full object-contain drop-shadow-2xl scale-100 sm:scale-125 relative z-0"
+                            className="w-5/5 sm:w-full object-contain drop-shadow-2xl scale-100 sm:scale-125 relative z-0"
                         />
                     </div>
                 </div>
