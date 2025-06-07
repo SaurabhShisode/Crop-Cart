@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { UserIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import {
+  UserIcon, EnvelopeIcon, LockClosedIcon, EyeIcon,
+  EyeSlashIcon
+} from '@heroicons/react/24/outline';
 import { toast, Toaster } from 'react-hot-toast';
 
 const RegisterFarmerPage: React.FC = () => {
@@ -11,7 +14,7 @@ const RegisterFarmerPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -94,6 +97,18 @@ const RegisterFarmerPage: React.FC = () => {
                 placeholder="Email address"
                 autoComplete="email"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 focus:outline-none"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="w-5 h-5" />
+                ) : (
+                  <EyeIcon className="w-5 h-5" />
+                )}
+              </button>
             </div>
 
             <div className="relative">
@@ -114,8 +129,8 @@ const RegisterFarmerPage: React.FC = () => {
               type="submit"
               disabled={loading}
               className={`w-full py-3 rounded-lg font-semibold transition-all shadow-md ${loading
-                  ? 'bg-green-900 text-white cursor-not-allowed'
-                  : 'bg-green-900 text-white hover:scale-[1.02]'
+                ? 'bg-green-900 text-white cursor-not-allowed'
+                : 'bg-green-900 text-white hover:scale-[1.02]'
                 }`}
             >
               {loading ? 'Registering...' : 'Register as Farmer'}
