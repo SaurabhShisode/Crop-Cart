@@ -104,20 +104,7 @@ const Navbar: React.FC<{
         setLocation('Error fetching location');
       }
     };
-    const [showTicker, setShowTicker] = useState(false);
 
-
-    useEffect(() => {
-      const handleScroll = () => {
-        const hero = document.querySelector('section.bg-green-900') as HTMLElement | null;
-        const heroHeight = hero?.offsetHeight || 0;
-
-        setShowTicker(window.scrollY > heroHeight - 100);
-      };
-
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     useEffect(() => {
       function handleClickOutside(event: MouseEvent) {
@@ -150,7 +137,6 @@ const Navbar: React.FC<{
 
 
     return (
-      <>
       <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
         <div
           className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
@@ -316,24 +302,9 @@ const Navbar: React.FC<{
             </>
           )}
         </div>
-        
+
       </nav>
-  {
-          showTicker && (
-            <div className="bg-yellow-400 text-black py-2 overflow-hidden relative z-20 shadow-md">
-              <div className="w-[200%] animate-marquee whitespace-nowrap font-semibold text-sm">
-                <span className="mx-10">🔥 10% off on all vegetables this week!</span>
-                <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
-                <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
-                {/* Repeat content to avoid empty gap at the end */}
-                <span className="mx-10">🔥 10% off on all vegetables this week!</span>
-                <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
-                <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
-              </div>
-            </div>
-          )
-        }
-        </>
+
 
     );
   };
@@ -363,7 +334,20 @@ const Home: React.FC = () => {
   const [pincode, setPincode] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const [showTicker, setShowTicker] = useState(false);
 
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const hero = document.querySelector('section.bg-green-900') as HTMLElement | null;
+      const heroHeight = hero?.offsetHeight || 0;
+
+      setShowTicker(window.scrollY > heroHeight - 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
@@ -553,6 +537,19 @@ const Home: React.FC = () => {
         </div>
 
       </section>
+      {showTicker && (
+        <div className="bg-yellow-400 text-black py-2 overflow-hidden relative z-20 shadow-md">
+          <div className="w-[200%] animate-marquee whitespace-nowrap font-semibold text-sm">
+            <span className="mx-10">🔥 10% off on all vegetables this week!</span>
+            <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
+            <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
+            {/* Repeat content to avoid empty gap at the end */}
+            <span className="mx-10">🔥 10% off on all vegetables this week!</span>
+            <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
+            <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
+          </div>
+        </div>
+      )}
 
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
         <div className="px-6 py-8 bg-white space-y-6">
