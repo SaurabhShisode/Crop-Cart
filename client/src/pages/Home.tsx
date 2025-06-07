@@ -104,7 +104,20 @@ const Navbar: React.FC<{
         setLocation('Error fetching location');
       }
     };
+    const [showTicker, setShowTicker] = useState(false);
 
+
+    useEffect(() => {
+      const handleScroll = () => {
+        const hero = document.querySelector('section.bg-green-900') as HTMLElement | null;
+        const heroHeight = hero?.offsetHeight || 0;
+
+        setShowTicker(window.scrollY > heroHeight - 100);
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
       function handleClickOutside(event: MouseEvent) {
@@ -137,175 +150,190 @@ const Navbar: React.FC<{
 
 
     return (
-      <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
-        <div
-          className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
-          onClick={() => navigate('/')}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
-        >
-          <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
-          <span>CropCart</span>
-        </div>
-
-        <div className="hidden md:flex items-center space-x-8">
-          <div className="flex items-center gap-2 bg-green-50 text-green-800 px-4 py-2 rounded-md shadow-sm">
-            <MapPinIcon className="w-5 h-5" aria-hidden="true" />
-            <span className="font-semibold">{location}</span>
-          </div>
-          <input
-            type="text"
-            maxLength={6}
-            placeholder="Enter Pincode"
-            value={pincode}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (/^\d{0,6}$/.test(val)) {
-                setPincode(val);
-                if (val.length === 6) fetchLocation(val);
-              }
-            }}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            aria-label="Enter Pincode"
-          />
-          <div className="relative ">
-            <input
-              type="text"
-              className="px-4 py-2 pr-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-transparent text-black placeholder-transparent"
-              aria-label="Search for products"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {!searchQuery && (
-              <span
-                className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 transition-opacity duration-300 pointer-events-none ${fade ? "opacity-100" : "opacity-0"
-                  }`}
-              >
-                {placeholders[placeholderIndex]}
-              </span>
-            )}
-
-
-
-
-
-            <MagnifyingGlassIcon
-              className="w-5 h-5 text-gray-500 absolute right-2 top-2.5"
-              aria-hidden="true"
-            />
-          </div>
+      <>
+        <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
           <div
-            className="relative cursor-pointer"
-            onClick={toggleCart}
-            aria-label="Toggle cart"
+            className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
+            onClick={() => navigate('/')}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && toggleCart()}
+            onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
           >
-            <ShoppingCart
-              className="w-7 h-7 text-green-800 hover:text-green-600"
-              aria-hidden="true"
+            <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
+            <span>CropCart</span>
+          </div>
+
+          <div className="hidden md:flex items-center space-x-8">
+            <div className="flex items-center gap-2 bg-green-50 text-green-800 px-4 py-2 rounded-md shadow-sm">
+              <MapPinIcon className="w-5 h-5" aria-hidden="true" />
+              <span className="font-semibold">{location}</span>
+            </div>
+            <input
+              type="text"
+              maxLength={6}
+              placeholder="Enter Pincode"
+              value={pincode}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (/^\d{0,6}$/.test(val)) {
+                  setPincode(val);
+                  if (val.length === 6) fetchLocation(val);
+                }
+              }}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              aria-label="Enter Pincode"
             />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                {cartCount}
-              </span>
+            <div className="relative ">
+              <input
+                type="text"
+                className="px-4 py-2 pr-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-transparent text-black placeholder-transparent"
+                aria-label="Search for products"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {!searchQuery && (
+                <span
+                  className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 transition-opacity duration-300 pointer-events-none ${fade ? "opacity-100" : "opacity-0"
+                    }`}
+                >
+                  {placeholders[placeholderIndex]}
+                </span>
+              )}
+
+
+
+
+
+              <MagnifyingGlassIcon
+                className="w-5 h-5 text-gray-500 absolute right-2 top-2.5"
+                aria-hidden="true"
+              />
+            </div>
+            <div
+              className="relative cursor-pointer"
+              onClick={toggleCart}
+              aria-label="Toggle cart"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && toggleCart()}
+            >
+              <ShoppingCart
+                className="w-7 h-7 text-green-800 hover:text-green-600"
+                aria-hidden="true"
+              />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4 relative">
+            {userName ? (
+              <>
+                <span className="font-semibold text-green-700 text-lg">
+                  Hi, {userName}
+                </span>
+
+                <div
+                  ref={dropdownRef}
+                  className="relative"
+                >
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    aria-haspopup="true"
+                    aria-expanded={dropdownOpen}
+                    aria-label="User menu"
+                  >
+                    <User className="w-6 h-6 text-green-700" />
+                  </button>
+                  {dropdownOpen && (
+                    <ul
+                      className="absolute right-0 mt-2 w-48 bg-white border border-green-200 rounded-md shadow-lg z-50"
+                      role="menu"
+                      aria-orientation="vertical"
+                      aria-labelledby="user-menu"
+                    >
+                      <li>
+                        <button
+                          onClick={() => {
+                            navigate('/myorders');
+                            setDropdownOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                          role="menuitem"
+                        >
+                          My Orders
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            navigate('/my-account');
+                            setDropdownOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                          role="menuitem"
+                        >
+                          My Account
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            onLogout();
+                            setDropdownOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
+                          role="menuitem"
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="px-4 py-2 font-semibold text-gray-800 hover:text-green-700 text-lg"
+                  aria-label="Login"
+                >
+                  Log in
+                </button>
+                <button
+                  onClick={() => navigate('/register')}
+                  className="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold flex items-center gap-2"
+                  aria-label="Sign up"
+                >
+                  <UserPlusIcon className="w-5 h-5" aria-hidden="true" />
+                  Sign up
+                </button>
+              </>
             )}
           </div>
-        </div>
 
-        <div className="flex items-center space-x-4 relative">
-          {userName ? (
-            <>
-              <span className="font-semibold text-green-700 text-lg">
-                Hi, {userName}
-              </span>
-
-              <div
-                ref={dropdownRef}
-                className="relative"
-              >
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-                  aria-haspopup="true"
-                  aria-expanded={dropdownOpen}
-                  aria-label="User menu"
-                >
-                  <User className="w-6 h-6 text-green-700" />
-                </button>
-                {dropdownOpen && (
-                  <ul
-                    className="absolute right-0 mt-2 w-48 bg-white border border-green-200 rounded-md shadow-lg z-50"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="user-menu"
-                  >
-                    <li>
-                      <button
-                        onClick={() => {
-                          navigate('/myorders');
-                          setDropdownOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                        role="menuitem"
-                      >
-                        My Orders
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        onClick={() => {
-                          navigate('/my-account');
-                          setDropdownOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                        role="menuitem"
-                      >
-                        My Account
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        onClick={() => {
-                          onLogout();
-                          setDropdownOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
-                        role="menuitem"
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => navigate('/login')}
-                className="px-4 py-2 font-semibold text-gray-800 hover:text-green-700 text-lg"
-                aria-label="Login"
-              >
-                Log in
-              </button>
-              <button
-                onClick={() => navigate('/register')}
-                className="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold flex items-center gap-2"
-                aria-label="Sign up"
-              >
-                <UserPlusIcon className="w-5 h-5" aria-hidden="true" />
-                Sign up
-              </button>
-            </>
-          )}
-        </div>
-
-      </nav>
+        </nav>
+        {showTicker && (
+          <div className="bg-yellow-400 text-black py-2 overflow-hidden relative z-20 shadow-md">
+            <div className="w-[200%] animate-marquee whitespace-nowrap font-semibold text-sm">
+              <span className="mx-10">🔥 10% off on all vegetables this week!</span>
+              <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
+              <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
+              {/* Repeat content to avoid empty gap at the end */}
+              <span className="mx-10">🔥 10% off on all vegetables this week!</span>
+              <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
+              <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
+            </div>
+          </div>
+        )}
 
 
+      </>
     );
   };
 type Crop = {
@@ -334,20 +362,7 @@ const Home: React.FC = () => {
   const [pincode, setPincode] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const [showTicker, setShowTicker] = useState(false);
 
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const hero = document.querySelector('section.bg-green-900') as HTMLElement | null;
-      const heroHeight = hero?.offsetHeight || 0;
-
-      setShowTicker(window.scrollY > heroHeight - 100);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
@@ -537,19 +552,6 @@ const Home: React.FC = () => {
         </div>
 
       </section>
-      {showTicker && (
-        <div className="bg-yellow-400 text-black py-2 overflow-hidden relative z-20 shadow-md">
-          <div className="w-[200%] animate-marquee whitespace-nowrap font-semibold text-sm">
-            <span className="mx-10">🔥 10% off on all vegetables this week!</span>
-            <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
-            <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
-            {/* Repeat content to avoid empty gap at the end */}
-            <span className="mx-10">🔥 10% off on all vegetables this week!</span>
-            <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
-            <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
-          </div>
-        </div>
-      )}
 
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
         <div className="px-6 py-8 bg-white space-y-6">
