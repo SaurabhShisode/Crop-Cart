@@ -28,7 +28,7 @@ const LiveCounters: React.FC = () => {
           Celebrating the growth of our community and the fresh produce we've delivered.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-12 mx-10 sm:mx-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-12">
           {stats.map((stat, index) => (
             <div
               key={index}
