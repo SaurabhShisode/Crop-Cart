@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { UserIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { UserIcon,
+  EnvelopeIcon,
+  LockClosedIcon,
+  EyeIcon,
+  EyeSlashIcon } from '@heroicons/react/24/outline';
 import { toast, Toaster } from 'react-hot-toast';
 
 const RegisterPage: React.FC = () => {
@@ -11,6 +15,7 @@ const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); 
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,7 +53,7 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-
+  
 
   return (
     <div className="min-h-screen flex">
@@ -98,19 +103,33 @@ const RegisterPage: React.FC = () => {
               />
             </div>
 
-            <div className="relative">
-              <LockClosedIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-green-300 focus:border-green-900 focus:ring-2 focus:ring-green-400 focus:outline-none transition"
-                placeholder="Create a password"
-                autoComplete="new-password"
-              />
-            </div>
+              <div className="relative">
+      <LockClosedIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+      
+      <input
+        id="password"
+        type={showPassword ? 'text' : 'password'}
+        required
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        className="w-full pl-10 pr-10 py-3 rounded-lg border border-green-300 focus:border-green-900 focus:ring-2 focus:ring-green-400 focus:outline-none transition"
+        placeholder="Create a password"
+        autoComplete="new-password"
+      />
+
+      <button
+        type="button"
+        onClick={() => setShowPassword(prev => !prev)}
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 focus:outline-none"
+        tabIndex={-1}
+      >
+        {showPassword ? (
+          <EyeSlashIcon className="w-5 h-5" />
+        ) : (
+          <EyeIcon className="w-5 h-5" />
+        )}
+      </button>
+    </div>
 
             <button
               type="submit"
