@@ -184,7 +184,7 @@ export default function LandingPage() {
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
-                        className={`max-w-xl space-y-4 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-4 opacity-100' : 'translate-y-[100px] opacity-0'
+                        className={`max-w-xl space-y-6 sm:space-y-4 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-4 opacity-100' : 'translate-y-[100px] opacity-0'
                             } mt-8 md:mt-24`}
                     >
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-center md:text-left">
@@ -193,8 +193,7 @@ export default function LandingPage() {
                         <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed font-medium md:font-semibold text-center md:text-left">
                             Join our platform to discover fresh, high-quality produce from farmers nearby and support your community.
                         </p>
-                        <div className="flex justify-center md:justify-start mb-6 md:mb-0">
-
+                        <div className="flex justify-center mb-6 md:justify-start">
                             <button
                                 onClick={() => navigate('/home')}
                                 className="w-40 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold"
