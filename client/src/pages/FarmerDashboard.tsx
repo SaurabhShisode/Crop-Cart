@@ -517,7 +517,7 @@ const FarmerDashboard: React.FC = () => {
           <>
             <div className="grid grid-cols-6 gap-6 text-white">
 
-              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
+              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">This Month's Earnings</h3>
 
