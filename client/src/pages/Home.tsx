@@ -504,7 +504,7 @@ const Home: React.FC = () => {
 
 
 
-
+<div className='bg-white'>
       <section
         className="relative bg-green-900 text-white overflow-hidden w-full"
         style={{ opacity: heroOpacity, transition: 'opacity 0.1s linear' }}
@@ -538,7 +538,7 @@ const Home: React.FC = () => {
         </div>
 
       </section>
-
+</div>
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
         <div className="px-6 py-8 bg-white space-y-6">
 
