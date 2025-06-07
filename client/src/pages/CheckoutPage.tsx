@@ -145,22 +145,22 @@ const CheckoutPage: React.FC = () => {
             </ul>
             <div className="border-t border-green-300 mt-6 pt-4 space-y-1 text-green-900">
               <div className="flex justify-between items-center">
-                <span className="text-base">Base Price:</span>
-                <span>₹{totalPrice.toFixed(2)}</span>
+                <span className="font-semibold text-base">Base Price:</span>
+                <span className='font-semibold'>₹{totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-base">Taxes:</span>
-                <span>₹{(totalPrice * 0.18).toFixed(2)}</span>
+                <span className="text-base font-semibold">Taxes:</span>
+                <span className='font-semibold'>₹{(totalPrice * 0.18).toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-base">Delivery Fee:</span>
+                <span className="text-base font-semibold">Delivery Fee:</span>
                 {totalPrice > 299 ? (
                   <span>
-                    <span className="line-through text-red-500 mr-2">₹50.00</span>
+                    <span className="line-through text-red-500 mr-2 font-semibold">₹50.00</span>
                     <span className="text-green-600 font-semibold">₹0.00</span>
                   </span>
                 ) : (
-                  <span>₹50.00</span>
+                  <span className='font-semibold'>₹50.00</span>
                 )}
               </div>
               <div className="flex justify-between items-center font-bold text-xl border-t border-green-300 pt-2 mt-2">
