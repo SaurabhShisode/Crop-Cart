@@ -12,8 +12,7 @@ module.exports = {
       },
       animation: {
         'gradient-x': 'gradientX 5s ease infinite',
-        'slide-left-sm': 'slideLeft 40s linear infinite',
-        'slide-left-lg': 'slideLeft 40s linear infinite',
+        'slide-left': 'slideLeft 40s linear infinite',
       },
       keyframes: {
         gradientX: {
