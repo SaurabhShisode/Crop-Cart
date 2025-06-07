@@ -97,18 +97,7 @@ const RegisterFarmerPage: React.FC = () => {
                 placeholder="Email address"
                 autoComplete="email"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(prev => !prev)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 focus:outline-none"
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <EyeSlashIcon className="w-5 h-5" />
-                ) : (
-                  <EyeIcon className="w-5 h-5" />
-                )}
-              </button>
+              
             </div>
 
             <div className="relative">
@@ -123,6 +112,18 @@ const RegisterFarmerPage: React.FC = () => {
                 placeholder="Create a password"
                 autoComplete="new-password"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 focus:outline-none"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="w-5 h-5" />
+                ) : (
+                  <EyeIcon className="w-5 h-5" />
+                )}
+              </button>
             </div>
 
             <button
