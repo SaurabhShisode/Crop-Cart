@@ -516,11 +516,11 @@ const FarmerDashboard: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-6 gap-6 text-white">
-              
+
               <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">This Month's Earnings</h3>
-                  
+
                 </div>
                 <p className="text-4xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
                 <p
@@ -543,7 +543,7 @@ const FarmerDashboard: React.FC = () => {
               <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">This Month's Orders</h3>
-                  
+
                 </div>
                 <p className="text-4xl font-bold mt-2">{currentMonthOrders}</p>
                 <p
@@ -566,7 +566,7 @@ const FarmerDashboard: React.FC = () => {
               <div className="col-span-6 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold">Most Sold Crop</h3>
-                  
+
                 </div>
                 <div className="text-center">
                   {mostSoldCrop ? (
@@ -691,36 +691,40 @@ const FarmerDashboard: React.FC = () => {
                 {[...crops].reverse().map((crop) => (
                   <div
                     key={crop._id}
-                    className="mt-6 snap-start bg-white border border-green-200 p-3 rounded-md shadow hover:shadow-lg transition-all duration-300 flex flex-col w-56 flex-shrink-0"
-                    style={{ maxWidth: '220px' }}
+                    className="mt-6 snap-start bg-white border border-green-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-60 flex-shrink-0"
+                    style={{ maxWidth: '240px' }}
                   >
-
                     {crop.image && (
                       <img
                         src={crop.image}
                         alt={crop.name}
-                        className="w-full h-32 object-cover rounded mb-2"
+                        className="w-full h-36 object-cover rounded-xl mb-3 border border-gray-100"
                       />
                     )}
-                    <h3 className="text-md font-semibold text-green-700 mb-1 truncate">{crop.name}</h3>
-                    <p className="text-xs text-gray-600">Price: ₹{crop.price}</p>
-                    <p className="text-xs text-gray-600">Quantity: {crop.quantity}</p>
-                    <p className="text-xs text-gray-600">Type: {crop.type}</p>
-                    <p className="text-xs text-gray-600">Availability: {crop.availability}</p>
-                    <p className="text-xs text-gray-600 mb-2 truncate">
-                      Regions: {crop.regionPincodes?.join(', ')}
-                    </p>
+
+                    <h3 className="text-lg font-semibold text-green-800 mb-1 truncate">{crop.name}</h3>
+
+                    <div className="text-sm text-gray-600 space-y-1 mb-3">
+                      <p><span className="font-medium text-gray-700">Price:</span> ₹{crop.price}</p>
+                      <p><span className="font-medium text-gray-700">Quantity:</span> {crop.quantity}</p>
+                      <p><span className="font-medium text-gray-700">Type:</span> {crop.type}</p>
+                      <p><span className="font-medium text-gray-700">Availability:</span> {crop.availability}</p>
+                      <p className="truncate">
+                        <span className="font-medium text-gray-700">Regions:</span> {crop.regionPincodes?.join(', ')}
+                      </p>
+                    </div>
+
                     <button
                       onClick={() => {
                         setCropToDelete(crop);
                         setDeleteModalOpen(true);
                       }}
-                      className="mt-auto bg-red-600 hover:bg-red-700 text-white py-1 rounded text-sm"
+                      className="mt-auto bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl text-sm font-medium transition"
                     >
                       Remove
                     </button>
-
                   </div>
+
                 ))}
               </ScrollableSection>
 
