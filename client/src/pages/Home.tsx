@@ -528,7 +528,7 @@ const Home: React.FC = () => {
         </div>
         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
           <svg
-            className="relative block w-[calc(100%+1.3px)] h-[80px]"
+            className="relative block w-[calc(100%+1.3px)] h-[83px]"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
