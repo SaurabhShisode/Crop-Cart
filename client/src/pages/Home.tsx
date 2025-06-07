@@ -330,20 +330,7 @@ const Home: React.FC = () => {
   const [pincode, setPincode] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const [showTicker, setShowTicker] = useState(false);
-
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const hero = document.querySelector('section.bg-green-900') as HTMLElement | null;
-      const heroHeight = hero?.offsetHeight || 0;
-
-      setShowTicker(window.scrollY > heroHeight - 100);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
@@ -496,7 +483,7 @@ const Home: React.FC = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
-      {showTicker && (
+      
         <div className="bg-yellow-400 text-black py-2 overflow-hidden relative z-20 shadow-md">
           <div className="w-[200%] animate-marquee whitespace-nowrap font-semibold text-sm">
             <span className="mx-10">🔥 10% off on all vegetables this week!</span>
@@ -508,7 +495,7 @@ const Home: React.FC = () => {
             <span className="mx-10">🌾 Support local farmers. Shop fresh, shop local!</span>
           </div>
         </div>
-      )}
+      
 
 
 
