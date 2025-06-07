@@ -553,14 +553,14 @@ const Home: React.FC = () => {
 
             <div className="bg-cyan-200 p-6 rounded-2xl shadow-md hover:scale-105 transition">
               <h2 className="text-xl font-semibold text-cyan-900 mb-2">Organic Vegetables at Your Doorstep</h2>
-              <p className="mb-4 text-sm text-cyan-800">Handpicked greens and veggies from nearby farms</p>
+              <p className="mb-4 text-sm text-cyan-800">🔥 10% off on all vegetables this week!</p>
               <button className="bg-white text-cyan-700 font-medium px-4 py-2 rounded-md">Order Now</button>
             </div>
 
 
             <div className="bg-yellow-300 p-6 rounded-2xl shadow-md hover:scale-105 transition">
-              <h2 className="text-xl font-semibold text-yellow-900 mb-2">Fresh Dairy & Grains</h2>
-              <p className="mb-4 text-sm text-yellow-800">Pure milk, ghee, wheat, pulses and more—straight from the source</p>
+              <h2 className="text-xl font-semibold text-yellow-900 mb-2">Free Delivery</h2>
+              <p className="mb-4 text-sm text-yellow-800">🚚 Free delivery for orders above ₹299</p>
               <button className="bg-white text-yellow-800 font-medium px-4 py-2 rounded-md">Order Now</button>
             </div>
           </div>
