@@ -180,7 +180,7 @@ export default function LandingPage() {
 
 
             {/* Hero Section */}
-            <section className="relative bg-green-900 text-white overflow-hidden h-[860px] sm:h-auto">
+            <section className="relative bg-green-900 text-white overflow-hidden h-[880px] sm:h-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
@@ -208,7 +208,7 @@ export default function LandingPage() {
                     {/* Right Image */}
                     <div
                         className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
-                            ? 'translate-y-32 sm:translate-y-32 opacity-100'
+                            ? 'translate-y-20 sm:translate-y-32 opacity-100'
                             : 'translate-y-[150px] sm:translate-y-[150px] opacity-0'
                             }`}
                     >
