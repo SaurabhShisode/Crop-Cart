@@ -58,7 +58,7 @@ export default function LandingPage() {
                     </div>
 
                     {/* Centered Menu Links (Desktop Only) */}
-                    <div className="hidden md:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
+                    <div className="hidden lg:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
                         {['home', 'about', 'contact'].map((section) => (
                             <button
                                 key={section}
@@ -88,7 +88,7 @@ export default function LandingPage() {
                     </div>
 
                     {/* Right Buttons (Desktop Only) */}
-                    <div className="hidden md:flex items-center space-x-4">
+                    <div className="hidden lg:flex items-center space-x-4">
                         <button
                             onClick={() => navigate('/farmer-login')}
                             className="px-5 py-3 bg-green-100 text-green-700 hover:bg-green-200 font-semibold rounded-md text-lg"
@@ -112,7 +112,7 @@ export default function LandingPage() {
 
                     {/* Hamburger Icon (Mobile Only) */}
                     <button
-                        className="md:hidden text-2xl text-green-700 dark:text-green-400 focus:outline-none"
+                        className="lg:hidden text-2xl text-green-700 dark:text-green-400 focus:outline-none"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     >
                         <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
@@ -121,7 +121,7 @@ export default function LandingPage() {
 
                 {/* Mobile Menu */}
                 {mobileMenuOpen && (
-                    <div className="flex flex-col mt-4 space-y-4 md:hidden">
+                    <div className="flex flex-col mt-4 space-y-4 lg:hidden">
                         {['home', 'about', 'contact'].map((section) => (
                             <button
                                 key={section}
@@ -180,7 +180,7 @@ export default function LandingPage() {
 
 
             {/* Hero Section */}
-            <section className="relative bg-green-900 text-white overflow-hidden h-[860px] sm:h-auto">
+            <section className="relative bg-green-900 text-white overflow-hidden h-[880px] sm:h-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
@@ -196,7 +196,7 @@ export default function LandingPage() {
                         <div className="flex justify-center  md:justify-start">
                             <button
                                 onClick={() => navigate('/home')}
-                                className="w-30 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold "
+                                className="w-30 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold mb-8 sm:mb-0"
                             >
                                 Get Started
                             </button>
@@ -207,7 +207,7 @@ export default function LandingPage() {
 
                     {/* Right Image */}
                     <div
-                        className={`mt-12 sm:mt-0 relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
+                        className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
                             ? 'translate-y-22 sm:translate-y-32 opacity-100'
                             : 'translate-y-[150px] sm:translate-y-[150px] opacity-0'
                             }`}
