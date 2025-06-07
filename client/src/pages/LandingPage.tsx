@@ -180,8 +180,7 @@ export default function LandingPage() {
 
 
             {/* Hero Section */}
-            <section className="relative bg-green-900 text-white overflow-hidden h-[600px] sm:h-[960px]">
-
+            <section className="relative bg-green-900 text-white overflow-hidden h-[860px] sm:h-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
