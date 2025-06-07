@@ -305,7 +305,7 @@ const Navbar: React.FC<{
 
         </nav>
         
-          <div className="bg-yellow-400 text-black py-2 overflow-hidden sticky top-[80px] z-40 shadow-md">
+          <div className="bg-yellow-400 text-black py-2 overflow-hidden sticky top-[85px] z-40 shadow-md">
             <div className="w-[200%] animate-marquee whitespace-nowrap font-semibold text-sm">
               <span className="mx-10">🔥 10% off on all vegetables this week!</span>
               <span className="mx-10">🚚 Free delivery for orders above ₹299</span>
