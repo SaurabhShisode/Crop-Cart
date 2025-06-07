@@ -193,7 +193,8 @@ export default function LandingPage() {
                         <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed font-medium md:font-semibold text-center md:text-left">
                             Join our platform to discover fresh, high-quality produce from farmers nearby and support your community.
                         </p>
-                        <div className="flex justify-center md:justify-start">
+                        <div className="flex justify-center md:justify-start mb-6 md:mb-0">
+
                             <button
                                 onClick={() => navigate('/home')}
                                 className="w-40 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold"
