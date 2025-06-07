@@ -184,19 +184,19 @@ export default function LandingPage() {
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
-                        className={`max-w-xl space-y-6 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-4 opacity-100' : 'translate-y-[100px] opacity-0'
+                        className={`max-w-xl space-y-4 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-4 opacity-100' : 'translate-y-[100px] opacity-0'
                             } mt-8 md:mt-24`}
                     >
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-center md:text-left">
                             Buy Fresh Crops <br />Directly from Local Farmers
                         </h1>
-                        <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed font-medium md:font-semibold text-center md:text-left">
+                        <p className="text-sm sm:text-lg md:text-xl text-gray-200 leading-relaxed font-medium md:font-semibold text-center md:text-left">
                             Join our platform to discover fresh, high-quality produce from farmers nearby and support your community.
                         </p>
-                        <div className="flex justify-center mb-6 md:justify-start">
+                        <div className="flex justify-center  md:justify-start">
                             <button
                                 onClick={() => navigate('/home')}
-                                className="w-40 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold"
+                                className="w-30 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold mb-8 sm:mb-0"
                             >
                                 Get Started
                             </button>
@@ -208,7 +208,7 @@ export default function LandingPage() {
                     {/* Right Image */}
                     <div
                         className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
-                            ? 'translate-y-20 sm:translate-y-32 opacity-100'
+                            ? 'translate-y-22 sm:translate-y-32 opacity-100'
                             : 'translate-y-[150px] sm:translate-y-[150px] opacity-0'
                             }`}
                     >
@@ -249,8 +249,8 @@ export default function LandingPage() {
 
 
             {/* What We Do Section */}
-            <section id="what-we-do" className=" mt-20 py-16 sm:py-24 px-4 sm:px-6 md:px-20">
-                <div className="max-w-7xl mx-auto text-center">
+            <section id="what-we-do" className=" sm:mt-20 py-16 sm:py-24 px-4 sm:px-6 md:px-20">
+                <div className="max-w-7xl mx-10 sm:mx-auto text-center">
                     <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">
                         What We Do
                     </h2>
@@ -281,8 +281,8 @@ export default function LandingPage() {
 
 
 
-            <section className=" py-24 px-6 md:px-20">
-                <div className="max-w-7xl mx-auto text-center">
+            <section className=" py-16 sm:py-24 px-4 sm:px-6 md:px-20">
+                <div className="max-w-7xl mx-10 sm:mx-auto text-center">
                     <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">How It Works</h2>
                     <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">
                         A simple 3-step process to get fresh produce delivered to your doorstep.
@@ -315,14 +315,14 @@ export default function LandingPage() {
             <LiveCounters />
 
             <TestimonialSection />
-            <section className=" py-24 px-6 md:px-20">
-                <div className="max-w-7xl mx-auto text-center">
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-green-900 mb-6">Frequently Asked Questions</h2>
-                    <p className="text-lg md:text-xl text-gray-800 max-w-3xl mx-auto mb-16 font-semibold leading-relaxed">
+            <section className=" py-16 sm:py-24 px-4 sm:px-6 md:px-20">
+                <div className="max-w-7xl mx-10 sm:mx-auto text-center">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">Frequently Asked Questions</h2>
+                    <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">
                         Have questions? We’ve got answers to help you understand how CropCart works.
                     </p>
 
-                    <div className="max-w-4xl mx-auto text-left space-y-0">
+                    <div className="max-w-4xl text-2xl mx-auto text-left space-y-0">
                         {[
                             {
                                 question: "How do I place an order on CropCart?",
@@ -349,10 +349,10 @@ export default function LandingPage() {
                                 key={idx}
                                 className="bg-[#F9F9F9] rounded-3xl p-8 cursor-pointer hover:bg-green-50 transition duration-500"
                             >
-                                <summary className="font-semibold text-lg md:text-base leading-6 list-none focus:outline-none text-green-900 hover:text-green-800">
+                                <summary className="font-semibold text-base sm:text-lg md:text-base leading-6 list-none focus:outline-none text-green-900 hover:text-green-800">
                                     {question}
                                 </summary>
-                                <p className="mt-3 text-gray-700">{answer}</p>
+                                <p className="mt-3 text-gray-700 text-sm">{answer}</p>
                             </details>
                         ))}
                     </div>
@@ -360,32 +360,32 @@ export default function LandingPage() {
             </section>
 
 
-
-
-
-
-
             {/* Contact Section */}
-            <section id="contact-us" className="py-24 px-6 md:px-20 bg-green-100 text-green-900">
-                <div className="max-w-7xl mx-auto text-center">
-                    <h2 className="text-4xl md:text-5xl font-extrabold mb-8">Get in Touch</h2>
-                    <p className="max-w-3xl mx-auto mb-16 text-xl font-semibold leading-relaxed">
+            <section id="contact-us" className="py-16 sm:py-24 px-4 sm:px-6 md:px-20 bg-green-100 text-green-900">
+                <div className="max-w-7xl mx-4 sm:mx-auto text-center">
+                    <h2 className="text-xl sm:text-3xl md:text-5xl font-extrabold text-green-800 mb-3 sm:mb-6">
+                        Get in Touch
+                    </h2>
+
+                    <p className="text-sm sm:text-base md:text-lg text-gray-700 max-w-3xl mx-auto mb-6 sm:mb-12 font-medium sm:font-semibold leading-relaxed">
                         Have questions or want to partner with us? Reach out and we'll get back to you as soon as possible.
                     </p>
 
                     {state.succeeded ? (
-                        <div className="text-2xl font-semibold text-green-800">
+                        <div className="text-lg sm:text-2xl font-semibold text-green-800">
                             ✅ Thanks for reaching out! We'll get back to you shortly.
                         </div>
                     ) : (
-                        <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-8 text-left">
+                        <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 sm:space-y-8 text-left">
                             <div>
-                                <label htmlFor="name" className="block mb-3 font-bold text-lg">Name</label>
+                                <label htmlFor="name" className="block mb-2 font-bold text-base sm:text-lg">
+                                    Name
+                                </label>
                                 <input
                                     id="name"
                                     type="text"
                                     name="name"
-                                    className="w-full px-5 py-3 rounded-md border border-green-300 focus:outline-none focus:ring-3 focus:ring-green-600 text-lg"
+                                    className="w-full px-4 py-3 rounded-md border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-base"
                                     placeholder="Your name"
                                     required
                                 />
@@ -393,12 +393,14 @@ export default function LandingPage() {
                             </div>
 
                             <div>
-                                <label htmlFor="email" className="block mb-3 font-bold text-lg">Email</label>
+                                <label htmlFor="email" className="block mb-2 font-bold text-base sm:text-lg">
+                                    Email
+                                </label>
                                 <input
                                     id="email"
                                     type="email"
                                     name="email"
-                                    className="w-full px-5 py-3 rounded-md border border-green-300 focus:outline-none focus:ring-3 focus:ring-green-600 text-lg"
+                                    className="w-full px-4 py-3 rounded-md border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-base"
                                     placeholder="Your email"
                                     required
                                 />
@@ -406,12 +408,14 @@ export default function LandingPage() {
                             </div>
 
                             <div>
-                                <label htmlFor="message" className="block mb-3 font-bold text-lg">Message</label>
+                                <label htmlFor="message" className="block mb-2 font-bold text-base sm:text-lg">
+                                    Message
+                                </label>
                                 <textarea
                                     id="message"
                                     name="message"
-                                    rows={5}
-                                    className="w-full px-5 py-3 rounded-md border border-green-300 focus:outline-none focus:ring-3 focus:ring-green-600 text-lg"
+                                    rows={4}
+                                    className="w-full px-4 py-3 rounded-md border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-base"
                                     placeholder="Write your message here..."
                                     required
                                 />
@@ -422,7 +426,7 @@ export default function LandingPage() {
                                 <button
                                     type="submit"
                                     disabled={state.submitting}
-                                    className="bg-green-700 hover:bg-green-800 text-white px-10 py-4 rounded-md font-bold text-xl transition"
+                                    className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-md font-bold text-base sm:text-xl transition"
                                 >
                                     {state.submitting ? "Sending..." : "Send Message"}
                                 </button>
@@ -431,6 +435,7 @@ export default function LandingPage() {
                     )}
                 </div>
             </section>
+
 
             {/* Footer */}
             <Footer />

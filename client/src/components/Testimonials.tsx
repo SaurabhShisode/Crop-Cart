@@ -25,17 +25,17 @@ const testimonials = [
 ];
 const TestimonialsSection = () => {
     return (
-        <section className="py-24 overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
-                <h2 className="text-4xl md:text-5xl font-extrabold text-green-800 mb-6">
+        <section className=" py-16 sm:py-24 overflow-hidden">
+            <div className="max-w-7xl mx-10 sm:mx-auto px-6 md:px-12 text-center">
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">
                     Voices of Trust
                 </h2>
-                <p className="text-lg md:text-xl text-green-900 max-w-3xl mx-auto mb-12 font-semibold leading-relaxed">
+                <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">
                     Hear directly from our farmers and customers how CropCart makes a difference.
                 </p>
 
                 <div
-                    className="mt-8 overflow-x-clip h-[250px]"
+                    className="mt-8 overflow-x-clip h-[230px] sm:h-[250px]"
                     style={{
                         maskImage:
                             "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
@@ -43,7 +43,7 @@ const TestimonialsSection = () => {
                             "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
                     }}
                 >
-                    <div className="flex gap-8 animate-slide-left pr-8 flex-none hover:[animation-play-state:paused]">
+                    <div className="flex gap-8 animate-slide-left-sm md:animate-slide-left-lg pr-8 flex-none hover:[animation-play-state:paused] ">
                         {[...Array(2)].fill(0).map((_, i) => (
                             <Fragment key={i}>
                                 {testimonials.map(({ name, position, text, avatar }) => (
@@ -66,6 +66,7 @@ const TestimonialsSection = () => {
                                             {text}
                                         </p>
                                     </div>
+
                                 ))}
                             </Fragment>
                         ))}
