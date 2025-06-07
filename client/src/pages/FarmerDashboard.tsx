@@ -588,7 +588,7 @@ const FarmerDashboard: React.FC = () => {
             {/* Crops Section */}
 
             <section className="my-12">
-              <h2 className="text-3xl font-bold text-green-800 mb-6">🌱 Your Crops</h2>
+              <h2 className="text-3xl font-bold text-green-800 mb-6">Your Crops</h2>
 
               {/* Add Crop Form */}
               <form
@@ -646,10 +646,10 @@ const FarmerDashboard: React.FC = () => {
                       style: { background: '#14532d', color: 'white' },
                     });
                   }
-                }} // your logic remains unchanged
+                }} 
                 className="bg-gradient-to-br from-green-50 to-green-100 p-8 md:p-10 rounded-2xl shadow-lg border border-green-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
-                <h3 className="col-span-full text-2xl font-semibold text-green-800">➕ Add New Crop</h3>
+                <h3 className="col-span-full text-2xl font-semibold text-green-800">Add New Crop</h3>
 
                 <input name="name" required placeholder="Crop Name" className="input-field" />
                 <input name="price" type="number" required placeholder="Price (₹)" className="input-field" />
