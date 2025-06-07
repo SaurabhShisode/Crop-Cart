@@ -572,7 +572,7 @@ const FarmerDashboard: React.FC = () => {
                   {mostSoldCrop ? (
                     <>
                       <p className="text-3xl font-bold">{mostSoldCrop.cropName}</p>
-                      <p className="text-green-100 mt-1">Sold {mostSoldCrop.totalSold} times</p>
+                      <p className="text-sm mt-3 font-medium text-lime-100">Sold {mostSoldCrop.totalSold} times</p>
                     </>
                   ) : (
                     <p className="text-green-100">No crop sales data yet.</p>
