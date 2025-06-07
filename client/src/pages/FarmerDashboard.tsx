@@ -540,7 +540,7 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               {/* Orders */}
-              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
+              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">This Month's Orders</h3>
 
@@ -563,7 +563,7 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               {/* Most Sold Crop */}
-              <div className="col-span-6 row-span-2 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl p-6 shadow-xl hover:scale-[1.02] transition">
+              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold">Most Sold Crop</h3>
 
