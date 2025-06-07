@@ -62,6 +62,10 @@ const CheckoutPage: React.FC = () => {
       const storedUser = localStorage.getItem('cropcartUser');
       const userId = storedUser ? JSON.parse(storedUser)?.user?.id : null;
 
+      const tax = parseFloat((totalPrice * 0.18).toFixed(2));
+      const deliveryFee = totalPrice > 299 ? 0 : 50;
+      const total = parseFloat((totalPrice + tax + deliveryFee).toFixed(2));
+
       const orderData = {
         userId,
         name,
@@ -76,9 +80,9 @@ const CheckoutPage: React.FC = () => {
           quantityInCart: item.quantityInCart,
           farmerId: item.farmer,
         })),
-        total: parseFloat((totalPrice * 1.18 + 50).toFixed(2)),
-        tax: parseFloat((totalPrice * 0.18).toFixed(2)),
-        deliveryFee: 50,
+        total,
+        tax,
+        deliveryFee,
       };
 
 
@@ -150,13 +154,23 @@ const CheckoutPage: React.FC = () => {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-base">Delivery Fee:</span>
-                <span>₹50.00</span>
+                {totalPrice > 299 ? (
+                  <span>
+                    <span className="line-through text-red-500 mr-2">₹50.00</span>
+                    <span className="text-green-600 font-semibold">₹0.00</span>
+                  </span>
+                ) : (
+                  <span>₹50.00</span>
+                )}
               </div>
               <div className="flex justify-between items-center font-bold text-xl border-t border-green-300 pt-2 mt-2">
                 <span>Total:</span>
-                <span>₹{(totalPrice * 1.18 + 50).toFixed(2)}</span>
+                <span>
+                  ₹{(totalPrice * 1.18 + (totalPrice > 299 ? 0 : 50)).toFixed(2)}
+                </span>
               </div>
             </div>
+
           </section>
 
           {/* Shipping Details */}
