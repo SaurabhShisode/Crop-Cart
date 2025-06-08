@@ -149,12 +149,16 @@ const toggleOrderDetails = (orderId: string) => {
         throw new Error(errData.message || 'Failed to delete order');
       }
 
-      toast.success('Order deleted successfully');
+      toast.success('Order deleted successfully', {
+        style: { background: '#14532d', color: 'white' },
+      });
       setOrders((prev) => prev.filter((o) => o._id !== orderToDelete._id));
       setShowDeleteModal(false);
       setOrderToDelete(null);
     } catch (err: any) {
-      toast.error(err.message || 'Error deleting order');
+      toast.error(err.message || 'Error deleting order', {
+        style: { background: '#14532d', color: 'white' },
+      });
     }
   };
     useEffect(() => {
@@ -167,7 +171,9 @@ const toggleOrderDetails = (orderId: string) => {
       try {
         const userData = localStorage.getItem('cropcartUser');
         if (!userData) {
-          toast.error('You must be logged in to view orders');
+          toast.error('You must be logged in to view orders', {
+        style: { background: '#14532d', color: 'white' },
+      });
           navigate('/login');
           return;
         }
@@ -192,7 +198,9 @@ const toggleOrderDetails = (orderId: string) => {
         const data = await res.json();
         setOrders(data);
       } catch (error: any) {
-        toast.error(error.message || 'Failed to load orders');
+        toast.error(error.message || 'Failed to load orders', {
+        style: { background: '#14532d', color: 'white' },
+      });
       } finally {
         setLoading(false);
       }
@@ -203,7 +211,9 @@ const toggleOrderDetails = (orderId: string) => {
 
   const onLogout = () => {
     localStorage.removeItem('cropcartUser');
-    toast.success('Logged out successfully');
+    toast.success('Logged out successfully', {
+        style: { background: '#14532d', color: 'white' },
+      });
     navigate('/home');
   };
 
