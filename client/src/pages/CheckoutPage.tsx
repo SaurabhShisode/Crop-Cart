@@ -162,7 +162,7 @@ const CheckoutPage: React.FC = () => {
                       <p className="font-semibold text-white text-sm md:text-base">
                         {item.name} ({item.quantity})
                       </p>
-                      <div className="flex items-center space-x-2 mt-1 bg-green-700 rounded">
+                      <div className="flex items-center space-x-2 mt-1 bg-green-700 rounded w-[75px]">
                         <button
                           type="button"
                           onClick={() => updateQuantity(item._id, quantityNum - 1)}
