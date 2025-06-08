@@ -149,7 +149,10 @@ export default function LandingPage() {
                                 {section.charAt(0).toUpperCase() + section.slice(1)}
                             </button>
                         ))}
-                        <button className="px-4 py-3 font-semibold text-left text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400">
+                        <button onClick={() => {
+                                navigate('/farmer-login');
+                                setMobileMenuOpen(false);
+                            }} className="px-4 py-3 font-semibold text-left text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400">
                             Sell Your Produce
                         </button>
                         <button
