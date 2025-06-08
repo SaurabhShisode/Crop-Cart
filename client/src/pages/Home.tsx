@@ -43,7 +43,7 @@ const ScrollableSection: React.FC<{
       <div
         ref={scrollRef}
         id={sectionId}
-        className="overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide flex gap-4 py-2 px-1"
+        className="overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide flex gap-4 py-2 px-4"
       >
         {children}
       </div>
@@ -661,7 +661,7 @@ const Home: React.FC = () => {
                   {products.map((crop) => (
                     <div
                       key={crop._id}
-                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
+                      className=" snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
                       <img
                         src={crop.image}
