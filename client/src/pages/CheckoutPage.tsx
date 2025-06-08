@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../components/Footer';
-
 interface CartItem {
   _id: string;
   name: string;
@@ -22,9 +21,7 @@ const CheckoutPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  useEffect(() => {
-  window.scrollTo(0, 0);
-}, []);
+
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
@@ -198,15 +195,39 @@ const CheckoutPage: React.FC = () => {
 
             <div className="border-t border-white mt-4 md:mt-6 pt-3 md:pt-4 space-y-1 text-white">
               <div className="flex justify-between items-center text-sm md:text-base">
-                <span className="font-semibold">Base Price:</span>
+                <span className="flex items-center gap-2 font-semibold">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-circle-dollar-sign-icon lucide-circle-dollar-sign"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>Base Price:</span>
                 <span className="font-semibold">₹{totalPrice.toFixed(2)}</span>
               </div>
+
               <div className="flex justify-between items-center text-sm md:text-base">
-                <span className="font-semibold">Taxes:</span>
+                <span className="flex items-center gap-2 font-semibold">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-landmark-icon lucide-landmark"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg>Taxes:</span>
                 <span className="font-semibold">₹{(totalPrice * 0.18).toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center text-sm md:text-base">
-                <span className="font-semibold">Delivery Fee:</span>
+                <span className="flex items-center gap-2 font-semibold">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-truck-icon lucide-truck"
+                  >
+                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+                    <path d="M15 18H9" />
+                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+                    <circle cx="17" cy="18" r="2" />
+                    <circle cx="7" cy="18" r="2" />
+                  </svg>
+                  Delivery Fee:
+                </span>
+
                 {totalPrice > 299 ? (
                   <span>
                     <span className="line-through text-white/50 mr-1 md:mr-2 font-semibold">₹50.00</span>
@@ -216,6 +237,7 @@ const CheckoutPage: React.FC = () => {
                   <span className="font-semibold">₹50.00</span>
                 )}
               </div>
+
               <div className="flex justify-between items-center font-bold text-base md:text-xl border-t border-white pt-2 mt-2">
                 <span>Total:</span>
                 <span>
