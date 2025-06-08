@@ -647,7 +647,7 @@ const Home: React.FC = () => {
                   {products.map((crop) => (
                     <div
                       key={crop._id}
-                      className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
+                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
                       <img
                         src={crop.image}
@@ -706,7 +706,7 @@ const Home: React.FC = () => {
                   {products.map((crop) => (
                     <div
                       key={crop._id}
-                      className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
+                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-md transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
                       <img
                         src={crop.image}
@@ -743,11 +743,6 @@ const Home: React.FC = () => {
           )}
         </main>
       </div>
-
-
-
-
-
       <Footer />
 
 
