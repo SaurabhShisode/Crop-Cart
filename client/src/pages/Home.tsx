@@ -146,7 +146,7 @@ const Navbar: React.FC<{
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    
+
     useEffect(() => {
       const interval = setInterval(() => {
         setFade(false);
@@ -454,29 +454,29 @@ const Home: React.FC = () => {
 
 
 
- /* const [heroOpacity, setHeroOpacity] = useState(1);
-
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          const fadeStart = 0;
-          const fadeEnd = 400;
-          const newOpacity = Math.max(1 - (scrollY - fadeStart) / (fadeEnd - fadeStart), 0);
-          setHeroOpacity(newOpacity);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-*/
+  /* const [heroOpacity, setHeroOpacity] = useState(1);
+ 
+   useEffect(() => {
+     let ticking = false;
+ 
+     const handleScroll = () => {
+       if (!ticking) {
+         window.requestAnimationFrame(() => {
+           const scrollY = window.scrollY;
+           const fadeStart = 0;
+           const fadeEnd = 400;
+           const newOpacity = Math.max(1 - (scrollY - fadeStart) / (fadeEnd - fadeStart), 0);
+           setHeroOpacity(newOpacity);
+           ticking = false;
+         });
+         ticking = true;
+       }
+     };
+ 
+     window.addEventListener('scroll', handleScroll);
+     return () => window.removeEventListener('scroll', handleScroll);
+   }, []);
+ */
   useEffect(() => {
     if (userName) {
       const storedUser = localStorage.getItem('cropcartUser');
@@ -573,7 +573,7 @@ const Home: React.FC = () => {
     {}
   );
   return (
-    <div className="min-h-screen bg-white flex flex-col overflow-x-hidden">
+    <div className="min-h-screen bg-white flex flex-col">
       <Navbar
         userName={userName}
         onLogout={handleLogout}
@@ -630,8 +630,8 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex justify-center">
-        <main className="flex-grow max-w-7xl mx-40 min-h-screen pb-10 px-4 bg-white">
+      <div className="hidden lg:flex justify-center">
+        <main className="flex-grow max-w-7xl mx-0 sm:mx-40 min-h-screen pb-10 px-4 bg-white">
 
           {Object.keys(groupedCrops).length === 0 ? (
             <p className="text-center text-green-900 text-base font-medium">
@@ -690,6 +690,60 @@ const Home: React.FC = () => {
         </main>
 
       </div>
+      <div className="lg:hidden px-4 py-6 bg-white min-h-screen mb-10">
+        <main className="max-w-4xl mx-auto space-y-10">
+          {Object.keys(groupedCrops).length === 0 ? (
+            <p className="text-center text-green-900 text-base font-medium">
+              No products available right now.
+            </p>
+          ) : (
+            Object.entries(groupedCrops).map(([type, products]) => (
+              <section key={type}>
+                <h2 className="text-lg font-bold text-green-700 mb-3 capitalize sticky top-0 bg-white z-10">
+                  {type}
+                </h2>
+                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
+                  {products.map((crop) => (
+                    <div
+                      key={crop._id}
+                      className="snap-start bg-white/80 backdrop-blur-sm border border-green-100 shadow hover:shadow-md transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
+                    >
+                      <img
+                        src={crop.image}
+                        alt={crop.name}
+                        className="w-full h-24 object-cover rounded-md mb-2"
+                        loading="lazy"
+                      />
+                      <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
+                        {crop.name}
+                      </h3>
+                      <p className="text-green-700 text-sm font-bold mb-1">
+                        ₹{crop.price}
+                      </p>
+                      <p className="text-xs text-gray-600 mb-2">
+                        {crop.quantity}
+                      </p>
+                      <button
+                        onClick={() => {
+                          if (!userName) {
+                            navigate('/login');
+                          } else {
+                            addToCart(crop);
+                          }
+                        }}
+                        className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
+                      >
+                        🛒 Add
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))
+          )}
+        </main>
+      </div>
+
 
 
 
