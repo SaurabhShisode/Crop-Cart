@@ -7,7 +7,7 @@ import {
   UserPlusIcon,
 } from '@heroicons/react/24/outline';
 import { ShoppingCart, User, ArrowLeft, ArrowRight } from 'lucide-react';
-import homeheroImage from '../assets/home_hero.png';
+//import homeheroImage from '../assets/home_hero.png';
 import veggiesImage from '../assets/veggies.jpg';
 import logo from '../assets/logo.png';
 import Footer from '../components/Footer';
@@ -454,7 +454,7 @@ const Home: React.FC = () => {
 
 
 
-  const [heroOpacity, setHeroOpacity] = useState(1);
+ /* const [heroOpacity, setHeroOpacity] = useState(1);
 
   useEffect(() => {
     let ticking = false;
@@ -476,7 +476,7 @@ const Home: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
+*/
   useEffect(() => {
     if (userName) {
       const storedUser = localStorage.getItem('cropcartUser');
@@ -585,47 +585,10 @@ const Home: React.FC = () => {
         setSearchQuery={setSearchQuery}
       />
 
-
-
-
-      <section
-        className="relative bg-green-900 text-white overflow-hidden w-full"
-        style={{ opacity: heroOpacity, transition: 'opacity 0.1s linear' }}
-      >
-        <div className="flex flex-col md:flex-row items-center justify-between px-10 py-24 w-full mx-auto">
-          <div className="w-full md:w-1/2 space-y-8 pl-24 md:pl-32 md:px-0">
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-              Products <br />nearby you.
-            </h1>
-            <p className="text-base md:text-lg text-gray-200 leading-relaxed font-semibold">
-              Order fresh, locally-sourced produce with ease and get it delivered straight to your doorstep.
-            </p>
-          </div>
-          <div className="w-full md:w-1/2 max-w-sm mx-auto transition-all duration-700 ease-out transform">
-            <img
-              src={homeheroImage}
-              alt="Hero"
-              className="w-full object-contain drop-shadow-2xl scale-125 translate-y-20 rounded"
-            />
-          </div>
-        </div>
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
-          <svg
-            className="relative block w-[calc(100%+1.3px)] h-[80px]"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-          >
-            <path d="M0 0 C 600 120 600 120 1200 0 L1200 120 L0 120 Z" fill="#FFFFFF" />
-          </svg>
-        </div>
-
-      </section>
-
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
         <div className="px-6 py-8 bg-white space-y-6">
 
-          <div className="relative rounded-3xl overflow-hidden bg-green-500 text-white p-8 w-full h-80">
+          <div className="relative rounded-3xl overflow-hidden bg-green-500 text-white p-4 sm:p-8 w-full h-42 sm:h-80">
 
             <img
               src={veggiesImage}
@@ -635,29 +598,30 @@ const Home: React.FC = () => {
 
 
             <div className="relative z-10">
-              <h1 className="text-4xl font-bold mb-2">CropCart Specials</h1>
-              <p className="text-lg mb-4">Your trusted platform to buy farm-fresh produce directly from farmers</p>
-              <button className="bg-white text-green-600 px-4 py-2 rounded-md font-semibold shadow hover:bg-green-100">
+              <h1 className="text-xl sm:text-4xl font-bold mb-2">CropCart Specials</h1>
+              <p className="text-sm sm:text-lg mb-4 font-semibold">
+                Your trusted platform to buy farm-fresh produce directly from farmers
+              </p>
+              <button className="text-sm sm:text-base bg-white text-green-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-semibold shadow hover:bg-green-100">
                 Start Shopping
               </button>
             </div>
+
           </div>
-
-
 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <div className="bg-cyan-200 p-6 rounded-2xl shadow-md hover:scale-105 transition">
+            <div className="bg-cyan-200 p-4 sm:p-6 rounded-2xl shadow-md hover:scale-105 transition">
               <h2 className="text-xl font-semibold text-cyan-900 mb-2">Fresh Organic Vegetables Delivered</h2>
               <p className="mb-4 text-sm text-cyan-800">Enjoy 10% off on all organic vegetables this week!🔥</p>
-              <button className="bg-white text-cyan-700 font-medium px-4 py-2 rounded-md">Shop Now</button>
+              <button className="text-sm sm:text-base bg-white text-cyan-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-semibold shadow hover:bg-green-10">Shop Now</button>
             </div>
 
             <div className="bg-yellow-300 p-6 rounded-2xl shadow-md hover:scale-105 transition">
               <h2 className="text-xl font-semibold text-yellow-900 mb-2">Free Delivery on Orders Over ₹299</h2>
               <p className="mb-4 text-sm text-yellow-800">Get your fresh produce delivered at no extra cost! 🚚 </p>
-              <button className="bg-white text-yellow-800 font-medium px-4 py-2 rounded-md">Start Shopping</button>
+              <button className="text-sm sm:text-base bg-white text-yellow-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-semibold shadow hover:bg-green-10">Start Shopping</button>
             </div>
 
           </div>
