@@ -103,7 +103,7 @@ const downloadInvoice = (order: Order) => {
 const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-
+const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -120,6 +120,11 @@ const MyOrders: React.FC = () => {
       setShowDeleteModal(true);
     }
   };
+
+  
+const toggleOrderDetails = (orderId: string) => {
+  setExpandedOrderId((prev) => (prev === orderId ? null : orderId));
+};
 
   const handleConfirmDelete = async () => {
     if (!orderToDelete) return;
@@ -202,116 +207,108 @@ const MyOrders: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-sm sticky top-0 z-50">
+    <div
+      className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
+      onClick={() => navigate('/')}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
+    >
+      <img src={logo} alt="CropCart Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
+      <span>CropCart</span>
+    </div>
 
-      <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
-        <div
-          className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
-          onClick={() => navigate('/')}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
-        >
-          <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
-          <span>CropCart</span>
-        </div>
+    <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+      {userName ? (
+        <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+          <span className="hidden sm:flex font-semibold text-green-700 text-sm sm:text-lg">
+            Hi, {userName}
+          </span>
 
-        <div className="flex items-center space-x-4 relative">
-          {userName ? (
-            <>
-              <span className="font-semibold text-green-700 text-lg">
-                Hi, {userName}
-              </span>
-
-              <div
-                ref={dropdownRef}
-                className="relative"
-              >
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-                  aria-haspopup="true"
-                  aria-expanded={dropdownOpen}
-                  aria-label="User menu"
-                >
-                  <User className="w-6 h-6 text-green-700" />
-                </button>
-                {dropdownOpen && (
-                  <ul
-                    className="absolute right-0 mt-2 w-48 bg-white border border-green-200 rounded-md shadow-lg z-50"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="user-menu"
+          <div ref={dropdownRef} className="relative">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="p-1.5 sm:p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+              aria-haspopup="true"
+              aria-expanded={dropdownOpen}
+              aria-label="User menu"
+            >
+              <User className="w-5 h-5 sm:w-6 sm:h-6 text-green-700" />
+            </button>
+            {dropdownOpen && (
+              <ul className="absolute right-0 mt-2 w-44 sm:w-48 bg-white border border-green-200 rounded-md shadow-lg z-50 text-sm sm:text-base">
+                <li>
+                  <button
+                    onClick={() => {
+                      navigate('/myorders');
+                      setDropdownOpen(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
                   >
-                    <li>
-                      <button
-                        onClick={() => {
-                          navigate('/myorders');
-                          setDropdownOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                        role="menuitem"
-                      >
-                        My Orders
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        onClick={() => {
-                          navigate('/my-account');
-                          setDropdownOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                        role="menuitem"
-                      >
-                        My Account
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        onClick={() => {
-                          onLogout();
-                          setDropdownOpen(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
-                        role="menuitem"
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => navigate('/login')}
-                className="px-4 py-2 font-semibold text-gray-800 hover:text-green-700 text-lg"
-                aria-label="Login"
-              >
-                Log in
-              </button>
-              <button
-                onClick={() => navigate('/register')}
-                className="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold flex items-center gap-2"
-                aria-label="Sign up"
-              >
-                <UserPlusIcon className="w-5 h-5" aria-hidden="true" />
-                Sign up
-              </button>
-            </>
-          )}
+                    My Orders
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      navigate('/my-account');
+                      setDropdownOpen(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                  >
+                    My Account
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      onLogout();
+                      setDropdownOpen(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
+                  >
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            )}
+          </div>
         </div>
-      </nav>
+      ) : (
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => navigate('/login')}
+            className="px-3 py-1.5 text-sm sm:text-lg font-semibold text-gray-800 hover:text-green-700"
+          >
+            Log in
+          </button>
+          <button
+            onClick={() => navigate('/register')}
+            className="px-4 sm:px-5 py-1.5 sm:py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-sm sm:text-lg font-semibold flex items-center gap-2"
+          >
+            <UserPlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+            Sign up
+          </button>
+        </div>
+      )}
+    </div>
+  </nav>
 
-      {/* Orders Section */}
-      <main className="pt-28 pb-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-green-900 dark:text-green-300 mb-8">My Orders</h1>
+  {/* Orders Section */}
+        <main className="pt-24 sm:pt-28 pb-24 sm:pb-28 max-w-6xl mx-auto px-3 sm:px-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-green-900 dark:text-green-300 mb-6 sm:mb-8">
+          My Orders
+        </h1>
 
         {loading ? (
-          <div className="text-center text-green-800 dark:text-green-200">Loading your orders...</div>
+          <div className="text-center text-green-800 dark:text-green-200 text-sm sm:text-base">
+            Loading your orders...
+          </div>
         ) : orders.length === 0 ? (
-          <div className="text-center text-gray-600 dark:text-gray-400 text-lg">You haven’t placed any orders yet.</div>
+          <div className="text-center text-gray-600 dark:text-gray-400 text-sm sm:text-lg">
+            You haven’t placed any orders yet.
+          </div>
         ) : (
           <div className="grid gap-6">
             {orders.map((order) => {
@@ -319,75 +316,95 @@ const MyOrders: React.FC = () => {
               const tax = parseFloat(order.tax);
               const delivery = order.deliveryFee;
               const basePrice = total - tax - delivery;
+              const isExpanded = expandedOrderId === order._id;
 
               return (
                 <div
                   key={order._id}
-                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300"
+                  onClick={() => toggleOrderDetails(order._id)}
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition-all duration-300 text-sm sm:text-base cursor-pointer"
                 >
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
                     <div>
-                      <p className="text-sm text-gray-500">Order ID:</p>
-                      <p className="text-lg font-semibold text-green-800 dark:text-green-300">{order._id}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">Order ID:</p>
+                      <p className="text-sm sm:text-lg font-semibold text-green-800 dark:text-green-300 break-all">
+                        {order._id}
+                      </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500">Placed on</p>
-                      <p className="text-md font-medium">{new Date(order.createdAt).toLocaleString('en-GB')}</p>
+                    <div className="text-left sm:text-right">
+                      <p className="text-xs sm:text-sm text-gray-500">Placed on</p>
+                      <p className="text-sm sm:text-base font-medium">
+                        {new Date(order.createdAt).toLocaleString('en-GB')}
+                      </p>
                     </div>
                   </div>
 
-                  <p className="mb-2">
-                    <span className="font-medium">Delivery Address:</span> {order.address}
-                  </p>
-                  <p className="mb-2">
-                    <span className="font-medium">Phone:</span> {order.phone}
-                  </p>
+                  {/* Expanded Details */}
+                  <div
+                    className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                      isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <p className="mb-2 text-sm sm:text-base">
+                      <span className="font-medium">Delivery Address:</span> {order.address}
+                    </p>
+                    <p className="mb-2 text-sm sm:text-base">
+                      <span className="font-medium">Phone:</span> {order.phone}
+                    </p>
 
-
-                  <div className="mb-4">
-                    <p className="font-medium mb-1">Items:</p>
-                    <ul className="list-disc ml-6 space-y-1 text-sm">
-                      {order.items.map((item, idx) => (
-                        <li key={idx}>
-                          <span className="font-medium">{item.name}</span> — {item.quantityInCart} ({item.quantity})
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                    <div>
-                      <p className="text-gray-500">Base Price</p>
-                      <p className="font-semibold">₹{basePrice.toFixed(2)}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Tax</p>
-                      <p className="font-semibold">₹{tax.toFixed(2)}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Delivery</p>
-                      <p className="font-semibold">₹{delivery.toFixed(2)}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Total</p>
-                      <p className="font-bold text-green-700 dark:text-green-300">₹{total.toFixed(2)}</p>
+                    <div className="mb-4">
+                      <p className="font-medium mb-1">Items:</p>
+                      <ul className="list-disc ml-6 space-y-1 text-xs sm:text-sm">
+                        {order.items.map((item, idx) => (
+                          <li key={idx}>
+                            <span className="font-medium">{item.name}</span> — {item.quantityInCart} ({item.quantity})
+                          </li>
+                        ))}
+                      </ul>
                     </div>
 
-                  </div>
-                  <div className="flex justify-start space-x-4 mt-4">
-                    <button
-                      onClick={() => downloadInvoice(order)}
-                      className="bg-gradient-to-br from-green-900 to-emerald-800 hover:from-green-800 hover:to-emerald-700 text-white font-medium py-1.5 px-3 rounded text-sm transition duration-300 whitespace-nowrap"
-                    >
-                      Download Invoice
-                    </button>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs sm:text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                      <div>
+                        <p className="text-gray-500">Base Price</p>
+                        <p className="font-semibold">₹{basePrice.toFixed(2)}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Tax</p>
+                        <p className="font-semibold">₹{tax.toFixed(2)}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Delivery</p>
+                        <p className="font-semibold">₹{delivery.toFixed(2)}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Total</p>
+                        <p className="font-bold text-green-700 dark:text-green-300">
+                          ₹{total.toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
 
-                    <button
-                      onClick={() => handleDeleteClick(order._id)}
-                      className="bg-gradient-to-br from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white font-medium py-1.5 px-3 rounded text-sm transition duration-300 whitespace-nowrap"
-                    >
-                      Cancel Order
-                    </button>
+                    <div className="flex flex-col sm:flex-row justify-start gap-2 sm:gap-3 mt-4">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          downloadInvoice(order);
+                        }}
+                        className="bg-gradient-to-br from-green-900 to-emerald-800 hover:from-green-800 hover:to-emerald-700 text-white font-medium py-1.5 px-3 rounded text-xs sm:text-sm transition duration-300 whitespace-nowrap"
+                      >
+                        Download Invoice
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(order._id);
+                        }}
+                        className="bg-gradient-to-br from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white font-medium py-1.5 px-3 rounded text-xs sm:text-sm transition duration-300 whitespace-nowrap"
+                      >
+                        Cancel Order
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -395,16 +412,20 @@ const MyOrders: React.FC = () => {
           </div>
         )}
       </main>
-      <Footer />
-      {showDeleteModal && orderToDelete && (
-        <ConfirmDeleteModal
-          isOpen={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          onConfirm={handleConfirmDelete}
-          cropName={`Order ID: ${orderToDelete._id}`}
-        />
-      )}
-    </div>
+
+  <Footer />
+
+  {showDeleteModal && orderToDelete && (
+    <ConfirmDeleteModal
+      isOpen={showDeleteModal}
+      onClose={() => setShowDeleteModal(false)}
+      onConfirm={handleConfirmDelete}
+      cropName={`Order ID: ${orderToDelete._id}`}
+    />
+  )}
+</div>
+
+
 
   );
 
