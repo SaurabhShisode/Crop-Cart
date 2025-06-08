@@ -11,6 +11,11 @@ import homeheroImage from '../assets/home_hero.png';
 import veggiesImage from '../assets/veggies.jpg';
 import logo from '../assets/logo.png';
 import Footer from '../components/Footer';
+import {
+  faBars,
+  faTimes
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ScrollableSection: React.FC<{
   children: React.ReactNode;
@@ -131,15 +136,56 @@ const Navbar: React.FC<{
     }, []);
 
 
+    useEffect(() => {
+      function handleClickOutside(event: MouseEvent) {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+          setDropdownOpen(false);
+        }
+      }
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setFade(false);
+        setTimeout(() => {
+          setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+          setFade(true);
+        }, 300);
+      }, 3000);
+      return () => clearInterval(interval);
+    }, []);
+
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+
+
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(event.target as Node)
+        ) {
+          setDropdownOpen(false);
+        }
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+
 
 
 
 
     return (
       <>
-        <nav className="flex justify-between items-center px-6 py-7 bg-white shadow-sm sticky top-0 z-50">
+        <nav className="flex justify-between items-center px-6 py-6 md:py-7 bg-white shadow-sm sticky top-0 z-50">
+          {/* Logo */}
           <div
-            className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
+            className="flex items-center gap-2 text-2xl font-extrabold text-green-700 cursor-pointer"
             onClick={() => navigate('/')}
             role="button"
             tabIndex={0}
@@ -149,15 +195,16 @@ const Navbar: React.FC<{
             <span>CropCart</span>
           </div>
 
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop Inputs */}
+          <div className="hidden lg:flex items-center space-x-8">
             <div className="flex items-center gap-2 bg-green-50 text-green-800 px-4 py-2 rounded-md shadow-sm">
               <MapPinIcon className="w-5 h-5" aria-hidden="true" />
               <span className="font-semibold">{location}</span>
             </div>
+
             <input
               type="text"
               maxLength={6}
-              placeholder="Enter Pincode"
               value={pincode}
               onChange={(e) => {
                 const val = e.target.value;
@@ -167,33 +214,27 @@ const Navbar: React.FC<{
                 }
               }}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Enter Pincode"
               aria-label="Enter Pincode"
             />
-            <div className="relative ">
+
+            <div className="relative">
               <input
                 type="text"
-                className="px-4 py-2 pr-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-transparent text-black placeholder-transparent"
+                className="px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-transparent text-black placeholder-transparent"
+                placeholder="Search for products"
                 aria-label="Search for products"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {!searchQuery && (
                 <span
-                  className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 transition-opacity duration-300 pointer-events-none ${fade ? "opacity-100" : "opacity-0"
-                    }`}
+                  className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 transition-opacity duration-300 pointer-events-none ${fade ? "opacity-100" : "opacity-0"}`}
                 >
                   {placeholders[placeholderIndex]}
                 </span>
               )}
-
-
-
-
-
-              <MagnifyingGlassIcon
-                className="w-5 h-5 text-gray-500 absolute right-2 top-2.5"
-                aria-hidden="true"
-              />
+              <MagnifyingGlassIcon className="w-5 h-5 absolute right-2 top-2.5 text-gray-500" aria-hidden="true" />
             </div>
             <div
               className="relative cursor-pointer"
@@ -203,108 +244,164 @@ const Navbar: React.FC<{
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && toggleCart()}
             >
-              <ShoppingCart
-                className="w-7 h-7 text-green-800 hover:text-green-600"
-                aria-hidden="true"
-              />
+              <ShoppingCart className="w-7 h-7 text-green-800 hover:text-green-600" aria-hidden="true" />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                   {cartCount}
                 </span>
               )}
             </div>
+
           </div>
 
-          <div className="flex items-center space-x-4 relative">
-            {userName ? (
-              <>
-                <span className="font-semibold text-green-700 text-lg">
-                  Hi, {userName}
+          {/* Right side */}
+          <div className="flex items-center gap-6 md:gap-6">
+
+            <div
+              className="relative cursor-pointer lg:hidden"
+              onClick={toggleCart}
+              aria-label="Toggle cart"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && toggleCart()}
+            >
+              <ShoppingCart className="w-7 h-7 text-green-800 hover:text-green-600 translate-y-[-2.5px]" aria-hidden="true" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                  {cartCount}
                 </span>
-
-                <div
-                  ref={dropdownRef}
-                  className="relative"
-                >
-                  <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    aria-haspopup="true"
-                    aria-expanded={dropdownOpen}
-                    aria-label="User menu"
-                  >
-                    <User className="w-6 h-6 text-green-700" />
-                  </button>
-                  {dropdownOpen && (
-                    <ul
-                      className="absolute right-0 mt-2 w-48 bg-white border border-green-200 rounded-md shadow-lg z-50"
-                      role="menu"
-                      aria-orientation="vertical"
-                      aria-labelledby="user-menu"
+              )}
+            </div>
+            {/* User / Auth Buttons */}
+            <div className="hidden md:flex items-center space-x-4">
+              {userName ? (
+                <>
+                  <span className="font-semibold text-green-700 text-lg">Hi, {userName}</span>
+                  <div ref={dropdownRef} className="relative">
+                    <button
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      aria-haspopup="true"
+                      aria-expanded={dropdownOpen}
+                      aria-label="User menu"
                     >
-                      <li>
-                        <button
-                          onClick={() => {
-                            navigate('/myorders');
-                            setDropdownOpen(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                          role="menuitem"
-                        >
-                          My Orders
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => {
-                            navigate('/my-account');
-                            setDropdownOpen(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                          role="menuitem"
-                        >
-                          My Account
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => {
-                            onLogout();
-                            setDropdownOpen(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
-                          role="menuitem"
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => navigate('/login')}
-                  className="px-4 py-2 font-semibold text-gray-800 hover:text-green-700 text-lg"
-                  aria-label="Login"
-                >
-                  Log in
-                </button>
-                <button
-                  onClick={() => navigate('/register')}
-                  className="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold flex items-center gap-2"
-                  aria-label="Sign up"
-                >
-                  <UserPlusIcon className="w-5 h-5" aria-hidden="true" />
-                  Sign up
-                </button>
-              </>
-            )}
+                      <User className="w-6 h-6 text-green-700" />
+                    </button>
+                    {dropdownOpen && (
+                      <ul
+                        className="absolute right-0 mt-2 w-48 bg-white border border-green-200 rounded-md shadow-lg z-50"
+                        role="menu"
+                        aria-orientation="vertical"
+                      >
+                        <li>
+                          <button
+                            onClick={() => {
+                              navigate('/myorders');
+                              setDropdownOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                            role="menuitem"
+                          >
+                            My Orders
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() => {
+                              navigate('/my-account');
+                              setDropdownOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                            role="menuitem"
+                          >
+                            My Account
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() => {
+                              onLogout();
+                              setDropdownOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
+                            role="menuitem"
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="px-4 py-2 font-semibold text-gray-800 hover:text-green-700 text-lg"
+                    aria-label="Login"
+                  >
+                    Log in
+                  </button>
+                  <button
+                    onClick={() => navigate('/register')}
+                    className="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-lg font-semibold flex items-center gap-2"
+                    aria-label="Sign up"
+                  >
+                    <UserPlusIcon className="w-5 h-5" aria-hidden="true" />
+                    Sign up
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <button className="lg:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} className="text-green-800 text-xl" />
+            </button>
           </div>
 
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden absolute top-16 md:top-[86px] left-0 w-full bg-white shadow-md px-6 py-4 space-y-4 z-50">
+              <div className="flex items-center gap-2">
+                <MapPinIcon className="w-5 h-5 text-green-600" />
+                <span className="font-semibold text-green-800">{location}</span>
+              </div>
+              <input
+                type="text"
+                maxLength={6}
+                value={pincode}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (/^\d{0,6}$/.test(val)) {
+                    setPincode(val);
+                    if (val.length === 6) fetchLocation(val);
+                  }
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Enter Pincode"
+              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className=" w-full px-4 py-2 pr-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-transparent text-black placeholder-transparent"
+                  placeholder="Search for products"
+                />
+                {!searchQuery && (
+                  <span
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 transition-opacity duration-300 pointer-events-none ${fade ? "opacity-100" : "opacity-0"
+                      }`}
+                  >
+                    {placeholders[placeholderIndex]}
+                  </span>
+                )}
+                <MagnifyingGlassIcon className="w-5 h-5 absolute right-3 top-2.5 text-gray-500" />
+              </div>
+            </div>
+          )}
         </nav>
-
       </>
     );
   };
