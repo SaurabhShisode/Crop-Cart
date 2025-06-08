@@ -339,7 +339,7 @@ const Navbar: React.FC<{
                 </div>
 
               ) : (
-                <div className="flex items-center gap-4">
+                <div className=" hidden sm:flex flex items-center gap-4">
                   <button
                     onClick={() => navigate('/login')}
                     className="px-4 py-2 font-semibold text-gray-800 hover:text-green-700 text-lg"
