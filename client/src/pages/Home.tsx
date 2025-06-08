@@ -265,13 +265,17 @@ const Navbar: React.FC<{
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && toggleCart()}
             >
-              <ShoppingCart className="w-7 h-7 text-green-800 hover:text-green-600 translate-y-[-2.5px]" aria-hidden="true" />
+              <ShoppingCart
+                className="w-7 h-7 text-green-800 hover:text-green-600 translate-y-[-2.5px]"
+                aria-hidden="true"
+              />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                   {cartCount}
                 </span>
               )}
             </div>
+
             {/* User / Auth Buttons */}
             <div className="hidden md:flex items-center space-x-4">
               {userName ? (
@@ -427,6 +431,7 @@ const Home: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileCartOpen, setIsMobileCartOpen] = useState(false)
   const [userName, setUserName] = useState<string | null>(null);
   const [pincode, setPincode] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -550,7 +555,16 @@ const Home: React.FC = () => {
 
 
 
-  const toggleCart = () => setIsCartOpen((prev) => !prev);
+  const toggleCart = () => {
+    if (window.innerWidth < 768) {
+
+      setIsMobileCartOpen((prev) => !prev);
+    } else {
+
+      setIsCartOpen((prev) => !prev);
+    }
+  };
+
 
   const filteredCrops = crops.filter((crop) => {
     const matchesPincode =
@@ -743,15 +757,19 @@ const Home: React.FC = () => {
           )}
         </main>
       </div>
+
+
+
+
+
       <Footer />
 
 
       <div
-        className={`fixed top-28 right-0 h-[calc(100vh-8rem)] w-80 bg-white shadow-lg transform transition-transform rounded z-20 ${isCartOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+        className={`hidden md:flex fixed top-28 right-0 h-[calc(100vh-8rem)] w-80 bg-white shadow-lg transform transition-transform rounded z-20 ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}
         aria-label="Shopping cart drawer"
       >
-        <div className="p-6 flex flex-col h-full min-h-0">
+        <div className="p-6 flex flex-col h-full w-full min-h-0">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-green-900">Your Cart</h2>
             <button
@@ -817,6 +835,39 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
+
+
+      {isMobileCartOpen && (
+        <div className="fixed inset-x-0 bottom-5 z-40 bg-green-900 p-2 rounded-xl shadow-2xl mx-4 md:hidden">
+          <div className="grid grid-cols-6 items-center gap-2">
+            <div className="col-span-1 flex justify-center bg-green-700 h-full w-10 rounded">
+              <ShoppingCart
+                className="w-6 h-8 text-white hover:text-green-600"
+                aria-hidden="true"
+              />
+            </div>
+
+            <div className="col-span-2 text-xs font-medium text-white">
+              <p className="font-semibold">{cart.length} {cart.length === 1 ? 'item' : 'items'}</p>
+              <p className="text-sm font-bold">₹ {totalPrice.toFixed(2)}</p>
+            </div>
+
+            <button
+              onClick={() => {
+                setIsMobileCartOpen(false);
+                navigate('/checkout');
+              }}
+              className="col-span-3 w-full bg-green-700 text-white py-2 rounded-md font-semibold text-sm"
+            >
+              Checkout
+            </button>
+          </div>
+
+
+        </div>
+      )}
+
+
     </div>
   );
 };
