@@ -22,7 +22,9 @@ const CheckoutPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
+  useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
