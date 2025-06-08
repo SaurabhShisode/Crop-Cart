@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,10 @@ const RegisterFarmerPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

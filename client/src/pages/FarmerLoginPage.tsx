@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockClosedIcon, EnvelopeIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import { signInWithPopup } from 'firebase/auth';
@@ -11,6 +11,11 @@ const FarmerLoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

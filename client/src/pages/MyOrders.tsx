@@ -157,7 +157,10 @@ const toggleOrderDetails = (orderId: string) => {
       toast.error(err.message || 'Error deleting order');
     }
   };
-
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
+    
 
   useEffect(() => {
     const fetchOrders = async () => {
