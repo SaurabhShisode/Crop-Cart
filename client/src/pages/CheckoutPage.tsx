@@ -7,7 +7,7 @@ interface CartItem {
   _id: string;
   name: string;
   price: number;
-  quantityInCart: string;
+  quantityInCart: number;
   quantity: string;
   farmer: string;
   cropId: string;
@@ -43,7 +43,7 @@ const CheckoutPage: React.FC = () => {
   }, []);
 
   const totalPrice = cart.reduce((total, item) => {
-    const quantityNum = parseFloat(item.quantityInCart) || 0;
+    const quantityNum = (item.quantityInCart) || 0;
     return total + item.price * quantityNum;
   }, 0);
 
@@ -111,70 +111,119 @@ const CheckoutPage: React.FC = () => {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-green-50 px-6 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center  px-6 text-center">
         <h2 className="text-3xl font-semibold text-gray-700 mb-4">Your cart is empty</h2>
         <p className="text-gray-500">Please add some items to your cart before checking out.</p>
       </div>
     );
   }
+  const updateQuantity = (itemId: string, newQuantity: number) => {
+    let updatedCart;
+
+    if (newQuantity <= 0) {
+      
+      updatedCart = cart.filter(item => item._id !== itemId);
+    } else {
+      
+      updatedCart = cart.map(item =>
+        item._id === itemId
+          ? { ...item, quantityInCart: newQuantity }
+          : item
+      );
+    }
+
+    setCart(updatedCart);
+
+    const storedUser = localStorage.getItem('cropcartUser');
+    const userId = storedUser ? JSON.parse(storedUser)?.user?.id : null;
+    if (userId) {
+      localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedCart));
+    }
+  };
+
 
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="min-h-screen bg-green-50 flex items-center justify-center px-6 py-10">
+      <div className="min-h-screen bg-white flex items-center justify-center px-6 py-10 mt-16 sm:mt-0">
 
-        <div className="max-w-6xl w-full bg-white rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-8 p-10">
+        <div className="max-w-6xl w-full  rounded-2xl  grid grid-cols-1 md:grid-cols-3 gap-8   sm:p-10">
           {/* Order Summary */}
-          <section className="md:col-span-1 bg-green-100 border border-green-200 rounded-xl p-6">
-            <h2 className="text-2xl font-bold text-green-900 mb-6">Order Summary</h2>
-            <ul className="divide-y divide-green-300">
+
+          <section className="order-1 md:order-1 md:col-span-1 bg-green-900 border  rounded-xl p-4 md:p-6 shadow-2xl">
+            <h2 className="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6">Order Summary</h2>
+
+            <ul className="divide-y divide-white">
               {cart.map(item => {
-                const quantityNum = parseFloat(item.quantityInCart) || 0;
+                const quantityNum = item.quantityInCart || 0;
                 return (
-                  <li key={item._id} className="py-4 flex justify-between">
+                  <li key={item._id} className="py-2 md:py-4 flex justify-between items-center">
                     <div>
-                      <p className="font-semibold text-green-800">{item.name} ({item.quantity})</p>
-                      <p className="text-sm text-green-700">Qty: {item.quantityInCart}</p>
+                      <p className="font-semibold text-white text-sm md:text-base">
+                        {item.name} ({item.quantity})
+                      </p>
+                      <div className="flex items-center space-x-2 mt-1 bg-green-700 rounded">
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item._id, quantityNum - 1)}
+                          className="px-2 py-1  text-white rounded text-xs font-bold "
+                          disabled={quantityNum <= 0}
+                        >
+                          −
+                        </button>
+                        <span className="text-white text-sm font-bold">{quantityNum}</span>
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item._id, quantityNum + 1)}
+                          className="px-2 py-1  text-white rounded text-xs font-bold "
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
-                    <p className="font-semibold text-green-900">
+                    <p className="font-semibold text-white text-sm md:text-base">
                       ₹{(item.price * quantityNum).toFixed(2)}
                     </p>
                   </li>
                 );
               })}
             </ul>
-            <div className="border-t border-green-300 mt-6 pt-4 space-y-1 text-green-900">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-base">Base Price:</span>
-                <span className='font-semibold'>₹{totalPrice.toFixed(2)}</span>
+
+
+            <div className="border-t border-white mt-4 md:mt-6 pt-3 md:pt-4 space-y-1 text-white">
+              <div className="flex justify-between items-center text-sm md:text-base">
+                <span className="font-semibold">Base Price:</span>
+                <span className="font-semibold">₹{totalPrice.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-base font-semibold">Taxes:</span>
-                <span className='font-semibold'>₹{(totalPrice * 0.18).toFixed(2)}</span>
+              <div className="flex justify-between items-center text-sm md:text-base">
+                <span className="font-semibold">Taxes:</span>
+                <span className="font-semibold">₹{(totalPrice * 0.18).toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-base font-semibold">Delivery Fee:</span>
+              <div className="flex justify-between items-center text-sm md:text-base">
+                <span className="font-semibold">Delivery Fee:</span>
                 {totalPrice > 299 ? (
                   <span>
-                    <span className="line-through text-red-500 mr-2 font-semibold">₹50.00</span>
-                    <span className="text-green-600 font-semibold">₹0.00</span>
+                    <span className="line-through text-white/50 mr-1 md:mr-2 font-semibold">₹50.00</span>
+                    <span className="text-white font-semibold">₹0.00</span>
                   </span>
                 ) : (
-                  <span className='font-semibold'>₹50.00</span>
+                  <span className="font-semibold">₹50.00</span>
                 )}
               </div>
-              <div className="flex justify-between items-center font-bold text-xl border-t border-green-300 pt-2 mt-2">
+              <div className="flex justify-between items-center font-bold text-base md:text-xl border-t border-white pt-2 mt-2">
                 <span>Total:</span>
                 <span>
                   ₹{(totalPrice * 1.18 + (totalPrice > 299 ? 0 : 50)).toFixed(2)}
                 </span>
               </div>
             </div>
-
           </section>
 
+
           {/* Shipping Details */}
-          <section className="md:col-span-2 p-6 border border-green-200 rounded-xl">
+
+          <section className="order-2 md:order-2 md:col-span-2 p-6 bg-green-50 rounded-xl shadow-2xl">
+
             <h2 className="text-2xl font-bold text-green-900 mb-6">Shipping Details</h2>
             <form
               onSubmit={(e) => {
@@ -194,7 +243,7 @@ const CheckoutPage: React.FC = () => {
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="John Doe"
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-600 transition"
+                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-900 transition"
                 />
               </div>
 
@@ -209,7 +258,7 @@ const CheckoutPage: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="john@example.com"
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-600 transition"
+                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-900 transition"
                 />
               </div>
               <div>
@@ -224,7 +273,7 @@ const CheckoutPage: React.FC = () => {
                   required
                   placeholder="e.g., 9876543210"
                   pattern="[0-9]{10}"
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-600 transition"
+                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-900 transition"
                 />
               </div>
 
@@ -240,7 +289,7 @@ const CheckoutPage: React.FC = () => {
                   required
                   rows={4}
                   placeholder="123, Green Street, City, Country"
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-600 resize-none transition"
+                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-900 resize-none transition"
                 />
               </div>
 
