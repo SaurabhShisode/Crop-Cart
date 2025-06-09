@@ -16,6 +16,8 @@ import {
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import BouncingDotsLoader from '../components/BouncingDotsLoader';
+
 
 const ScrollableSection: React.FC<{
   children: React.ReactNode;
@@ -434,6 +436,7 @@ const Home: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [pincode, setPincode] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -501,14 +504,21 @@ const Home: React.FC = () => {
   }, [cart, userName]);
 
   useEffect(() => {
-    fetch('https://crop-cart-backend.onrender.com/api/crops')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then((data: Crop[]) => setCrops(data))
-      .catch((err) => console.error('Error fetching crops:', err));
-  }, []);
+  fetch('https://crop-cart-backend.onrender.com/api/crops')
+    .then((res) => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
+    .then((data: Crop[]) => {
+      setCrops(data);
+      setLoading(false); 
+    })
+    .catch((err) => {
+      console.error('Error fetching crops:', err);
+      setLoading(false); 
+    });
+}, []);
+
 
   const addToCart = (crop: Crop) => {
 
@@ -649,7 +659,11 @@ const Home: React.FC = () => {
       <div className="hidden lg:flex justify-center">
         <main className="flex-grow max-w-7xl mx-0 sm:mx-40 min-h-screen pb-10 px-4 bg-white">
 
-          {Object.keys(groupedCrops).length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <BouncingDotsLoader />
+            </div>
+          ) : Object.keys(groupedCrops).length === 0 ? (
             <p className="text-center text-green-900 text-base font-medium">
               No products available right now.
             </p>
