@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 
+import { RotatingLines } from 'react-loader-spinner';
 
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -174,7 +175,7 @@ const Navbar: React.FC = () => {
       <div className="flex items-center space-x-4 relative">
         {userName ? (
           <>
-            <span className="font-semibold text-green-700 text-lg">
+            <span className="hidden sm:flex font-semibold text-green-700 text-lg">
               Hi, {userName}
             </span>
 
@@ -508,21 +509,29 @@ const FarmerDashboard: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen p-28 bg-green-50">
-        <h1 className="text-4xl font-bold text-green-900 mb-8">Farmer Dashboard</h1>
+      <div className="min-h-screen sm:p-28 bg-green-50">
+        <h1 className="text-2xl sm:text-4xl font-bold text-green-900 mb-2 sm:mb-8 px-4 sm:px-0 pb-2 sm:pb-0 pt-10 sm:pt-0">Farmer Dashboard</h1>
 
         {loading ? (
-          <div className="text-center text-xl text-green-700">Loading data...</div>
+          <div className="flex justify-center items-center h-64">
+            <RotatingLines
+              strokeColor="green"
+              strokeWidth="5"
+              animationDuration="0.75"
+              width="64"
+              visible={true}
+            />
+          </div>
         ) : (
           <>
-            <div className="grid grid-cols-6 gap-6 text-white">
+            <div className="grid grid-cols-6 gap-6 text-white p-4 sm:p-0">
 
-              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-semibold">This Month's Earnings</h3>
+              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-3 sm:p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
+                <div className="flex items-center  sm:justify-between">
+                  <h3 className="text-lg sm:text-xl font-semibold">This Month's Earnings</h3>
 
                 </div>
-                <p className="text-4xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
+                <p className="text-2xl sm:text-4xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
                 <p
                   className={`text-sm mt-3 font-medium ${earningsGrowth > 0
                     ? 'text-lime-100'
@@ -540,12 +549,12 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               {/* Orders */}
-              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
+              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-semibold">This Month's Orders</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold">This Month's Orders</h3>
 
                 </div>
-                <p className="text-4xl font-bold mt-2">{currentMonthOrders}</p>
+                <p className="text-2xl sm:text-4xl font-bold mt-2">{currentMonthOrders}</p>
                 <p
                   className={`text-sm mt-3 font-medium ${orderGrowth > 0
                     ? 'text-lime-100'
@@ -563,9 +572,9 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               {/* Most Sold Crop */}
-              <div className="col-span-6 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
+              <div className="col-span-6 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold">Most Sold Crop</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold">Most Sold Crop</h3>
 
                 </div>
                 <div className="text-center">
@@ -586,126 +595,28 @@ const FarmerDashboard: React.FC = () => {
 
 
             {/* Crops Section */}
-            <section className="my-10">
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">Your Crops</h2>
-
-              {/* Add Crop Form */}
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  const form = e.currentTarget;
-                  const formData = new FormData(form);
-
-                  const imageFile = formData.get('image') as File | null;
-
-                  let imageUrl = '';
-                  try {
-                    if (imageFile && imageFile.name) {
-                      imageUrl = await uploadImageToCloudinary(imageFile);
-                    }
-                  } catch (error) {
-                    toast.error('Image upload failed', {
-                      style: { background: '#14532d', color: 'white' },
-                    });
-                    return;
-                  }
-
-                  const newCrop = {
-                    name: formData.get('name'),
-                    price: Number(formData.get('price')),
-                    quantity: formData.get('quantity'),
-                    type: formData.get('type'),
-                    availability: formData.get('availability'),
-                    regionPincodes: (formData.get('regionPincodes') as string)
-                      .split(',')
-                      .map((p) => p.trim()),
-                    image: imageUrl,
-                  };
-
-                  const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
-
-                  const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(newCrop),
-                  });
-
-                  if (res.ok) {
-                    const addedCrop = await res.json();
-                    setCrops((prev) => [...prev, addedCrop]);
-                    form.reset();
-                    toast.success('Crop added successfully', {
-                      style: { background: '#14532d', color: 'white' },
-                    });
-                  } else {
-                    toast.error('Failed to add crop', {
-                      style: { background: '#14532d', color: 'white' },
-                    });
-                  }
-                }}
-                className="bg-white p-8 md:p-10 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 shadow hover:shadow-lg transition-all duration-300"
-              >
-                <h2 className="col-span-full text-2xl font-semibold text-green-700">Add New Crop</h2>
-
-                <input name="name" required placeholder="Crop Name" className="input-field" />
-                <input name="price" type="number" required placeholder="Price (₹)" className="input-field" />
-                <input name="quantity" required placeholder="Quantity (e.g., 20 kg)" className="input-field" />
-
-                <select name="type" required className="input-field bg-white text-gray-700">
-                  <option value="" disabled>Select Crop Type</option>
-                  <option value="crop">Crop</option>
-                  <option value="dairy">Dairy</option>
-                  <option value="grocery">Grocery</option>
-                </select>
-
-                <input name="availability" required placeholder="Availability" className="input-field" />
-                <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="input-field" />
-
-                <div className="flex flex-col col-span-full sm:col-span-1">
-                  <label className="text-gray-600 font-medium mb-1">Upload Image</label>
-                  <input
-                    name="image"
-                    type="file"
-                    accept="image/*"
-                    className="rounded-2xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-                  />
-                </div>
-
-                <div className="col-span-full sm:col-span-1 flex items-end">
-                  <button
-                    type="submit"
-                    className="w-full bg-gradient-to-br from-green-900 to-emerald-800 rounded-lg text-white py-3 font-semibold shadow-md transition duration-300 ease-in-out hover:from-green-800 hover:to-emerald-700"
-                  >
-
-                    Add Crop
-                  </button>
-                </div>
-              </form>
-
-
+            <section className="my-10 ">
+              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-2 sm:mb-4 px-4 sm:px-0">Your Crops</h2>
 
               {/* Crop Cards */}
               <ScrollableSection sectionId="crops-section">
                 {[...crops].reverse().map((crop) => (
                   <div
                     key={crop._id}
-                    className="mt-6 snap-start bg-white border border-green-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-60 flex-shrink-0"
+                    className="first:ml-4 sm:mt-6 snap-start bg-white border border-green-900/60 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-60 flex-shrink-0 "
                     style={{ maxWidth: '240px' }}
                   >
                     {crop.image && (
                       <img
                         src={crop.image}
                         alt={crop.name}
-                        className="w-full h-36 object-cover rounded-xl mb-3 border border-gray-100"
+                        className="w-full h-28 sm:h-36 object-cover rounded-xl mb-3 border border-gray-100"
                       />
                     )}
 
-                    <h3 className="text-lg font-semibold text-green-800 mb-1 truncate">{crop.name}</h3>
+                    <h3 className="text-md sm:text-lg font-semibold text-green-800 mb-1 truncate">{crop.name}</h3>
 
-                    <div className="text-sm text-gray-600 space-y-1 mb-3">
+                    <div className="text-xs sm:text-sm text-gray-600 space-y-1 mb-3">
                       <p><span className="font-medium text-gray-700">Price:</span> ₹{crop.price}</p>
                       <p><span className="font-medium text-gray-700">Quantity:</span> {crop.quantity}</p>
                       <p><span className="font-medium text-gray-700">Type:</span> {crop.type}</p>
@@ -720,7 +631,7 @@ const FarmerDashboard: React.FC = () => {
                         setCropToDelete(crop);
                         setDeleteModalOpen(true);
                       }}
-                      className="mt-auto bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl text-sm font-medium transition"
+                      className="mt-auto bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl text-xs sm:text-sm font-medium transition"
                     >
                       Remove
                     </button>
@@ -730,14 +641,114 @@ const FarmerDashboard: React.FC = () => {
               </ScrollableSection>
 
 
+
+              <div className='px-4 sm:px-0'>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const formData = new FormData(form);
+                    const imageFile = formData.get('image') as File | null;
+
+                    let imageUrl = '';
+                    try {
+                      if (imageFile && imageFile.name) {
+                        imageUrl = await uploadImageToCloudinary(imageFile);
+                      }
+                    } catch (error) {
+                      toast.error('Image upload failed', {
+                        style: { background: '#14532d', color: 'white' },
+                      });
+                      return;
+                    }
+
+                    const newCrop = {
+                      name: formData.get('name'),
+                      price: Number(formData.get('price')),
+                      quantity: formData.get('quantity'),
+                      type: formData.get('type'),
+                      availability: formData.get('availability'),
+                      regionPincodes: (formData.get('regionPincodes') as string)
+                        .split(',')
+                        .map((p) => p.trim()),
+                      image: imageUrl,
+                    };
+
+                    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+
+                    const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                      },
+                      body: JSON.stringify(newCrop),
+                    });
+
+                    if (res.ok) {
+                      const addedCrop = await res.json();
+                      setCrops((prev) => [...prev, addedCrop]);
+                      form.reset();
+                      toast.success('Crop added successfully', {
+                        style: { background: '#14532d', color: 'white' },
+                      });
+                    } else {
+                      toast.error('Failed to add crop', {
+                        style: { background: '#14532d', color: 'white' },
+                      });
+                    }
+                  }}
+                  className="bg-white p-6 sm:p-8 md:p-10 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 shadow hover:shadow-lg transition-all duration-300 mt-5 sm:mt-0 border border-green-900/60"
+                >
+                  <h2 className="col-span-full text-lg sm:text-2xl font-semibold text-green-700">Add New Crop</h2>
+
+                  <input name="name" required placeholder="Crop Name" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
+                  <input name="price" type="number" required placeholder="Price (₹)" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
+                  <input name="quantity" required placeholder="Quantity (e.g., 20 kg)" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
+
+                  <select name="type" required className="input-field text-sm p-2 h-10 bg-white text-gray-700 sm:text-base sm:p-3 sm:h-12">
+                    <option value="" disabled>Select Crop Type</option>
+                    <option value="crop">Crop</option>
+                    <option value="dairy">Dairy</option>
+                    <option value="grocery">Grocery</option>
+                  </select>
+
+                  <input name="availability" required placeholder="Availability" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
+                  <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
+
+                  <div className="flex flex-col col-span-full sm:col-span-1">
+                    <label className="text-gray-600 font-medium mb-1 text-sm sm:text-base">Upload Image</label>
+                    <input
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                      className="rounded-2xl border border-gray-300 p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition text-sm sm:text-base"
+                    />
+                  </div>
+
+                  <div className="col-span-full sm:col-span-1 flex items-end">
+                    <button
+                      type="submit"
+                      className="w-full bg-gradient-to-br from-green-900 to-emerald-800 rounded-lg text-white py-2 sm:py-3 text-sm sm:text-base font-semibold shadow-md transition duration-300 ease-in-out hover:from-green-800 hover:to-emerald-700"
+                    >
+                      Add Crop
+                    </button>
+                  </div>
+                </form>
+
+              </div>
+
+
+
+
             </section>
 
             {/* Orders Section */}
-            <section className="mb-10">
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
+            <section className="mb-10 px-4 sm:px-6 lg:px-8">
+              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
 
               {orders.length === 0 ? (
-                <p>No orders received yet.</p>
+                <p className="text-gray-600 text-sm sm:text-base">No orders received yet.</p>
               ) : (
                 <div className="grid grid-cols-1 gap-6">
                   {[...orders].reverse().map((order) => {
@@ -746,51 +757,54 @@ const FarmerDashboard: React.FC = () => {
                     return (
                       <div
                         key={order._id}
-                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-lg transition-all duration-300 cursor-pointer"
+                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition-all duration-300 cursor-pointer"
                         onClick={() => toggleOrderDetails(order._id)}
                       >
-                        <div className="flex justify-between items-center mb-4">
+                        {/* Top section: Order ID and Date */}
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
                           <div>
-                            <p className="text-sm text-gray-500">Order ID:</p>
-                            <p className="text-lg font-semibold text-green-800 dark:text-green-300">
+                            <p className="text-xs sm:text-sm text-gray-500">Order ID:</p>
+                            <p className="text-base sm:text-lg font-semibold text-green-800 dark:text-green-300 break-all">
                               {order._id}
                             </p>
                           </div>
-                          <div className="text-right">
-                            <p className="text-sm text-gray-500">Placed on</p>
-                            <p className="text-md font-medium">
+                          <div className="text-left sm:text-right">
+                            <p className="text-xs sm:text-sm text-gray-500">Placed on</p>
+                            <p className="text-sm sm:text-base font-medium">
                               {new Date(order.createdAt).toLocaleString("en-GB")}
                             </p>
                           </div>
                         </div>
 
                         {/* Always-visible Info */}
-                        <p className="mb-2">
+                        <p className="text-sm sm:text-base mb-2">
                           <span className="font-medium">Buyer:</span> {order.buyer?.name}
                         </p>
-                        <p className="mb-2">
+                        <p className="text-sm sm:text-base mb-2 break-all">
                           <span className="font-medium">Email:</span> {order.buyer?.email}
                         </p>
 
                         {/* Toggleable Expanded Details */}
                         <div
-                          className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                          className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded
+                            ? 'max-h-[9999px] opacity-100 mt-4'
+                            : 'max-h-0 opacity-0'
                             }`}
                         >
                           {order.address && (
-                            <p className="mb-2">
+                            <p className="text-sm mb-2 break-words">
                               <span className="font-medium">Delivery Address:</span> {order.address}
                             </p>
                           )}
                           {order.phone && (
-                            <p className="mb-2">
+                            <p className="text-sm mb-2">
                               <span className="font-medium">Phone:</span> {order.phone}
                             </p>
                           )}
 
                           <div className="mb-4">
-                            <p className="font-medium mb-1">Items:</p>
-                            <ul className="list-disc ml-6 space-y-1 text-sm">
+                            <p className="font-medium text-sm mb-1">Items:</p>
+                            <ul className="list-disc ml-5 space-y-1 text-sm">
                               {order.items.map((item, idx) => (
                                 <li key={idx}>
                                   <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity}) × ₹{item.price.toFixed(2)} = ₹{(item.price * item.quantityInCart).toFixed(2)}
@@ -799,8 +813,8 @@ const FarmerDashboard: React.FC = () => {
                             </ul>
                           </div>
 
-
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                          {/* Price Details */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                             <div>
                               <p className="text-gray-500">Order Price</p>
                               <p className="font-semibold">₹{order.basePrice.toFixed(2)}</p>
@@ -809,8 +823,7 @@ const FarmerDashboard: React.FC = () => {
                               <p className="text-gray-500">Tax</p>
                               <p className="font-semibold">₹{order.tax.toFixed(2)}</p>
                             </div>
-                            <div>
-                            </div>
+                            <div className="hidden md:block"></div>
                             <div>
                               <p className="text-gray-500">Total</p>
                               <p className="font-bold text-green-700 dark:text-green-300">
@@ -819,7 +832,6 @@ const FarmerDashboard: React.FC = () => {
                             </div>
                           </div>
                         </div>
-
                       </div>
                     );
                   })}
@@ -831,31 +843,34 @@ const FarmerDashboard: React.FC = () => {
 
 
             {/* Stats Section */}
-            <section>
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
+            <section className='px-4 sm:px-0'>
+              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
 
 
               <div className="flex justify-start mb-4">
                 <button
                   onClick={() => setViewMode('monthly')}
-                  className={`px-4 py-2 mr-2 rounded ${viewMode === 'monthly' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
+                  className={`px-3 py-1.5 text-sm sm:px-4 sm:py-2 sm:text-base mr-2 rounded ${viewMode === 'monthly' ? 'bg-green-600 text-white' : 'bg-gray-200'
+                    }`}
                 >
                   Monthly
                 </button>
                 <button
                   onClick={() => setViewMode('weekly')}
-                  className={`px-4 py-2 rounded ${viewMode === 'weekly' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
+                  className={`px-3 py-1.5 text-sm sm:px-4 sm:py-2 sm:text-base rounded ${viewMode === 'weekly' ? 'bg-green-600 text-white' : 'bg-gray-200'
+                    }`}
                 >
                   Weekly
                 </button>
               </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-10">
-                    <h3 className="text-xl font-bold text-green-900 mb-2">
+                <div className="border border-green-900/60 bg-white p-4 rounded-lg shadow">
+                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-6 sm:mb-10">
+                    <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">
                       Earnings This {viewMode === 'weekly' ? 'Week' : 'Month'}
                     </h3>
-                    <p className="text-4xl font-extrabold text-green-800">
+                    <p className="text-3xl sm:text-4xl font-extrabold text-green-800">
                       ₹{(viewMode === 'weekly' ? currentWeekEarnings : currentMonthEarnings).toLocaleString()}
                     </p>
                   </div>
@@ -863,12 +878,12 @@ const FarmerDashboard: React.FC = () => {
                   <Line data={earningsChartData} options={chartOptions} />
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-10">
-                    <h3 className="text-xl font-bold text-green-900 mb-2">
+                <div className="bg-white border border-green-900/60 p-4 rounded-lg shadow mb-10 sm:mb-0">
+                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-6 sm:mb-10">
+                    <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">
                       Orders This {viewMode === 'weekly' ? 'Week' : 'Month'}
                     </h3>
-                    <p className="text-4xl font-extrabold text-green-800">
+                    <p className="text-3xl sm:text-4xl font-extrabold text-green-800">
                       {viewMode === 'weekly' ? currentWeekOrders : currentMonthOrders}
                     </p>
                   </div>
