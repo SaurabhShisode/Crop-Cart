@@ -10,7 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 
-import { RotatingLines } from 'react-loader-spinner';
+import BouncingDotsLoader from '../components/BouncingDotsLoader';
 
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -514,13 +514,7 @@ const FarmerDashboard: React.FC = () => {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <RotatingLines
-              strokeColor="green"
-              strokeWidth="5"
-              animationDuration="0.75"
-              width="64"
-              visible={true}
-            />
+             <BouncingDotsLoader />
           </div>
         ) : (
           <>
