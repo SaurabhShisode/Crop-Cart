@@ -32,7 +32,7 @@ const LiveCounters: React.FC = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="cursor-pointer group bg-white p-6 sm:p-8 md:p-10 rounded-3xl shadow-md hover:shadow-xl hover:bg-green-50 transition duration-500 transform hover:-translate-y-2 sm:hover:-translate-y-4"
+              className="cursor-pointer group bg-white p-6 sm:p-8 md:p-10 rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl hover:bg-green-50 transition duration-500 transform hover:-translate-y-2 sm:hover:-translate-y-4"
             >
               <div className="text-3xl sm:text-4xl font-extrabold text-green-800 mb-3 sm:mb-4 transition-transform duration-500 group-hover:scale-110">
                 {inView ? (
