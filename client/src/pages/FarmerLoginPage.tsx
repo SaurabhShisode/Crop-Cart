@@ -125,7 +125,7 @@ const FarmerLoginPage: React.FC = () => {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 rounded-lg border border-green-300 focus:ring-2 focus:ring-green-400"
+            className="w-full pl-10 pr-4 py-3 rounded-lg border border-green-300 focus:border-green-900 focus:ring-2 focus:ring-green-400 focus:outline-none transition text-sm sm:text-base"
             placeholder="you@example.com"
             autoComplete="email"
             disabled={loading}
@@ -139,7 +139,7 @@ const FarmerLoginPage: React.FC = () => {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full pl-10 pr-10 py-3 rounded-lg border border-green-300 focus:ring-2 focus:ring-green-400"
+            className="w-full pl-10 pr-10 py-3 rounded-lg border border-green-300 focus:border-green-900 focus:ring-2 focus:ring-green-400 focus:outline-none transition text-sm sm:text-base"
             placeholder="••••••••"
             autoComplete="current-password"
             disabled={loading}
