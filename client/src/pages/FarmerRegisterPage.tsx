@@ -150,7 +150,7 @@ const RegisterFarmerPage: React.FC = () => {
       <p className="mt-6 text-center text-green-700">
         Already registered?{' '}
         <button
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/farmer-login')}
           className="font-semibold underline hover:text-green-900"
         >
           Log in
