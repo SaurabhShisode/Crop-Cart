@@ -10,6 +10,7 @@ import {
 import { User, } from 'lucide-react';
 import Footer from '../components/Footer';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import BouncingDotsLoader from '../components/BouncingDotsLoader';
 
 
 interface Order {
@@ -149,31 +150,22 @@ const toggleOrderDetails = (orderId: string) => {
         throw new Error(errData.message || 'Failed to delete order');
       }
 
-      toast.success('Order deleted successfully', {
-        style: { background: '#14532d', color: 'white' },
-      });
+      toast.success('Order deleted successfully');
       setOrders((prev) => prev.filter((o) => o._id !== orderToDelete._id));
       setShowDeleteModal(false);
       setOrderToDelete(null);
     } catch (err: any) {
-      toast.error(err.message || 'Error deleting order', {
-        style: { background: '#14532d', color: 'white' },
-      });
+      toast.error(err.message || 'Error deleting order');
     }
   };
-    useEffect(() => {
-        window.scrollTo(0, 0);
-      }, []);
-    
+
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const userData = localStorage.getItem('cropcartUser');
         if (!userData) {
-          toast.error('You must be logged in to view orders', {
-        style: { background: '#14532d', color: 'white' },
-      });
+          toast.error('You must be logged in to view orders');
           navigate('/login');
           return;
         }
@@ -198,9 +190,7 @@ const toggleOrderDetails = (orderId: string) => {
         const data = await res.json();
         setOrders(data);
       } catch (error: any) {
-        toast.error(error.message || 'Failed to load orders', {
-        style: { background: '#14532d', color: 'white' },
-      });
+        toast.error(error.message || 'Failed to load orders');
       } finally {
         setLoading(false);
       }
@@ -209,11 +199,15 @@ const toggleOrderDetails = (orderId: string) => {
     fetchOrders();
   }, [navigate]);
 
+  
+
+useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
+
   const onLogout = () => {
     localStorage.removeItem('cropcartUser');
-    toast.success('Logged out successfully', {
-        style: { background: '#14532d', color: 'white' },
-      });
+    toast.success('Logged out successfully');
     navigate('/home');
   };
 
@@ -251,17 +245,7 @@ const toggleOrderDetails = (orderId: string) => {
             </button>
             {dropdownOpen && (
               <ul className="absolute right-0 mt-2 w-44 sm:w-48 bg-white border border-green-200 rounded-md shadow-lg z-50 text-sm sm:text-base">
-                <li>
-                  <button
-                    onClick={() => {
-                      navigate('/myorders');
-                      setDropdownOpen(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                  >
-                    My Orders
-                  </button>
-                </li>
+                
                 <li>
                   <button
                     onClick={() => {
@@ -309,14 +293,15 @@ const toggleOrderDetails = (orderId: string) => {
   </nav>
 
   {/* Orders Section */}
-        <main className="pt-24 sm:pt-28 pb-24 sm:pb-28 max-w-6xl mx-auto px-3 sm:px-6">
+        <main className="pt-12 sm:pt-28 pb-24 sm:pb-28 max-w-6xl mx-auto px-3 sm:px-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-green-900 dark:text-green-300 mb-6 sm:mb-8">
           My Orders
         </h1>
 
         {loading ? (
-          <div className="text-center text-green-800 dark:text-green-200 text-sm sm:text-base">
-            Loading your orders...
+          <div className="flex justify-center items-center">
+
+            <BouncingDotsLoader />
           </div>
         ) : orders.length === 0 ? (
           <div className="text-center text-gray-600 dark:text-gray-400 text-sm sm:text-lg">
