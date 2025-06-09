@@ -183,12 +183,12 @@ export default function LandingPage() {
 
 
             {/* Hero Section */}
-            <section className="relative bg-green-900 text-white overflow-hidden h-[880px] sm:h-auto">
+             <section className="relative bg-green-900 text-white overflow-hidden h-[840px] sm:h-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
                         className={`max-w-xl space-y-4 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-10  sm:translate-y-4 opacity-100' : 'translate-y-[100px]    sm:translate-y-[100px] opacity-0'
-                            } mt-8 md:mt-24`}
+                            } mt- md:mt-24`}
                     >
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-center md:text-left">
                             Buy Fresh Crops <br />Directly from Local Farmers
@@ -248,7 +248,6 @@ export default function LandingPage() {
 
 
             </section>
-
 
 
             {/* What We Do Section */}
