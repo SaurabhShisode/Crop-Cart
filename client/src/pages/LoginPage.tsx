@@ -87,7 +87,8 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-   <div className="min-h-screen flex flex-col md:flex-row">
+   <div className="h-screen flex flex-col md:flex-row">
+
   {/* Left Panel */}
   <div className="w-full md:w-1/3 relative overflow-hidden flex items-center justify-center bg-green-900 py-12 md:py-0">
     <div className="z-10 text-center px-6 md:px-12">
