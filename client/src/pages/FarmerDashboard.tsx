@@ -510,7 +510,7 @@ const FarmerDashboard: React.FC = () => {
     <>
       <Navbar />
       <div className="min-h-screen sm:p-28 bg-green-50">
-        <h1 className="text-2xl sm:text-4xl font-bold text-green-900 mb-2 sm:mb-8 px-4 sm:px-0 pb-2 sm:pb-0 pt-10 sm:pt-0">Farmer Dashboard</h1>
+        <h1 className="text-2xl sm:text-4xl font-bold text-green-900 mb-2 sm:mb-4 px-4 sm:px-4 pb-2 sm:pb-0 pt-10 sm:pt-0">Farmer Dashboard</h1>
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
@@ -518,7 +518,7 @@ const FarmerDashboard: React.FC = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-6 gap-6 text-white p-4 sm:p-0">
+            <div className="grid grid-cols-6 gap-6 text-white p-4 sm:px-4">
 
               <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-3 sm:p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
                 <div className="flex items-center  sm:justify-between">
@@ -589,7 +589,7 @@ const FarmerDashboard: React.FC = () => {
 
 
             {/* Crops Section */}
-            <section className="my-10 ">
+            <section className="my-10 sm:px-4 ">
               <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-2 sm:mb-4 px-4 sm:px-0">Your Crops</h2>
 
               {/* Crop Cards */}
@@ -597,7 +597,7 @@ const FarmerDashboard: React.FC = () => {
                 {[...crops].reverse().map((crop) => (
                   <div
                     key={crop._id}
-                    className="first:ml-4 sm:mt-6 snap-start bg-white border border-green-900/60 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-60 flex-shrink-0 "
+                    className="first:ml-4 snap-start bg-white border border-2 border-green-900/60 sm:border-none p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-60 flex-shrink-0 "
                     style={{ maxWidth: '240px' }}
                   >
                     {crop.image && (
@@ -692,7 +692,7 @@ const FarmerDashboard: React.FC = () => {
                       });
                     }
                   }}
-                  className="bg-white p-6 sm:p-8 md:p-10 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 shadow hover:shadow-lg transition-all duration-300 mt-5 sm:mt-0 border border-green-900/60"
+                  className="bg-white p-6 sm:p-8 md:p-10 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 shadow hover:shadow-lg transition-all duration-300 mt-5 sm:mt-5 border border-2 border-green-900/60 sm:border-none"
                 >
                   <h2 className="col-span-full text-lg sm:text-2xl font-semibold text-green-700">Add New Crop</h2>
 
@@ -751,7 +751,8 @@ const FarmerDashboard: React.FC = () => {
                     return (
                       <div
                         key={order._id}
-                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition-all duration-300 cursor-pointer"
+                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition-all duration-300 cursor-pointer
+                        border border-2 border-green-900/60 sm:border-none"
                         onClick={() => toggleOrderDetails(order._id)}
                       >
                         {/* Top section: Order ID and Date */}
@@ -859,7 +860,7 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="border border-green-900/60 bg-white p-4 rounded-lg shadow">
+                <div className="border border-2 border-green-900/60 sm:border-none bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-6 sm:mb-10">
                     <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">
                       Earnings This {viewMode === 'weekly' ? 'Week' : 'Month'}
@@ -872,7 +873,7 @@ const FarmerDashboard: React.FC = () => {
                   <Line data={earningsChartData} options={chartOptions} />
                 </div>
 
-                <div className="bg-white border border-green-900/60 p-4 rounded-lg shadow mb-10 sm:mb-0">
+                <div className="bg-white border border-2 border-green-900/60 sm:border-none p-4 rounded-lg shadow mb-10 sm:mb-0">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-6 sm:mb-10">
                     <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">
                       Orders This {viewMode === 'weekly' ? 'Week' : 'Month'}
