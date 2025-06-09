@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       const token = await userCred.user.getIdToken();
 
-      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/google', {
+      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
