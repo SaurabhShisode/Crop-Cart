@@ -199,7 +199,7 @@ export default function LandingPage() {
                         <div className="flex justify-center  md:justify-start">
                             <button
                                 onClick={() => navigate('/home')}
-                                className="w-30 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold mb-8 sm:mb-0"
+                                className="w-30 sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-8 sm:py-4 text-base sm:text-xl rounded-md font-semibold mb-16 sm:mb-0"
                             >
                                 Get Started
                             </button>
