@@ -68,7 +68,7 @@ const RegisterFarmerPage: React.FC = () => {
   </div>
 
   {/* Right Panel */}
-  <div className="w-full md:w-2/3 flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 py-12 px-4">
+  <div className="w-full max-w-md bg-white/80 backdrop-blur-lg p-6 sm:p-10 rounded-xl shadow-2xl border border-green-200">
     <div className="w-full max-w-md bg-white/80 backdrop-blur-lg p-6 md:p-10 rounded-xl shadow-2xl border border-green-200">
       <h2 className="text-2xl md:text-3xl font-bold text-green-800 mb-6 md:mb-8 text-center">
         Create Your Farmer Account
