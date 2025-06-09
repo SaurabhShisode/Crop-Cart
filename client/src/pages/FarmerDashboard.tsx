@@ -738,7 +738,7 @@ const FarmerDashboard: React.FC = () => {
             </section>
 
             {/* Orders Section */}
-            <section className="mb-10 px-4 sm:px-6 lg:px-8">
+            <section className="mb-10 px-4 sm:px-4 lg:px-4">
               <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
 
               {orders.length === 0 ? (
@@ -838,7 +838,7 @@ const FarmerDashboard: React.FC = () => {
 
 
             {/* Stats Section */}
-            <section className='px-4 sm:px-0'>
+            <section className='px-4 sm:px-4'>
               <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
 
 
