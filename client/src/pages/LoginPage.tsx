@@ -34,10 +34,14 @@ const LoginPage: React.FC = () => {
       });
       navigate('/home');
     } else {
-      toast.error(data.message || 'Login failed');
+      toast.error(data.message || 'Login failed', {
+        style: { background: '#14532d', color: 'white' },
+      });
     }
   } catch (error: any) {
-    toast.error(error.message || 'Login failed');
+    toast.error(error.message || 'Login failed', {
+        style: { background: '#14532d', color: 'white' },
+      });
   } finally {
     setLoading(false);
   }
@@ -64,14 +68,20 @@ const LoginPage: React.FC = () => {
 
       if (res.ok) {
         localStorage.setItem('cropcartUser', JSON.stringify(data));
-        toast.success(`Logged in as ${user.email}`);
+        toast.success(`Logged in as ${user.email}`, {
+        style: { background: '#14532d', color: 'white' },
+      });
         navigate('/home');
       } else {
-        toast.error(data.message || 'Google login failed');
+        toast.error(data.message || 'Google login failed', {
+        style: { background: '#14532d', color: 'white' },
+      });
       }
     } catch (error: any) {
       toast.error('Google login failed');
-      console.error('Google login error:', error.code, error.message);
+      console.error('Google login error:', error.code, error.message, {
+        style: { background: '#14532d', color: 'white' },
+      });
     } finally {
       setLoading(false);
     }
