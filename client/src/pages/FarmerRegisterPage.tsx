@@ -35,7 +35,7 @@ const RegisterFarmerPage: React.FC = () => {
         toast.success('Farmer registered successfully!', {
           style: { background: '#14532d', color: 'white' },
         });
-        navigate('/login');
+        navigate('/farmer-login');
       } else {
         toast.error(data.message || 'Registration failed', {
           style: { background: '#14532d', color: 'white' },

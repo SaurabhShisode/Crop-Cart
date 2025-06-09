@@ -11,6 +11,7 @@ import { User, } from 'lucide-react';
 import Footer from '../components/Footer';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import BouncingDotsLoader from '../components/BouncingDotsLoader';
+import NoOrderIcon from '../assets/icons/noOrders.svg';
 
 
 interface Order {
@@ -104,7 +105,7 @@ const downloadInvoice = (order: Order) => {
 const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -122,10 +123,10 @@ const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
     }
   };
 
-  
-const toggleOrderDetails = (orderId: string) => {
-  setExpandedOrderId((prev) => (prev === orderId ? null : orderId));
-};
+
+  const toggleOrderDetails = (orderId: string) => {
+    setExpandedOrderId((prev) => (prev === orderId ? null : orderId));
+  };
 
   const handleConfirmDelete = async () => {
     if (!orderToDelete) return;
@@ -199,11 +200,11 @@ const toggleOrderDetails = (orderId: string) => {
     fetchOrders();
   }, [navigate]);
 
-  
 
-useEffect(() => {
-        window.scrollTo(0, 0);
-      }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const onLogout = () => {
     localStorage.removeItem('cropcartUser');
@@ -214,86 +215,86 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-  <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-sm sticky top-0 z-50">
-    <div
-      className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
-      onClick={() => navigate('/')}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
-    >
-      <img src={logo} alt="CropCart Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
-      <span>CropCart</span>
-    </div>
+      <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-sm sticky top-0 z-50">
+        <div
+          className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
+          onClick={() => navigate('/')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
+        >
+          <img src={logo} alt="CropCart Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
+          <span>CropCart</span>
+        </div>
 
-    <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
-      {userName ? (
         <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
-          <span className="hidden sm:flex font-semibold text-green-700 text-sm sm:text-lg">
-            Hi, {userName}
-          </span>
+          {userName ? (
+            <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+              <span className="hidden sm:flex font-semibold text-green-700 text-sm sm:text-lg">
+                Hi, {userName}
+              </span>
 
-          <div ref={dropdownRef} className="relative">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="p-1.5 sm:p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-              aria-haspopup="true"
-              aria-expanded={dropdownOpen}
-              aria-label="User menu"
-            >
-              <User className="w-5 h-5 sm:w-6 sm:h-6 text-green-700" />
-            </button>
-            {dropdownOpen && (
-              <ul className="absolute right-0 mt-2 w-44 sm:w-48 bg-white border border-green-200 rounded-md shadow-lg z-50 text-sm sm:text-base">
-                
-                <li>
-                  <button
-                    onClick={() => {
-                      navigate('/my-account');
-                      setDropdownOpen(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                  >
-                    My Account
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      onLogout();
-                      setDropdownOpen(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
-                  >
-                    Logout
-                  </button>
-                </li>
-              </ul>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => navigate('/login')}
-            className="px-3 py-1.5 text-sm sm:text-lg font-semibold text-gray-800 hover:text-green-700"
-          >
-            Log in
-          </button>
-          <button
-            onClick={() => navigate('/register')}
-            className="px-4 sm:px-5 py-1.5 sm:py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-sm sm:text-lg font-semibold flex items-center gap-2"
-          >
-            <UserPlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-            Sign up
-          </button>
-        </div>
-      )}
-    </div>
-  </nav>
+              <div ref={dropdownRef} className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="p-1.5 sm:p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpen}
+                  aria-label="User menu"
+                >
+                  <User className="w-5 h-5 sm:w-6 sm:h-6 text-green-700" />
+                </button>
+                {dropdownOpen && (
+                  <ul className="absolute right-0 mt-2 w-44 sm:w-48 bg-white border border-green-200 rounded-md shadow-lg z-50 text-sm sm:text-base">
 
-  {/* Orders Section */}
-        <main className="pt-12 sm:pt-22 pb-24 sm:pb-28 max-w-6xl mx-auto px-3 sm:px-6">
+                    <li>
+                      <button
+                        onClick={() => {
+                          navigate('/my-account');
+                          setDropdownOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                      >
+                        My Account
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          onLogout();
+                          setDropdownOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => navigate('/login')}
+                className="px-3 py-1.5 text-sm sm:text-lg font-semibold text-gray-800 hover:text-green-700"
+              >
+                Log in
+              </button>
+              <button
+                onClick={() => navigate('/register')}
+                className="px-4 sm:px-5 py-1.5 sm:py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-sm sm:text-lg font-semibold flex items-center gap-2"
+              >
+                <UserPlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                Sign up
+              </button>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      {/* Orders Section */}
+      <main className="pt-12 sm:pt-22 pb-24 sm:pb-28 max-w-6xl mx-auto px-3 sm:px-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-green-900 dark:text-green-300 mb-6 sm:mb-8">
           My Orders
         </h1>
@@ -305,8 +306,14 @@ useEffect(() => {
           </div>
         ) : orders.length === 0 ? (
           <div className="text-center text-gray-600 dark:text-gray-400 text-sm sm:text-lg">
+            <img
+              src={NoOrderIcon}
+              alt="No orders"
+              className="mx-auto w-36 h-36"
+            />
             You haven’t placed any orders yet.
           </div>
+
         ) : (
           <div className="grid gap-6">
             {orders.map((order) => {
@@ -320,7 +327,7 @@ useEffect(() => {
                 <div
                   key={order._id}
                   onClick={() => toggleOrderDetails(order._id)}
-                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition-all duration-300 text-sm sm:text-base cursor-pointer"
+                  className="bg-white border border-2 border-green-900/60 sm:border-none rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition-all duration-300 text-sm sm:text-base cursor-pointer"
                 >
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
                     <div>
@@ -339,9 +346,8 @@ useEffect(() => {
 
                   {/* Expanded Details */}
                   <div
-                    className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                      isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
-                    }`}
+                    className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                      }`}
                   >
                     <p className="mb-2 text-sm sm:text-base">
                       <span className="font-medium">Delivery Address:</span> {order.address}
@@ -411,17 +417,17 @@ useEffect(() => {
         )}
       </main>
 
-  <Footer />
+      <Footer />
 
-  {showDeleteModal && orderToDelete && (
-    <ConfirmDeleteModal
-      isOpen={showDeleteModal}
-      onClose={() => setShowDeleteModal(false)}
-      onConfirm={handleConfirmDelete}
-      cropName={`Order ID: ${orderToDelete._id}`}
-    />
-  )}
-</div>
+      {showDeleteModal && orderToDelete && (
+        <ConfirmDeleteModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleConfirmDelete}
+          cropName={`Order ID: ${orderToDelete._id}`}
+        />
+      )}
+    </div>
 
 
 

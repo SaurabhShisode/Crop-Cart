@@ -723,7 +723,7 @@ const Home: React.FC = () => {
         </main>
 
       </div>
-      <div className="lg:hidden py-6 bg-white min-h-screen mb-10">
+      <div className="lg:hidden pb-6 bg-white min-h-screen mb-10">
         <main className="max-w-4xl mx-auto space-y-10">
           {Object.keys(groupedCrops).length === 0 ? (
             <p className="text-center text-green-900 text-base font-medium">
