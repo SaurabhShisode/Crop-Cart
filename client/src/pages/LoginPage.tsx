@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockClosedIcon, EnvelopeIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import {signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../firebase';
 import { toast } from 'react-hot-toast';
 
@@ -16,41 +16,32 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-    try {
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCred.user.getIdToken();
+    const data = await res.json();
 
-      const res = await fetch('https://crop-cart-backend.onrender.com/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('cropcartUser', JSON.stringify(data));
-        toast.success(`Logged in as ${email}`, {
-          style: { background: '#14532d', color: 'white' },
-        });
-        navigate('/home');
-      } else {
-        toast.error(data.message || 'Login failed', {
-          style: { background: '#14532d', color: 'white' },
-        });
-      }
-    } catch (error: any) {
-      toast.error(error.message || 'Login failed', {
+    if (res.ok) {
+      localStorage.setItem('cropcartUser', JSON.stringify(data));
+      toast.success(`Logged in as ${email}`, {
         style: { background: '#14532d', color: 'white' },
       });
-      console.error('Login error:', error.code, error.message);
-    } finally {
-      setLoading(false);
+      navigate('/home');
+    } else {
+      toast.error(data.message || 'Login failed');
     }
-  };
+  } catch (error: any) {
+    toast.error(error.message || 'Login failed');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleGoogleLogin = async () => {
     setLoading(true);
