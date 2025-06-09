@@ -538,7 +538,7 @@ const Home: React.FC = () => {
 
   setIsCartOpen(false);
 
-  if (shouldOpenMobileCart && window.innerWidth < 768) {
+  if (shouldOpenMobileCart && window.innerWidth < 1012) {
     setTimeout(() => {
       setIsMobileCartOpen(true);
     }, 0);
@@ -857,7 +857,7 @@ const Home: React.FC = () => {
 
 
       {isMobileCartOpen && (
-        <div className="fixed inset-x-0 bottom-5 z-40 bg-green-900 p-2 rounded-xl shadow-2xl mx-4 md:hidden">
+        <div className="fixed inset-x-0 bottom-5 z-40 bg-green-900 p-2 rounded-xl shadow-2xl mx-4 lg:hidden">
           <div className="grid grid-cols-6 items-center gap-2">
             <div className="col-span-1 flex justify-center bg-green-700 h-full w-10 rounded">
               <ShoppingCart

@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../components/Footer';
+import logo from '../assets/logo.png';
+import {
+  UserPlusIcon,
+} from '@heroicons/react/24/outline';
+
+import { User, } from 'lucide-react';
 interface CartItem {
   _id: string;
   name: string;
@@ -19,30 +25,36 @@ const CheckoutPage: React.FC = () => {
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const navigate = useNavigate();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('cropcartUser');
-    if (storedUser) {
-      try {
-        const data = JSON.parse(storedUser);
-        const userId = data?.user?.id;
-        if (userId) {
-          const cartKey = `cart_${userId}`;
-          const storedCart = localStorage.getItem(cartKey);
-          if (storedCart) {
-            setCart(JSON.parse(storedCart));
-          }
+  const storedUser = localStorage.getItem('cropcartUser');
+  if (storedUser) {
+    try {
+      const data = JSON.parse(storedUser);
+      setUserName(data?.user?.name || null);
+      
+      const userId = data?.user?.id;
+      if (userId) {
+        const cartKey = `cart_${userId}`;
+        const storedCart = localStorage.getItem(cartKey);
+        if (storedCart) {
+          setCart(JSON.parse(storedCart));
         }
-      } catch (err) {
-        console.error('Error reading cart from localStorage:', err);
       }
+    } catch (err) {
+      console.error('Error reading user or cart from localStorage:', err);
     }
-  }, []);
+  }
+}, []);
+
 
   const totalPrice = cart.reduce((total, item) => {
     const quantityNum = (item.quantityInCart) || 0;
@@ -87,6 +99,7 @@ const CheckoutPage: React.FC = () => {
         deliveryFee,
       };
 
+      
 
       const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
         method: 'POST',
@@ -110,6 +123,11 @@ const CheckoutPage: React.FC = () => {
       setLoading(false);
     }
   };
+  const onLogout = () => {
+        localStorage.removeItem('cropcartUser');
+        toast.success('Logged out successfully');
+        navigate('/home');
+      };
 
   if (cart.length === 0) {
     return (
@@ -150,9 +168,86 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <>
+    <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-lg sticky top-0 z-50">
+          <div
+            className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
+            onClick={() => navigate('/')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
+          >
+            <img src={logo} alt="CropCart Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
+            <span>CropCart</span>
+          </div>
+
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+            {userName ? (
+              <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+                <span className="hidden sm:flex font-semibold text-green-700 text-sm sm:text-lg">
+                  Hi, {userName}
+                </span>
+
+                <div ref={dropdownRef} className="relative">
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="p-1.5 sm:p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    aria-haspopup="true"
+                    aria-expanded={dropdownOpen}
+                    aria-label="User menu"
+                  >
+                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-green-700" />
+                  </button>
+                  {dropdownOpen && (
+                    <ul className="absolute right-0 mt-2 w-44 sm:w-48 bg-white border border-green-200 rounded-md shadow-lg z-50 text-sm sm:text-base">
+
+                      <li>
+                        <button
+                          onClick={() => {
+                            navigate('/my-account');
+                            setDropdownOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                        >
+                          My Account
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            onLogout();
+                            setDropdownOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="px-3 py-1.5 text-sm sm:text-lg font-semibold text-gray-800 hover:text-green-700"
+                >
+                  Log in
+                </button>
+                <button
+                  onClick={() => navigate('/register')}
+                  className="px-4 sm:px-5 py-1.5 sm:py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-sm sm:text-lg font-semibold flex items-center gap-2"
+                >
+                  <UserPlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  Sign up
+                </button>
+              </div>
+            )}
+          </div>
+        </nav>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-white flex items-center justify-center px-6 py-10 mt-16 sm:mt-0">
-
+        
         <div className="max-w-6xl w-full  rounded-2xl  grid grid-cols-1 md:grid-cols-3 gap-8   sm:p-10">
           {/* Order Summary */}
 
