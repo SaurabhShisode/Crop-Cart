@@ -181,7 +181,7 @@ const LoginPage: React.FC = () => {
             alt="Google"
             className="h-5 w-5"
           />
-          {loading ? 'Please wait...' : 'Sign in with Google'}
+          {loading ? 'Please wait...' : 'Continue with Google'}
         </button>
       </div>
 
