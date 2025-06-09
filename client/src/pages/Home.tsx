@@ -77,6 +77,7 @@ const Navbar: React.FC<{
   onLogout: () => void;
   cartCount: number;
   toggleCart: () => void;
+  toggleMobileCart: () => void;
   pincode: string;
 
   setPincode: React.Dispatch<React.SetStateAction<string>>;
@@ -87,6 +88,7 @@ const Navbar: React.FC<{
   onLogout,
   cartCount,
   toggleCart,
+  toggleMobileCart,
   pincode,
   setPincode,
   searchQuery,
@@ -261,11 +263,11 @@ const Navbar: React.FC<{
 
             <div
               className="relative cursor-pointer lg:hidden"
-              onClick={toggleCart}
+              onClick={toggleMobileCart}
               aria-label="Toggle cart"
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && toggleCart()}
+              onKeyDown={(e) => e.key === 'Enter' && toggleMobileCart()}
             >
               <ShoppingCart
                 className="w-7 h-7 text-green-800 hover:text-green-600 translate-y-[-2.5px]"
@@ -370,7 +372,7 @@ const Navbar: React.FC<{
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="lg:hidden absolute top-16 md:top-[86px] left-0 w-full bg-white shadow-md px-6 py-4 space-y-4 z-50">
+            <div className="lg:hidden absolute top-20 md:top-[86px] left-0 w-full bg-white shadow-md px-6 py-4 space-y-4 z-50">
               <div className="flex items-center gap-2">
                 <MapPinIcon className="w-5 h-5 text-green-600" />
                 <span className="font-semibold text-green-800">{location}</span>
@@ -504,46 +506,46 @@ const Home: React.FC = () => {
   }, [cart, userName]);
 
   useEffect(() => {
-  fetch('https://crop-cart-backend.onrender.com/api/crops')
-    .then((res) => {
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return res.json();
-    })
-    .then((data: Crop[]) => {
-      setCrops(data);
-      setLoading(false); 
-    })
-    .catch((err) => {
-      console.error('Error fetching crops:', err);
-      setLoading(false); 
-    });
-}, []);
+    fetch('https://crop-cart-backend.onrender.com/api/crops')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data: Crop[]) => {
+        setCrops(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching crops:', err);
+        setLoading(false);
+      });
+  }, []);
 
 
-  const addToCart = (crop: Crop) => {
+  const addToCart = (crop: Crop, shouldOpenMobileCart = false) => {
+  setCart((prev) => {
+    const exists = prev.find((item) => item._id === crop._id);
+    if (exists) {
+      return prev.map((item) =>
+        item._id === crop._id
+          ? { ...item, quantityInCart: item.quantityInCart + 1 }
+          : item
+      );
+    } else {
+      return [...prev, { ...crop, quantityInCart: 1 }];
+    }
+  });
+
+  setIsCartOpen(false);
+
+  if (shouldOpenMobileCart && window.innerWidth < 768) {
+    setTimeout(() => {
+      setIsMobileCartOpen(true);
+    }, 0);
+  }
+};
 
 
-    setCart((prev) => {
-      const exists = prev.find((item) => item._id === crop._id);
-      if (exists) {
-        return prev.map((item) =>
-          item._id === crop._id
-            ? { ...item, quantityInCart: item.quantityInCart + 1 }
-            : item
-        );
-      } else {
-        return [
-          ...prev,
-          {
-            ...crop,
-            quantityInCart: 1,
-          },
-        ];
-      }
-    });
-
-    setIsCartOpen(false);
-  };
 
 
   const removeFromCart = (id: string) => {
@@ -568,14 +570,13 @@ const Home: React.FC = () => {
 
 
   const toggleCart = () => {
-    if (window.innerWidth < 768) {
-
-      setIsMobileCartOpen((prev) => !prev);
-    } else {
-
-      setIsCartOpen((prev) => !prev);
-    }
+    setIsCartOpen((prev) => !prev);
   };
+
+  const toggleMobileCart = () => {
+    setIsMobileCartOpen((prev) => !prev);
+  };
+
 
 
   const filteredCrops = crops.filter((crop) => {
@@ -605,6 +606,7 @@ const Home: React.FC = () => {
         onLogout={handleLogout}
         cartCount={cartCount}
         toggleCart={toggleCart}
+        toggleMobileCart={toggleMobileCart}
         pincode={pincode}
         setPincode={setPincode}
         searchQuery={searchQuery}
@@ -710,6 +712,7 @@ const Home: React.FC = () => {
                         🛒 Add
                       </button>
 
+
                     </div>
                   ))}
                 </ScrollableSection>
@@ -720,7 +723,7 @@ const Home: React.FC = () => {
         </main>
 
       </div>
-      <div className="lg:hidden px-4 py-6 bg-white min-h-screen mb-10">
+      <div className="lg:hidden py-6 bg-white min-h-screen mb-10">
         <main className="max-w-4xl mx-auto space-y-10">
           {Object.keys(groupedCrops).length === 0 ? (
             <p className="text-center text-green-900 text-base font-medium">
@@ -729,14 +732,14 @@ const Home: React.FC = () => {
           ) : (
             Object.entries(groupedCrops).map(([type, products]) => (
               <section key={type}>
-                <h2 className="text-lg font-bold text-green-700 mb-3 capitalize sticky top-0 bg-white z-10">
+                <h2 className="text-lg font-bold text-green-700 mb-3 capitalize sticky top-0 bg-white z-10 px-4">
                   {type}
                 </h2>
-                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
+                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide px-4">
                   {products.map((crop) => (
                     <div
                       key={crop._id}
-                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-md transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
+                      className="snap-start bg-white/80 backdrop-blur-sm border border-2 border-green-900/60 shadow hover:shadow-md transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
                     >
                       <img
                         src={crop.image}
@@ -758,7 +761,7 @@ const Home: React.FC = () => {
                           if (!userName) {
                             navigate('/login');
                           } else {
-                            addToCart(crop);
+                            addToCart(crop, true);
                           }
                         }}
                         className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
@@ -864,7 +867,7 @@ const Home: React.FC = () => {
             </div>
 
             <div className="col-span-2 text-xs font-medium text-white">
-              <p className="font-semibold">{cart.length} {cart.length === 1 ? 'item' : 'items'}</p>
+              <p className="font-semibold">{cartCount} {cartCount === 1 ? 'item' : 'items'}</p>
               <p className="text-sm font-bold">₹ {totalPrice.toFixed(2)}</p>
             </div>
 
