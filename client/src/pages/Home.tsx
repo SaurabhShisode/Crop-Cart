@@ -1,4 +1,4 @@
-
+import axios from "axios";
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -7,7 +7,6 @@ import {
   UserPlusIcon,
 } from '@heroicons/react/24/outline';
 import { ShoppingCart, User, ArrowLeft, ArrowRight } from 'lucide-react';
-//import homeheroImage from '../assets/home_hero.png';
 import veggiesImage from '../assets/veggies.jpg';
 import logo from '../assets/logo.png';
 import Footer from '../components/Footer';
@@ -17,6 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BouncingDotsLoader from '../components/BouncingDotsLoader';
+import { motion } from 'framer-motion';
 
 
 const ScrollableSection: React.FC<{
@@ -443,6 +443,43 @@ const Home: React.FC = () => {
   const [pincode, setPincode] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+    const [mealTime, setMealTime] = useState("lunch");
+  const [mealName, setMealName] = useState('');
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [loadingIngredients, setLoadingIngredients] = useState(false);
+  const [selectedIngredients, setSelectedIngredients] = useState<Set<string>>(new Set());
+  const ingredientsRef = useRef<HTMLDivElement | null>(null);
+
+    const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        ingredientsRef.current &&
+        !ingredientsRef.current.contains(event.target as Node)
+      ) {
+        setIngredients([]); 
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('cropcartUser');
@@ -463,6 +500,83 @@ const Home: React.FC = () => {
       }
     }
   }, []);
+
+   useEffect(() => {
+    const hour = new Date().getHours();
+
+    if (hour >= 4 && hour < 11) {
+      setMealTime("breakfast this morning");
+    } else if (hour >= 11 && hour < 16) {
+      setMealTime("lunch today");
+    } else {
+      setMealTime("dinner tonight");
+    }
+  }, []);
+   const BACKEND_URL = 'https://crop-cart-backend.onrender.com';
+
+  type Ingredient = {
+    _id: string;
+    name: string;
+    price: number;
+    quantity: string;
+  };
+
+  const fetchIngredientsFromBackend = async (mealName: string) => {
+    if (mealName.trim().length < 3) {
+      setIngredients([]);
+      return;
+    }
+    setLoadingIngredients(true);
+    try {
+      const res = await axios.post(`${BACKEND_URL}/api/recipes/ingredients-from-meal`, {
+        mealName,
+      });
+
+      setIngredients(res.data.matchedIngredients || []);
+    } catch (error) {
+      console.error('Backend fetch ingredients error:', error);
+      setIngredients([]);
+    } finally {
+      setLoadingIngredients(false);
+    }
+  };
+
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMealName(e.target.value);
+  };
+
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      fetchIngredientsFromBackend(mealName);
+    }
+  };
+
+  const toggleIngredientSelection = (id: string) => {
+    setSelectedIngredients(prev => {
+      const updated = new Set(prev);
+      updated.has(id) ? updated.delete(id) : updated.add(id);
+      return updated;
+    });
+  };
+
+  const addSelectedIngredientsToCart = () => {
+    const selectedIds = Array.from(selectedIngredients);
+
+    selectedIds.forEach((id) => {
+      const crop = crops.find((c) => c._id === id || c.name.toLowerCase() === ingredients.find(i => i._id === id)?.name.toLowerCase());
+      if (crop) {
+        addToCart(crop);
+      }
+    });
+
+    setSelectedIngredients(new Set());
+  };
+
+
+
+
 
 
 
@@ -616,43 +730,148 @@ const Home: React.FC = () => {
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
         <div className="px-6 py-8 bg-white space-y-6">
 
-          <div className="relative rounded-3xl overflow-hidden bg-green-500 text-white p-4 sm:p-8 w-full h-42 sm:h-80">
-
+          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-green-600 to-green-500 text-white p-6 sm:p-10 w-full h-fit sm:h-80 shadow-2xl">
             <img
               src={veggiesImage}
               alt="Fresh produce"
-              className="absolute inset-0 w-full h-full object-cover opacity-90 blur-sm brightness-90 pointer-events-none z-0"
+              className="absolute inset-0 w-full h-full object-cover opacity-80 blur-sm brightness-95 pointer-events-none z-0"
             />
 
-
             <div className="relative z-10">
-              <h1 className="text-xl sm:text-4xl font-bold mb-2">CropCart Specials</h1>
-              <p className="text-sm sm:text-lg mb-4 font-semibold">
+              <h1 className="text-2xl sm:text-4xl font-extrabold mb-3 tracking-tight leading-snug drop-shadow-md">
+                CropCart Specials
+              </h1>
+              <p className="text-base sm:text-lg mb-6 font-medium text-white/90 max-w-xl">
                 Your trusted platform to buy farm-fresh produce directly from farmers
               </p>
-              <button className="text-sm sm:text-base bg-white text-green-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-semibold shadow hover:bg-green-100">
+              <button className="text-sm sm:text-base bg-white text-green-700 px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl font-semibold shadow-lg hover:bg-green-100 transition">
                 Start Shopping
               </button>
             </div>
-
           </div>
 
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <div className="bg-cyan-200 p-4 sm:p-6 rounded-2xl shadow-md hover:scale-105 transition">
-              <h2 className="text-xl font-semibold text-cyan-900 mb-2">Fresh Organic Vegetables Delivered</h2>
-              <p className="mb-4 text-sm text-cyan-800">Enjoy 10% off on all organic vegetables this week!🔥</p>
-              <button className="text-sm sm:text-base bg-white text-cyan-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-semibold shadow hover:bg-green-10">Shop Now</button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="bg-gradient-to-br from-cyan-100 to-cyan-200 p-6 rounded-3xl shadow-xl hover:scale-[1.03] transition-all duration-300 backdrop-blur-lg">
+              <h2 className="text-2xl font-semibold text-cyan-900 mb-2 tracking-tight">
+                Fresh Organic Vegetables Delivered
+              </h2>
+              <p className="mb-5 text-base text-cyan-800">
+                Enjoy <span className="font-bold text-cyan-900">10% off</span> on all organic vegetables this week! 🔥
+              </p>
+              <button className="text-sm sm:text-base bg-white text-cyan-700 px-5 py-2 rounded-xl font-semibold shadow-md hover:bg-cyan-100 transition">
+                Shop Now
+              </button>
             </div>
 
-            <div className="bg-yellow-300 p-6 rounded-2xl shadow-md hover:scale-105 transition">
-              <h2 className="text-xl font-semibold text-yellow-900 mb-2">Free Delivery on Orders Over ₹299</h2>
-              <p className="mb-4 text-sm text-yellow-800">Get your fresh produce delivered at no extra cost! 🚚 </p>
-              <button className="text-sm sm:text-base bg-white text-yellow-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md font-semibold shadow hover:bg-green-10">Start Shopping</button>
+            <div className="bg-gradient-to-br from-yellow-200 to-yellow-300 p-6 rounded-3xl shadow-xl hover:scale-[1.03] transition-all duration-300 backdrop-blur-lg">
+              <h2 className="text-2xl font-semibold text-yellow-900 mb-2 tracking-tight">
+                Free Delivery on Orders Over ₹299
+              </h2>
+              <p className="mb-5 text-base text-yellow-800">
+                Get your fresh produce delivered at no extra cost! 🚚
+              </p>
+              <button className="text-sm sm:text-base bg-white text-yellow-800 px-5 py-2 rounded-xl font-semibold shadow-md hover:bg-yellow-100 transition">
+                Start Shopping
+              </button>
             </div>
-
           </div>
+
+
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#6b21a8] text-white p-6 sm:p-10 shadow-2xl w-full h-fit sm:h-auto">
+            <div className="relative z-10 max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-8">
+
+              {/* Text Content */}
+              <div className="flex-1">
+                <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-4">
+                  What’s for <span className="text-green-300">{mealTime}?</span>
+                </h1>
+                <p className="text-base sm:text-lg text-white/80 mb-6">
+                  Type in a meal you're thinking of — like <span className="italic text-white/90">"paneer butter masala"</span>
+                </p>
+
+                {/* Input Field */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="paneer butter masala"
+                    value={mealName}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    className="w-full p-4 rounded-xl border border-white/10 text-black bg-white/80 
+            placeholder-gray-500 placeholder:italic placeholder:text-base 
+            focus:outline-none focus:ring-4 focus:ring-green-400/60 backdrop-blur-sm transition-all duration-300"
+                  />
+                </div>
+
+                {/* Loading Spinner */}
+                {loadingIngredients && (
+                  <div className="flex justify-center items-center mt-8 text-white/80">
+                    <BouncingDotsLoader />
+                  </div>
+
+                )}
+
+                {/* Ingredients List */}
+                {!loadingIngredients && ingredients.length > 0 && (
+                  <motion.div
+                    ref={ingredientsRef}
+                    initial="hidden"
+                    animate="visible"
+                    variants={containerVariants}
+                    className="mt-6 bg-white/70 border border-white/20 backdrop-blur-xl text-black rounded-2xl p-6 sm:p-8 shadow-[0_10px_30px_rgba(0,0,0,0.1)] transition-all duration-300"
+                  >
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-5">
+                      Suggested Ingredients
+                    </h2>
+
+                    <motion.ul className="space-y-4 max-h-64 overflow-y-auto pr-1 custom-scroll" variants={containerVariants}>
+                      {ingredients.map((ing) => (
+                        <motion.li
+                          key={ing._id}
+                          variants={itemVariants}
+                          className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-gray-200 shadow hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedIngredients.has(ing._id)}
+                              onChange={() => toggleIngredientSelection(ing._id)}
+                              className="accent-green-600 scale-125 cursor-pointer"
+                            />
+                            <div className="flex flex-col text-sm sm:text-base">
+                              <span className="font-semibold text-gray-900">{ing.name}</span>
+                              <span className="text-gray-500 text-xs sm:text-sm">
+                                {ing.quantity || '1 unit'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-green-700 font-semibold text-sm sm:text-base">
+                            ₹{ing.price}
+                          </div>
+                        </motion.li>
+                      ))}
+                    </motion.ul>
+
+                    <button
+                      onClick={addSelectedIngredientsToCart}
+                      className="mt-6 w-full bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold text-base sm:text-lg py-3 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl"
+                    >
+                      Add Selected to Cart
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            </div>
+
+            {/* Soft gradient overlay for depth */}
+            <div className="absolute inset-0 z-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none"></div>
+          </div>
+
+
+
+
 
 
         </div>
