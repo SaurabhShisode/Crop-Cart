@@ -514,7 +514,7 @@ const FarmerDashboard: React.FC = () => {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-             <BouncingDotsLoader />
+            <BouncingDotsLoader />
           </div>
         ) : (
           <>
@@ -656,6 +656,39 @@ const FarmerDashboard: React.FC = () => {
                       return;
                     }
 
+                    // Geocode the location to get lat/lng
+                    const address = formData.get('location') as string;
+                    let latitude = null;
+                    let longitude = null;
+
+                    try {
+                      const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+
+                      const geocodeRes = await fetch(
+                        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+                          address
+                        )}&key=${apiKey}`
+                      );
+
+                      const geocodeData = await geocodeRes.json();
+
+                      if (
+                        geocodeData.status === 'OK' &&
+                        geocodeData.results &&
+                        geocodeData.results.length > 0
+                      ) {
+                        latitude = geocodeData.results[0].geometry.location.lat;
+                        longitude = geocodeData.results[0].geometry.location.lng;
+                      } else {
+                        throw new Error('Invalid location');
+                      }
+                    } catch (err) {
+                      toast.error('Failed to fetch coordinates for location', {
+                        style: { background: '#14532d', color: 'white' },
+                      });
+                      return;
+                    }
+
                     const newCrop = {
                       name: formData.get('name'),
                       price: Number(formData.get('price')),
@@ -666,6 +699,10 @@ const FarmerDashboard: React.FC = () => {
                         .split(',')
                         .map((p) => p.trim()),
                       image: imageUrl,
+                      location: {
+                        latitude,
+                        longitude,
+                      },
                     };
 
                     const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
@@ -696,9 +733,9 @@ const FarmerDashboard: React.FC = () => {
                 >
                   <h2 className="col-span-full text-lg sm:text-2xl font-semibold text-green-700">Add New Crop</h2>
 
-                  <input name="name" required placeholder="Crop Name" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
-                  <input name="price" type="number" required placeholder="Price (₹)" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
-                  <input name="quantity" required placeholder="Quantity (e.g., 20 kg)" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
+                  <input name="name" required placeholder="Crop Name" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
+                  <input name="price" type="number" required placeholder="Price (₹)" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
+                  <input name="quantity" required placeholder="Quantity (e.g., 20 kg)" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
 
                   <select name="type" required className="input-field text-sm p-2 h-10 bg-white text-gray-700 sm:text-base sm:p-3 sm:h-12">
                     <option value="" disabled>Select Crop Type</option>
@@ -707,8 +744,10 @@ const FarmerDashboard: React.FC = () => {
                     <option value="grocery">Grocery</option>
                   </select>
 
-                  <input name="availability" required placeholder="Availability" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
-                  <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="input-field text-sm p-2 h-10 placeholder:text-sm sm:text-base sm:p-3 sm:h-12 sm:placeholder:text-base" />
+                  <input name="availability" required placeholder="Availability" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
+                  <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
+
+                  <input name="location" required placeholder="Crop Location (Full Address)" className="input-field col-span-full text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
 
                   <div className="flex flex-col col-span-full sm:col-span-1">
                     <label className="text-gray-600 font-medium mb-1 text-sm sm:text-base">Upload Image</label>
@@ -729,8 +768,8 @@ const FarmerDashboard: React.FC = () => {
                     </button>
                   </div>
                 </form>
-
               </div>
+
 
 
 
