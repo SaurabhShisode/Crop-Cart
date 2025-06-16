@@ -263,7 +263,7 @@ const CheckoutPage: React.FC = () => {
                       <p className="font-semibold text-white text-sm md:text-base">
                         {item.name} ({item.quantity})
                       </p>
-                      <div className="flex items-center space-x-2 mt-1 bg-green-700 rounded w-[75px]">
+                      <div className="flex items-center space-x-2 mt-2 bg-green-700 rounded w-[73px]">
                         <button
                           type="button"
                           onClick={() => updateQuantity(item._id, quantityNum - 1)}
@@ -291,7 +291,7 @@ const CheckoutPage: React.FC = () => {
             </ul>
 
 
-            <div className="border-t border-white mt-4 md:mt-6 pt-3 md:pt-4 space-y-1 text-white">
+            <div className=" border-t border-white mt-8 md:mt-6 pt-3 md:pt-4 space-y-4 text-white">
               <div className="flex justify-between items-center text-sm md:text-base">
                 <span className="flex items-center gap-2 font-semibold">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-circle-dollar-sign-icon lucide-circle-dollar-sign"><circle cx="12" cy="12" r="10" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 18V6" /></svg>Base Price:</span>
@@ -329,7 +329,7 @@ const CheckoutPage: React.FC = () => {
                 {totalPrice > 299 ? (
                   <span>
                     <span className="line-through text-white/50 mr-1 md:mr-2 font-semibold">₹50.00</span>
-                    <span className="text-white font-semibold">₹0.00</span>
+                    <span className="text-green-200 font-semibold">Free</span>
                   </span>
                 ) : (
                   <span className="font-semibold">₹50.00</span>
@@ -348,7 +348,7 @@ const CheckoutPage: React.FC = () => {
 
           {/* Shipping Details */}
 
-          <section className="order-2 md:order-2 md:col-span-2 p-6 bg-green-50 rounded-xl shadow-2xl">
+          <section className="order-2 md:order-2 md:col-span-2 p-6 bg-green-50 rounded-xl shadow-2xl border border-2 border-green-900">
 
             <h2 className="text-2xl font-bold text-green-900 mb-6">Shipping Details</h2>
             <form
