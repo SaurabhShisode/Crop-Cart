@@ -17,6 +17,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BouncingDotsLoader from '../components/BouncingDotsLoader';
 import { motion } from 'framer-motion';
+import NearbyCrops from '../components/NearbyCrops';
+import { StandaloneSearchBox } from '@react-google-maps/api';
+
 
 
 const ScrollableSection: React.FC<{
@@ -72,59 +75,57 @@ style.innerHTML = `
 }
 `;
 document.head.appendChild(style);
+
+
 const Navbar: React.FC<{
   userName: string | null;
   onLogout: () => void;
   cartCount: number;
   toggleCart: () => void;
   toggleMobileCart: () => void;
-  pincode: string;
-
-  setPincode: React.Dispatch<React.SetStateAction<string>>;
+  location: string;
+  setLocation: React.Dispatch<React.SetStateAction<string>>;
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  onLocationSelect?: (coords: { lat: number; lng: number }) => void;
 }> = ({
   userName,
   onLogout,
   cartCount,
   toggleCart,
   toggleMobileCart,
-  pincode,
-  setPincode,
+  location,
+  setLocation,
   searchQuery,
   setSearchQuery,
+  onLocationSelect,
 }) => {
     const navigate = useNavigate();
-    const [location, setLocation] = useState('Enter Pincode');
-    const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const searchBoxRef = useRef<any>(null);
 
-    const fetchLocation = async (pin: string) => {
-      try {
-        const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-        const data = await res.json();
-        if (data[0].Status === 'Success') {
-          const postOffice = data[0].PostOffice[0];
-          setLocation(`${postOffice.District}, ${postOffice.State}`);
-        } else {
-          setLocation('Invalid Pincode');
+    const handlePlacesChanged = () => {
+      const places = searchBoxRef.current?.getPlaces();
+      if (places?.length) {
+        const place = places[0];
+        const locationName = place.formatted_address;
+        const lat = place.geometry?.location?.lat();
+        const lng = place.geometry?.location?.lng();
+
+        if (locationName && lat !== undefined && lng !== undefined) {
+          setLocation(locationName);
+          onLocationSelect?.({ lat, lng });
         }
-      } catch {
-        setLocation('Error fetching location');
       }
     };
 
-    useEffect(() => {
-      function handleClickOutside(event: MouseEvent) {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-          setDropdownOpen(false);
-        }
-      }
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const placeholders = ["Search for wheat...", "Search for milk...", "Search for butter..."];
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const placeholders = [
+      'Search for wheat...',
+      'Search for milk...',
+      'Search for butter...',
+    ];
     const [placeholderIndex, setPlaceholderIndex] = useState(0);
     const [fade, setFade] = useState(true);
 
@@ -132,46 +133,16 @@ const Navbar: React.FC<{
       const interval = setInterval(() => {
         setFade(false);
         setTimeout(() => {
-          setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+          setPlaceholderIndex((i) => (i + 1) % placeholders.length);
           setFade(true);
         }, 300);
       }, 3000);
       return () => clearInterval(interval);
     }, []);
 
-
     useEffect(() => {
-      function handleClickOutside(event: MouseEvent) {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-          setDropdownOpen(false);
-        }
-      }
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setFade(false);
-        setTimeout(() => {
-          setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
-          setFade(true);
-        }, 300);
-      }, 3000);
-      return () => clearInterval(interval);
-    }, []);
-
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-
-
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (
-          dropdownRef.current &&
-          !dropdownRef.current.contains(event.target as Node)
-        ) {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
           setDropdownOpen(false);
         }
       };
@@ -186,7 +157,7 @@ const Navbar: React.FC<{
 
     return (
       <>
-        <nav className="flex justify-between items-center px-6 py-6 md:py-7 bg-white shadow-sm sticky top-0 z-50">
+        <nav className="flex justify-between items-center px-6 py-6 md:py-7 bg-white shadow-lg sticky top-0 z-50">
           {/* Logo */}
           <div
             className="flex items-center gap-2 text-2xl font-extrabold text-green-700 cursor-pointer"
@@ -201,27 +172,29 @@ const Navbar: React.FC<{
 
           {/* Desktop Inputs */}
           <div className="hidden lg:flex items-center space-x-8">
-            <div className="flex items-center gap-2 bg-green-50 text-green-800 px-4 py-2 rounded-md shadow-sm">
-              <MapPinIcon className="w-5 h-5" aria-hidden="true" />
-              <span className="font-semibold">{location}</span>
+            {/* Displayed location */}
+            <div className="flex items-center gap-2 bg-green-50 text-green-800 px-4 py-2 rounded-md shadow-sm w-56">
+              <MapPinIcon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+              <span className="font-semibold truncate overflow-hidden whitespace-nowrap">
+                {location}
+              </span>
             </div>
 
-            <input
-              type="text"
-              maxLength={6}
-              value={pincode}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (/^\d{0,6}$/.test(val)) {
-                  setPincode(val);
-                  if (val.length === 6) fetchLocation(val);
-                }
-              }}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="Enter Pincode"
-              aria-label="Enter Pincode"
-            />
 
+
+            {/* Address input with autocomplete */}
+            <StandaloneSearchBox
+              onLoad={(ref) => (searchBoxRef.current = ref)}
+              onPlacesChanged={handlePlacesChanged}
+            >
+              <input
+                type="text"
+                placeholder="Select Location"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-64"
+              />
+            </StandaloneSearchBox>
+
+            {/* Product search bar */}
             <div className="relative">
               <input
                 type="text"
@@ -240,6 +213,8 @@ const Navbar: React.FC<{
               )}
               <MagnifyingGlassIcon className="w-5 h-5 absolute right-2 top-2.5 text-gray-500" aria-hidden="true" />
             </div>
+
+            {/* Cart */}
             <div
               className="relative cursor-pointer"
               onClick={toggleCart}
@@ -255,8 +230,8 @@ const Navbar: React.FC<{
                 </span>
               )}
             </div>
-
           </div>
+
 
           {/* Right side */}
           <div className="flex items-center gap-6 md:gap-6">
@@ -377,20 +352,18 @@ const Navbar: React.FC<{
                 <MapPinIcon className="w-5 h-5 text-green-600" />
                 <span className="font-semibold text-green-800">{location}</span>
               </div>
+              <StandaloneSearchBox
+              onLoad={(ref) => (searchBoxRef.current = ref)}
+              onPlacesChanged={handlePlacesChanged}
+            >
               <input
                 type="text"
-                maxLength={6}
-                value={pincode}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (/^\d{0,6}$/.test(val)) {
-                    setPincode(val);
-                    if (val.length === 6) fetchLocation(val);
-                  }
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="Enter Pincode"
+                placeholder="Select Location"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-64"
               />
+            </StandaloneSearchBox>
+
+
               <div className="relative">
                 <input
                   type="text"
@@ -415,6 +388,7 @@ const Navbar: React.FC<{
       </>
     );
   };
+
 type Crop = {
   _id: string;
   name: string;
@@ -425,6 +399,10 @@ type Crop = {
   availability: string;
   quantity: string;
   farmer: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
 };
 
 
@@ -437,20 +415,24 @@ const Home: React.FC = () => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isMobileCartOpen, setIsMobileCartOpen] = useState(false)
+  const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
-  const [pincode, setPincode] = useState('');
+  const [location, setLocation] = useState<string>('Enter your area or city');
   const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
-    const [mealTime, setMealTime] = useState("lunch");
+  const [mealTime, setMealTime] = useState('lunch');
   const [mealName, setMealName] = useState('');
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState<Set<string>>(new Set());
   const ingredientsRef = useRef<HTMLDivElement | null>(null);
+  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [nearbyCrops, setNearbyCrops] = useState<Crop[]>([]);
 
-    const containerVariants = {
+  const navigate = useNavigate();
+
+
+  const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -471,7 +453,7 @@ const Home: React.FC = () => {
         ingredientsRef.current &&
         !ingredientsRef.current.contains(event.target as Node)
       ) {
-        setIngredients([]); 
+        setIngredients([]);
       }
     };
 
@@ -501,7 +483,7 @@ const Home: React.FC = () => {
     }
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     const hour = new Date().getHours();
 
     if (hour >= 4 && hour < 11) {
@@ -512,7 +494,8 @@ const Home: React.FC = () => {
       setMealTime("dinner tonight");
     }
   }, []);
-   const BACKEND_URL = 'https://crop-cart-backend.onrender.com';
+
+  const BACKEND_URL = 'https://crop-cart-backend.onrender.com';
 
   type Ingredient = {
     _id: string;
@@ -541,11 +524,9 @@ const Home: React.FC = () => {
     }
   };
 
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMealName(e.target.value);
   };
-
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -574,35 +555,6 @@ const Home: React.FC = () => {
     setSelectedIngredients(new Set());
   };
 
-
-
-
-
-
-
-  /* const [heroOpacity, setHeroOpacity] = useState(1);
- 
-   useEffect(() => {
-     let ticking = false;
- 
-     const handleScroll = () => {
-       if (!ticking) {
-         window.requestAnimationFrame(() => {
-           const scrollY = window.scrollY;
-           const fadeStart = 0;
-           const fadeEnd = 400;
-           const newOpacity = Math.max(1 - (scrollY - fadeStart) / (fadeEnd - fadeStart), 0);
-           setHeroOpacity(newOpacity);
-           ticking = false;
-         });
-         ticking = true;
-       }
-     };
- 
-     window.addEventListener('scroll', handleScroll);
-     return () => window.removeEventListener('scroll', handleScroll);
-   }, []);
- */
   useEffect(() => {
     if (userName) {
       const storedUser = localStorage.getItem('cropcartUser');
@@ -612,15 +564,13 @@ const Home: React.FC = () => {
           if (data.user && data.user.id) {
             localStorage.setItem(`cart_${data.user.id}`, JSON.stringify(cart));
           }
-        } catch {
-
-        }
+        } catch { }
       }
     }
   }, [cart, userName]);
 
   useEffect(() => {
-    fetch('https://crop-cart-backend.onrender.com/api/crops')
+    fetch(`${BACKEND_URL}/api/crops`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -635,32 +585,28 @@ const Home: React.FC = () => {
       });
   }, []);
 
-
   const addToCart = (crop: Crop, shouldOpenMobileCart = false) => {
-  setCart((prev) => {
-    const exists = prev.find((item) => item._id === crop._id);
-    if (exists) {
-      return prev.map((item) =>
-        item._id === crop._id
-          ? { ...item, quantityInCart: item.quantityInCart + 1 }
-          : item
-      );
-    } else {
-      return [...prev, { ...crop, quantityInCart: 1 }];
+    setCart((prev) => {
+      const exists = prev.find((item) => item._id === crop._id);
+      if (exists) {
+        return prev.map((item) =>
+          item._id === crop._id
+            ? { ...item, quantityInCart: item.quantityInCart + 1 }
+            : item
+        );
+      } else {
+        return [...prev, { ...crop, quantityInCart: 1 }];
+      }
+    });
+
+    setIsCartOpen(false);
+
+    if (shouldOpenMobileCart && window.innerWidth < 1012) {
+      setTimeout(() => {
+        setIsMobileCartOpen(true);
+      }, 0);
     }
-  });
-
-  setIsCartOpen(false);
-
-  if (shouldOpenMobileCart && window.innerWidth < 1012) {
-    setTimeout(() => {
-      setIsMobileCartOpen(true);
-    }, 0);
-  }
-};
-
-
-
+  };
 
   const removeFromCart = (id: string) => {
     setCart((prev) => prev.filter((item) => item._id !== id));
@@ -671,17 +617,13 @@ const Home: React.FC = () => {
     0
   );
 
-
   const cartCount = cart.reduce((acc, item) => acc + item.quantityInCart, 0);
-
 
   const handleLogout = () => {
     localStorage.removeItem('cropcartUser');
     setUserName(null);
     setCart([]);
   };
-
-
 
   const toggleCart = () => {
     setIsCartOpen((prev) => !prev);
@@ -691,17 +633,10 @@ const Home: React.FC = () => {
     setIsMobileCartOpen((prev) => !prev);
   };
 
+  const filteredCrops = (selectedCoords ? nearbyCrops : crops).filter((crop) =>
+    crop.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+  );
 
-
-  const filteredCrops = crops.filter((crop) => {
-    const matchesPincode =
-      pincode.length === 6 ? crop.regionPincodes.includes(pincode) : true;
-    const matchesSearch =
-      searchQuery.trim() === '' ||
-      crop.name.toLowerCase().includes(searchQuery.trim().toLowerCase());
-
-    return matchesPincode && matchesSearch;
-  });
 
   const groupedCrops = filteredCrops.reduce<Record<string, Crop[]>>(
     (acc, crop) => {
@@ -713,19 +648,30 @@ const Home: React.FC = () => {
     },
     {}
   );
+
+
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
+
+
+
       <Navbar
         userName={userName}
         onLogout={handleLogout}
         cartCount={cartCount}
         toggleCart={toggleCart}
         toggleMobileCart={toggleMobileCart}
-        pincode={pincode}
-        setPincode={setPincode}
+        location={location}
+        setLocation={setLocation}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        onLocationSelect={setSelectedCoords}
       />
+
+
+
+
 
       <div className="flex-grow max-w-7xl mx-auto h-150 py-10 px-4">
         <div className="px-6 py-8 bg-white space-y-6">
@@ -868,14 +814,16 @@ const Home: React.FC = () => {
             {/* Soft gradient overlay for depth */}
             <div className="absolute inset-0 z-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none"></div>
           </div>
+          <NearbyCrops
+            selectedCoords={selectedCoords}
+            onNearbyCropsChange={setNearbyCrops}
 
-
-
-
-
+          />
 
         </div>
+
       </div>
+
 
       <div className="hidden lg:flex justify-center">
         <main className="flex-grow max-w-7xl mx-0 sm:mx-40 min-h-screen pb-10 px-4 bg-white">
@@ -940,6 +888,8 @@ const Home: React.FC = () => {
             ))
           )}
         </main>
+
+
 
       </div>
       <div className="lg:hidden pb-6 bg-white min-h-screen mb-10">

@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../components/Footer';
 import logo from '../assets/logo.png';
-import {
-  UserPlusIcon,
-} from '@heroicons/react/24/outline';
+import { UserPlusIcon } from '@heroicons/react/24/outline';
+import { User } from 'lucide-react';
+import { DistanceMatrixService } from '@react-google-maps/api';
 
-import { User, } from 'lucide-react';
 interface CartItem {
   _id: string;
   name: string;
@@ -16,6 +15,10 @@ interface CartItem {
   quantity: string;
   farmer: string;
   cropId: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 const CheckoutPage: React.FC = () => {
@@ -26,38 +29,68 @@ const CheckoutPage: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [distances, setDistances] = useState<Record<string, { distance: string; duration: string }>>({});
+  const [deliveryCoords, setDeliveryCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+
+  useEffect(() => window.scrollTo(0, 0), []);
 
   useEffect(() => {
-  const storedUser = localStorage.getItem('cropcartUser');
-  if (storedUser) {
-    try {
-      const data = JSON.parse(storedUser);
-      setUserName(data?.user?.name || null);
-      
-      const userId = data?.user?.id;
-      if (userId) {
-        const cartKey = `cart_${userId}`;
-        const storedCart = localStorage.getItem(cartKey);
-        if (storedCart) {
-          setCart(JSON.parse(storedCart));
+    const storedUser = localStorage.getItem('cropcartUser');
+    if (storedUser) {
+      try {
+        const data = JSON.parse(storedUser);
+        setUserName(data?.user?.name || null);
+        const userId = data?.user?.id;
+        if (userId) {
+          const cartKey = `cart_${userId}`;
+          const storedCart = localStorage.getItem(cartKey);
+          if (storedCart) {
+            setCart(JSON.parse(storedCart));
+          }
         }
+      } catch (err) {
+        console.error('Error reading user or cart from localStorage:', err);
       }
-    } catch (err) {
-      console.error('Error reading user or cart from localStorage:', err);
     }
-  }
-}, []);
+  }, []);
+  
 
+  const getDeliveryCoords = async (address: string) => {
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
+    );
+    const data = await response.json();
+    if (data.status === 'OK') {
+      const location = data.results[0].geometry.location;
+      return {
+        latitude: location.lat,
+        longitude: location.lng,
+      };
+    } else {
+      throw new Error('Failed to geocode address');
+    }
+  };
+
+  useEffect(() => {
+  const fetchCoords = async () => {
+    if (!address) return;
+    try {
+      const coords = await getDeliveryCoords(address);
+      setDeliveryCoords(coords);
+    } catch (err) {
+      console.error('Geocoding error:', err);
+      toast.error('Invalid address', { style: { background: '#7f1d1d', color: 'white' } });
+    }
+  };
+
+  fetchCoords();
+}, [address]);
 
   const totalPrice = cart.reduce((total, item) => {
-    const quantityNum = (item.quantityInCart) || 0;
+    const quantityNum = item.quantityInCart || 0;
     return total + item.price * quantityNum;
   }, 0);
 
@@ -68,7 +101,6 @@ const CheckoutPage: React.FC = () => {
       toast.error('Please fill in all fields and add items to cart.', toastStyle);
       return;
     }
-
 
     setLoading(true);
 
@@ -99,8 +131,6 @@ const CheckoutPage: React.FC = () => {
         deliveryFee,
       };
 
-      
-
       const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -123,11 +153,12 @@ const CheckoutPage: React.FC = () => {
       setLoading(false);
     }
   };
+
   const onLogout = () => {
-        localStorage.removeItem('cropcartUser');
-        toast.success('Logged out successfully');
-        navigate('/home');
-      };
+    localStorage.removeItem('cropcartUser');
+    toast.success('Logged out successfully');
+    navigate('/home');
+  };
 
   if (cart.length === 0) {
     return (
@@ -168,86 +199,86 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <>
-    <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-lg sticky top-0 z-50">
-          <div
-            className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
-            onClick={() => navigate('/')}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
-          >
-            <img src={logo} alt="CropCart Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
-            <span>CropCart</span>
-          </div>
+      <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-lg sticky top-0 z-50">
+        <div
+          className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
+          onClick={() => navigate('/')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
+        >
+          <img src={logo} alt="CropCart Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
+          <span>CropCart</span>
+        </div>
 
-          <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
-            {userName ? (
-              <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
-                <span className="hidden sm:flex font-semibold text-green-700 text-sm sm:text-lg">
-                  Hi, {userName}
-                </span>
+        <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+          {userName ? (
+            <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+              <span className="hidden sm:flex font-semibold text-green-700 text-sm sm:text-lg">
+                Hi, {userName}
+              </span>
 
-                <div ref={dropdownRef} className="relative">
-                  <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="p-1.5 sm:p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    aria-haspopup="true"
-                    aria-expanded={dropdownOpen}
-                    aria-label="User menu"
-                  >
-                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-green-700" />
-                  </button>
-                  {dropdownOpen && (
-                    <ul className="absolute right-0 mt-2 w-44 sm:w-48 bg-white border border-green-200 rounded-md shadow-lg z-50 text-sm sm:text-base">
-
-                      <li>
-                        <button
-                          onClick={() => {
-                            navigate('/my-account');
-                            setDropdownOpen(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
-                        >
-                          My Account
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => {
-                            onLogout();
-                            setDropdownOpen(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
+              <div ref={dropdownRef} className="relative">
                 <button
-                  onClick={() => navigate('/login')}
-                  className="px-3 py-1.5 text-sm sm:text-lg font-semibold text-gray-800 hover:text-green-700"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="p-1.5 sm:p-2 rounded-full bg-green-100 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpen}
+                  aria-label="User menu"
                 >
-                  Log in
+                  <User className="w-5 h-5 sm:w-6 sm:h-6 text-green-700" />
                 </button>
-                <button
-                  onClick={() => navigate('/register')}
-                  className="px-4 sm:px-5 py-1.5 sm:py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-sm sm:text-lg font-semibold flex items-center gap-2"
-                >
-                  <UserPlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                  Sign up
-                </button>
+                {dropdownOpen && (
+                  <ul className="absolute right-0 mt-2 w-44 sm:w-48 bg-white border border-green-200 rounded-md shadow-lg z-50 text-sm sm:text-base">
+
+                    <li>
+                      <button
+                        onClick={() => {
+                          navigate('/my-account');
+                          setDropdownOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-green-800 hover:bg-green-100"
+                      >
+                        My Account
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          onLogout();
+                          setDropdownOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                )}
               </div>
-            )}
-          </div>
-        </nav>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => navigate('/login')}
+                className="px-3 py-1.5 text-sm sm:text-lg font-semibold text-gray-800 hover:text-green-700"
+              >
+                Log in
+              </button>
+              <button
+                onClick={() => navigate('/register')}
+                className="px-4 sm:px-5 py-1.5 sm:py-2 bg-green-700 hover:bg-green-800 text-white rounded-md text-sm sm:text-lg font-semibold flex items-center gap-2"
+              >
+                <UserPlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                Sign up
+              </button>
+            </div>
+          )}
+        </div>
+      </nav>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-white flex items-center justify-center px-6 py-10 mt-16 sm:mt-0">
-        
+
         <div className="max-w-6xl w-full  rounded-2xl  grid grid-cols-1 md:grid-cols-3 gap-8   sm:p-10">
           {/* Order Summary */}
 
@@ -255,19 +286,34 @@ const CheckoutPage: React.FC = () => {
             <h2 className="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6">Order Summary</h2>
 
             <ul className="divide-y divide-white">
-              {cart.map(item => {
+              {cart.map((item) => {
                 const quantityNum = item.quantityInCart || 0;
+                const info = distances[item._id];
+
                 return (
-                  <li key={item._id} className="py-2 md:py-4 flex justify-between items-center">
-                    <div>
+                  <li
+                    key={item._id}
+                    className="py-3 md:py-4 flex flex-col sm:flex-row justify-between gap-2 sm:gap-4"
+                  >
+                    <div className="flex flex-col">
                       <p className="font-semibold text-white text-sm md:text-base">
                         {item.name} ({item.quantity})
                       </p>
-                      <div className="flex items-center space-x-2 mt-2 bg-green-700 rounded w-[73px]">
+
+                      {info ? (
+                        <p className="px-2 text-sm text-white/80 mt-1">
+                           {info.distance} • approx. {info.duration}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-white/60 mt-1 italic">Calculating distance...</p>
+                      )}
+
+                      <div className="flex items-center space-x-2 mt-2 bg-green-700 rounded w-fit px-2 py-1">
                         <button
                           type="button"
+                          aria-label={`Decrease quantity of ${item.name}`}
                           onClick={() => updateQuantity(item._id, quantityNum - 1)}
-                          className="px-2 py-1  text-white rounded text-xs font-bold "
+                          className="px-2 py-1 text-white text-xs font-bold"
                           disabled={quantityNum <= 0}
                         >
                           −
@@ -275,20 +321,23 @@ const CheckoutPage: React.FC = () => {
                         <span className="text-white text-sm font-bold">{quantityNum}</span>
                         <button
                           type="button"
+                          aria-label={`Increase quantity of ${item.name}`}
                           onClick={() => updateQuantity(item._id, quantityNum + 1)}
-                          className="px-2 py-1  text-white rounded text-xs font-bold "
+                          className="px-2 py-1 text-white text-xs font-bold"
                         >
                           +
                         </button>
                       </div>
                     </div>
-                    <p className="font-semibold text-white text-sm md:text-base">
+
+                    <p className="font-semibold text-white text-sm md:text-base self-end sm:self-center">
                       ₹{(item.price * quantityNum).toFixed(2)}
                     </p>
                   </li>
                 );
               })}
             </ul>
+
 
 
             <div className=" border-t border-white mt-8 md:mt-6 pt-3 md:pt-4 space-y-4 text-white">
@@ -428,10 +477,56 @@ const CheckoutPage: React.FC = () => {
                 {loading ? 'Placing Order...' : 'Place Order'}
               </button>
             </form>
+
           </section>
         </div>
       </div>
       <Footer />
+      {deliveryCoords &&
+        cart.length > 0 &&
+        cart.every(item => item.location) && (
+          <DistanceMatrixService
+  options={{
+    origins: cart
+      .filter(item => item.location)
+      .map(item => ({
+        lat: item.location!.latitude,
+        lng: item.location!.longitude,
+      })),
+    destinations: [
+      {
+        lat: deliveryCoords.latitude,
+        lng: deliveryCoords.longitude,
+      },
+    ],
+    travelMode: window.google.maps.TravelMode.DRIVING,
+  }}
+  callback={(
+    response: google.maps.DistanceMatrixResponse | null,
+    status: google.maps.DistanceMatrixStatus
+  ) => {
+    if (status === 'OK' && response) {
+      const resultMap: Record<string, { distance: string; duration: string }> = {};
+      response.rows.forEach((row, idx) => {
+        const element = row.elements?.[0];
+        if (element && element.status === 'OK') {
+          resultMap[cart[idx]._id] = {
+            distance: element.distance.text,
+            duration: element.duration.text,
+          };
+        }
+      });
+      setDistances(resultMap);
+    } else {
+      console.error('Distance Matrix error:', status, response);
+    }
+  }}
+/>
+
+        )}
+
+
+
     </>
   );
 };
