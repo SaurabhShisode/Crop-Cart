@@ -25,13 +25,13 @@ const mapContainerStyle = {
     height: '400px',
 };
 
-// Default to center of India
+
 const defaultCenter = { lat: 22.9734, lng: 78.6569 };
 
 const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) => {
     const [nearbyCrops, setNearbyCrops] = useState<Crop[]>([]);
     const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>(defaultCenter);
-    const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null); // ✅ Corrected hook placement
+    const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
 
     useEffect(() => {
         if (selectedCoords) {
@@ -88,7 +88,7 @@ const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) 
                             {selectedCoords && (
                                 <Circle
                                     center={selectedCoords}
-                                    radius={30} // 👈 Smaller radius than 90 meters
+                                    radius={30} 
                                     options={{
                                         strokeColor: '#2563eb',
                                         strokeOpacity: 0.8,
