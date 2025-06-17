@@ -56,7 +56,7 @@ const CheckoutPage: React.FC = () => {
       }
     }
   }, []);
-  
+
 
   const getDeliveryCoords = async (address: string) => {
     const response = await fetch(
@@ -75,19 +75,19 @@ const CheckoutPage: React.FC = () => {
   };
 
   useEffect(() => {
-  const fetchCoords = async () => {
-    if (!address) return;
-    try {
-      const coords = await getDeliveryCoords(address);
-      setDeliveryCoords(coords);
-    } catch (err) {
-      console.error('Geocoding error:', err);
-      toast.error('Invalid address', { style: { background: '#7f1d1d', color: 'white' } });
-    }
-  };
+    const fetchCoords = async () => {
+      if (!address) return;
+      try {
+        const coords = await getDeliveryCoords(address);
+        setDeliveryCoords(coords);
+      } catch (err) {
+        console.error('Geocoding error:', err);
+        toast.error('Invalid address', { style: { background: '#7f1d1d', color: 'white' } });
+      }
+    };
 
-  fetchCoords();
-}, [address]);
+    fetchCoords();
+  }, [address]);
 
   const totalPrice = cart.reduce((total, item) => {
     const quantityNum = item.quantityInCart || 0;
@@ -302,7 +302,7 @@ const CheckoutPage: React.FC = () => {
 
                       {info ? (
                         <p className="px-2 text-sm text-white/80 mt-1">
-                           {info.distance} • approx. {info.duration}
+                          {info.distance} • approx. {info.duration}
                         </p>
                       ) : (
                         <p className="text-xs text-white/60 mt-1 italic">Calculating distance...</p>
@@ -486,42 +486,42 @@ const CheckoutPage: React.FC = () => {
         cart.length > 0 &&
         cart.every(item => item.location) && (
           <DistanceMatrixService
-  options={{
-    origins: cart
-      .filter(item => item.location)
-      .map(item => ({
-        lat: item.location!.latitude,
-        lng: item.location!.longitude,
-      })),
-    destinations: [
-      {
-        lat: deliveryCoords.latitude,
-        lng: deliveryCoords.longitude,
-      },
-    ],
-    travelMode: window.google.maps.TravelMode.DRIVING,
-  }}
-  callback={(
-    response: google.maps.DistanceMatrixResponse | null,
-    status: google.maps.DistanceMatrixStatus
-  ) => {
-    if (status === 'OK' && response) {
-      const resultMap: Record<string, { distance: string; duration: string }> = {};
-      response.rows.forEach((row, idx) => {
-        const element = row.elements?.[0];
-        if (element && element.status === 'OK') {
-          resultMap[cart[idx]._id] = {
-            distance: element.distance.text,
-            duration: element.duration.text,
-          };
-        }
-      });
-      setDistances(resultMap);
-    } else {
-      console.error('Distance Matrix error:', status, response);
-    }
-  }}
-/>
+            options={{
+              origins: cart
+                .filter(item => item.location)
+                .map(item => ({
+                  lat: item.location!.latitude,
+                  lng: item.location!.longitude,
+                })),
+              destinations: [
+                {
+                  lat: deliveryCoords.latitude,
+                  lng: deliveryCoords.longitude,
+                },
+              ],
+              travelMode: window.google.maps.TravelMode.DRIVING,
+            }}
+            callback={(
+              response: google.maps.DistanceMatrixResponse | null,
+              status: google.maps.DistanceMatrixStatus
+            ) => {
+              if (status === 'OK' && response) {
+                const resultMap: Record<string, { distance: string; duration: string }> = {};
+                response.rows.forEach((row, idx) => {
+                  const element = row.elements?.[0];
+                  if (element && element.status === 'OK') {
+                    resultMap[cart[idx]._id] = {
+                      distance: element.distance.text,
+                      duration: element.duration.text,
+                    };
+                  }
+                });
+                setDistances(resultMap);
+              } else {
+                console.error('Distance Matrix error:', status, response);
+              }
+            }}
+          />
 
         )}
 
