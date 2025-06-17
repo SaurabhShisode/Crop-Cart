@@ -88,7 +88,7 @@ const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) 
                             {selectedCoords && (
                                 <Circle
                                     center={selectedCoords}
-                                    radius={30} 
+                                    radius={60} 
                                     options={{
                                         strokeColor: '#2563eb',
                                         strokeOpacity: 0.8,
