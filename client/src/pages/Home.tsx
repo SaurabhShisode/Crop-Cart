@@ -725,12 +725,12 @@ const Home: React.FC = () => {
           </div>
 
 
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#6b21a8] text-white p-6 sm:p-10 shadow-2xl w-full h-fit sm:h-auto">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#6b21a8] text-white p-4 sm:p-6 shadow-2xl w-full h-fit sm:h-auto">
             <div className="relative z-10 max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-8">
 
               {/* Text Content */}
               <div className="flex-1">
-                <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-4">
+                <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-4 pt-2">
                   What’s for <span className="text-green-300">{mealTime}?</span>
                 </h1>
                 <p className="text-base sm:text-lg text-white/80 mb-6">

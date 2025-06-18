@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GoogleMap, Marker, Circle, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
 import { getDistanceFromLatLonInKm } from '../utils/calcDistance';
 
 type Crop = {
@@ -32,6 +32,8 @@ const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) 
     const [nearbyCrops, setNearbyCrops] = useState<Crop[]>([]);
     const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>(defaultCenter);
     const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
+
+    
 
     useEffect(() => {
         if (selectedCoords) {
@@ -70,10 +72,10 @@ const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) 
  rounded-3xl shadow-xl  overflow-hidden">
                 <div className="px-6 pt-6 sm:pt-8 sm:pt-8">
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                        Products Near Your Location
+                        Crops Near Your Location
                     </h2>
                     <p className="mt-1 text-sm sm:text-base text-white/80">
-                        Based on your selected delivery address, we found these nearby products within a 25km radius.
+                        Based on your selected delivery address, we found these nearby crops within a 25km radius.
                     </p>
                 </div>
 
@@ -84,24 +86,21 @@ const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) 
                             center={mapCenter}
                             zoom={selectedCoords ? 15 : 4}
                         >
-                            {/* Blue dot for user */}
+                            
                             {selectedCoords && (
-                                <Circle
-                                    center={selectedCoords}
-                                    radius={60} 
-                                    options={{
-                                        strokeColor: '#2563eb',
-                                        strokeOpacity: 0.8,
-                                        strokeWeight: 2,
-                                        fillColor: '#3b82f6',
-                                        fillOpacity: 0.8,
-                                        zIndex: 2,
-                                    }}
-                                />
+                                <>
+                                    <Marker
+                                        position={selectedCoords}
+                                        icon={{
+                                            url: 'https://cdn-icons-png.flaticon.com/512/2302/2302043.png',
+                                            scaledSize: new window.google.maps.Size(50, 50),
+                                        }}
+                                    />
 
+                                </>
                             )}
 
-                            {/* Crop markers */}
+                         
                             {nearbyCrops.map((crop) => (
                                 <Marker
                                     key={crop._id}
@@ -117,7 +116,7 @@ const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) 
                                 />
                             ))}
 
-                            {/* InfoWindow for crop */}
+                    
                             {selectedCrop && (
                                 <InfoWindow
                                     position={{
@@ -126,18 +125,29 @@ const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) 
                                     }}
                                     onCloseClick={() => setSelectedCrop(null)}
                                 >
-                                    <div className="min-w-[180px] text-sm p-2">
-                                        <h3 className="text-base font-semibold text-green-800">{selectedCrop.name}</h3>
-                                        <p className="text-gray-700 text-xs">
-                                            ₹{selectedCrop.price} • {selectedCrop.quantity}
+                                    <div className="min-w-[220px] bg-white/80 backdrop-blur-lg rounded-xl shadow-lg p-4 border border-gray-200">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-1">{selectedCrop.name}</h3>
+
+                                        <p className="text-sm text-gray-700 font-medium mb-2">
+                                            ₹{selectedCrop.price} <span className="text-gray-400 font-normal">• {selectedCrop.quantity}</span>
                                         </p>
-                                        <p className="text-gray-500 text-xs mt-1">
-                                            <span className="font-medium">Type:</span> {selectedCrop.type}
-                                        </p>
-                                        <p className="text-gray-500 text-xs">
-                                            <span className="font-medium">Availability:</span> {selectedCrop.availability}
-                                        </p>
+
+                                        <div className="flex flex-col gap-1 text-xs">
+                                            <div>
+                                                <span className="font-semibold text-gray-600">Type:</span>{' '}
+                                                <span className="inline-block px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-semibold">
+                                                    {selectedCrop.type}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className="font-semibold text-gray-600">Availability:</span>{' '}
+                                                <span className= " font-semibold inline-block px-2 py-0.5 rounded-full bg-green-100 text-green-800 ">
+                                                    {selectedCrop.availability}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </InfoWindow>
                             )}
                         </GoogleMap>
