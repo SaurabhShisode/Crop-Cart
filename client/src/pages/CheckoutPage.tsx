@@ -5,7 +5,8 @@ import Footer from '../components/Footer';
 import logo from '../assets/logo.png';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
 import { User } from 'lucide-react';
-import { DistanceMatrixService } from '@react-google-maps/api';
+
+import { DirectionsService } from '@react-google-maps/api';
 
 interface CartItem {
   _id: string;
@@ -31,9 +32,10 @@ const CheckoutPage: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [userName, setUserName] = useState<string | null>(null);
-  const [distances, setDistances] = useState<Record<string, { distance: string; duration: string }>>({});
+
   const [deliveryCoords, setDeliveryCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const navigate = useNavigate();
+  const [deliveryDuration, setDeliveryDuration] = useState<string | null>(null);
 
   useEffect(() => window.scrollTo(0, 0), []);
 
@@ -277,9 +279,9 @@ const CheckoutPage: React.FC = () => {
         </div>
       </nav>
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="min-h-screen bg-white flex items-center justify-center px-6 py-10 mt-16 sm:mt-0">
+      <div className="min-h-screen bg-white flex items-center justify-center px-6 pt-10 mt-16 sm:mt-0">
 
-        <div className="max-w-6xl w-full  rounded-2xl  grid grid-cols-1 md:grid-cols-3 gap-8   sm:p-10">
+        <div className="max-w-6xl w-full  rounded-2xl  grid grid-cols-1 md:grid-cols-3 gap-8 pb-10  sm:p-10">
           {/* Order Summary */}
 
           <section className="order-1 md:order-1 md:col-span-1 bg-green-900 border  rounded-xl p-4 md:p-6 shadow-2xl">
@@ -288,7 +290,7 @@ const CheckoutPage: React.FC = () => {
             <ul className="divide-y divide-white">
               {cart.map((item) => {
                 const quantityNum = item.quantityInCart || 0;
-                const info = distances[item._id];
+
 
                 return (
                   <li
@@ -300,13 +302,7 @@ const CheckoutPage: React.FC = () => {
                         {item.name} ({item.quantity})
                       </p>
 
-                      {info ? (
-                        <p className="px-2 text-sm text-white/80 mt-1">
-                          {info.distance} • approx. {info.duration}
-                        </p>
-                      ) : (
-                        <p className="text-xs text-white/60 mt-1 italic">Calculating distance...</p>
-                      )}
+
 
                       <div className="flex items-center space-x-2 mt-2 bg-green-700 rounded w-fit px-2 py-1">
                         <button
@@ -476,54 +472,94 @@ const CheckoutPage: React.FC = () => {
               >
                 {loading ? 'Placing Order...' : 'Place Order'}
               </button>
+
+              <div className="bg-white flex items-center justify-center">
+
+        <div className="max-w-6xl w-full rounded-xl bg-gradient-to-br from-green-100 via-emerald-200 to-green-50 border border-2 border-green-900 shadow-xl p-2 sm:p-4 flex items-center justify-center gap-6 ">
+
+
+          <div className="relative flex-shrink-0">
+            <img
+              src="https://images.vexels.com/media/users/3/153665/isolated/preview/85caec2546a1e9eaaabadfb301945221-fast-delivery-colored-stroke-icon.png"
+              alt="Fast Delivery"
+              className="w-12 h-12 sm:w-16 sm:h-16 "
+            />
+
+
+          </div>
+
+
+          <p className="text-md sm:text-lg font-semibold text-gray-800 text-center sm:text-left">
+            {deliveryDuration ? (
+              <>
+                Your order will arrive in&nbsp;
+                <span className="text-green-800">{deliveryDuration}</span>
+              </>
+            ) : (
+              <span className="text-gray-600">Enter your delivery address to get estimated delivery time</span>
+            )}
+          </p>
+        </div>
+
+      </div>
+              
             </form>
+            
+
 
           </section>
+          
         </div>
+
+
+
       </div>
+      
+
+
+
+
       <Footer />
       {deliveryCoords &&
         cart.length > 0 &&
         cart.every(item => item.location) && (
-          <DistanceMatrixService
+          <DirectionsService
             options={{
-              origins: cart
-                .filter(item => item.location)
-                .map(item => ({
+              origin: {
+                lat: cart[0].location!.latitude,
+                lng: cart[0].location!.longitude,
+              },
+
+              destination: {
+                lat: deliveryCoords.latitude,
+                lng: deliveryCoords.longitude,
+              },
+              waypoints: cart.slice(1).map(item => ({
+                location: {
                   lat: item.location!.latitude,
                   lng: item.location!.longitude,
-                })),
-              destinations: [
-                {
-                  lat: deliveryCoords.latitude,
-                  lng: deliveryCoords.longitude,
                 },
-              ],
+                stopover: true,
+              })),
+
               travelMode: window.google.maps.TravelMode.DRIVING,
+              optimizeWaypoints: true,
             }}
-            callback={(
-              response: google.maps.DistanceMatrixResponse | null,
-              status: google.maps.DistanceMatrixStatus
-            ) => {
-              if (status === 'OK' && response) {
-                const resultMap: Record<string, { distance: string; duration: string }> = {};
-                response.rows.forEach((row, idx) => {
-                  const element = row.elements?.[0];
-                  if (element && element.status === 'OK') {
-                    resultMap[cart[idx]._id] = {
-                      distance: element.distance.text,
-                      duration: element.duration.text,
-                    };
-                  }
-                });
-                setDistances(resultMap);
+            callback={(response, status) => {
+              if (status === 'OK' && response?.routes?.length) {
+                const totalDuration = response.routes[0].legs.reduce((acc, leg) => {
+                  return acc + (leg.duration?.value ?? 0);
+                }, 0);
+
+                const durationText = Math.round(totalDuration / 60) + ' mins';
+                setDeliveryDuration(durationText);
               } else {
-                console.error('Distance Matrix error:', status, response);
+                console.error('DirectionsService error:', status, response);
               }
             }}
           />
-
         )}
+
 
 
 
