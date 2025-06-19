@@ -111,6 +111,8 @@ interface Order {
   deliveryFee: number;
   total: number;
   basePrice: number;
+  fulfilled?: boolean;
+  fulfilledAt?: string | null;
 }
 
 
@@ -265,6 +267,10 @@ const FarmerDashboard: React.FC = () => {
   const toggleOrderDetails = (orderId: string) => {
     setExpandedOrderId((prevId) => (prevId === orderId ? null : orderId));
   };
+
+  
+
+  
 
 
   useEffect(() => {
@@ -660,7 +666,7 @@ const FarmerDashboard: React.FC = () => {
                     const address = formData.get('location') as string;
                     let latitude = null;
                     let longitude = null;
-
+                    
                     try {
                       const apiKey = process.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -742,6 +748,9 @@ const FarmerDashboard: React.FC = () => {
                     <option value="crop">Crop</option>
                     <option value="dairy">Dairy</option>
                     <option value="grocery">Grocery</option>
+                    <option value="spice">Spice</option>
+                    <option value="vegetable">Vegetable</option>
+                    <option value="fruit">Fruit</option>
                   </select>
 
                   <input name="availability" required placeholder="Availability" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
