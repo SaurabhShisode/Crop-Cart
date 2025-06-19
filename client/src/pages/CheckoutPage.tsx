@@ -35,7 +35,8 @@ const CheckoutPage: React.FC = () => {
 
   const [deliveryCoords, setDeliveryCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const navigate = useNavigate();
-  const [deliveryDuration, setDeliveryDuration] = useState<string | null>(null);
+  const [deliveryDuration, setDeliveryDuration] = useState<number | null>(null);
+
 
   useEffect(() => window.scrollTo(0, 0), []);
 
@@ -131,6 +132,10 @@ const CheckoutPage: React.FC = () => {
         total,
         tax,
         deliveryFee,
+        fulfilled: false,
+        fulfilledAt: null,
+        deliveryTime: deliveryDuration ?? 30,
+
       };
 
       const response = await fetch('https://crop-cart-backend.onrender.com/api/orders', {
@@ -475,46 +480,46 @@ const CheckoutPage: React.FC = () => {
 
               <div className="bg-white flex items-center justify-center">
 
-        <div className="max-w-6xl w-full rounded-xl bg-gradient-to-br from-green-100 via-emerald-200 to-green-50 border border-2 border-green-900 shadow-xl p-2 sm:p-4 flex items-center justify-center gap-6 ">
+                <div className="max-w-6xl w-full rounded-xl bg-gradient-to-br from-green-100 via-emerald-200 to-green-50 border border-2 border-green-900 shadow-xl p-2 sm:p-4 flex items-center justify-center gap-6 ">
 
 
-          <div className="relative flex-shrink-0">
-            <img
-              src="https://images.vexels.com/media/users/3/153665/isolated/preview/85caec2546a1e9eaaabadfb301945221-fast-delivery-colored-stroke-icon.png"
-              alt="Fast Delivery"
-              className="w-12 h-12 sm:w-16 sm:h-16 "
-            />
+                  <div className="relative flex-shrink-0">
+                    <img
+                      src="https://images.vexels.com/media/users/3/153665/isolated/preview/85caec2546a1e9eaaabadfb301945221-fast-delivery-colored-stroke-icon.png"
+                      alt="Fast Delivery"
+                      className="w-12 h-12 sm:w-16 sm:h-16 "
+                    />
 
 
-          </div>
+                  </div>
 
 
-          <p className="text-md sm:text-lg font-semibold text-gray-800 text-center sm:text-left">
-            {deliveryDuration ? (
-              <>
-                Your order will arrive in&nbsp;
-                <span className="text-green-800">{deliveryDuration}</span>
-              </>
-            ) : (
-              <span className="text-gray-600">Enter your delivery address to get estimated delivery time</span>
-            )}
-          </p>
-        </div>
+                  <p className="text-md sm:text-lg font-semibold text-gray-800 text-center sm:text-left">
+                    {deliveryDuration ? (
+                      <>
+                        Your order will arrive in&nbsp;
+                        <span className="text-green-800">{deliveryDuration} mins</span>
+                      </>
+                    ) : (
+                      <span className="text-gray-600">Enter your delivery address to get estimated delivery time</span>
+                    )}
+                  </p>
+                </div>
 
-      </div>
-              
+              </div>
+
             </form>
-            
+
 
 
           </section>
-          
+
         </div>
 
 
 
       </div>
-      
+
 
 
 
@@ -551,8 +556,10 @@ const CheckoutPage: React.FC = () => {
                   return acc + (leg.duration?.value ?? 0);
                 }, 0);
 
-                const durationText = Math.round(totalDuration / 60) + ' mins';
-                setDeliveryDuration(durationText);
+                const durationInMinutes = Math.round(totalDuration / 60);
+                setDeliveryDuration(durationInMinutes);
+
+
               } else {
                 console.error('DirectionsService error:', status, response);
               }
