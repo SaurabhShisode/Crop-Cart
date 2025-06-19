@@ -111,8 +111,6 @@ interface Order {
   deliveryFee: number;
   total: number;
   basePrice: number;
-  fulfilled?: boolean;
-  fulfilledAt?: string | null;
 }
 
 
@@ -267,10 +265,6 @@ const FarmerDashboard: React.FC = () => {
   const toggleOrderDetails = (orderId: string) => {
     setExpandedOrderId((prevId) => (prevId === orderId ? null : orderId));
   };
-
-  
-
-  
 
 
   useEffect(() => {
@@ -662,13 +656,13 @@ const FarmerDashboard: React.FC = () => {
                       return;
                     }
 
-                    // Geocode the location to get lat/lng
+
                     const address = formData.get('location') as string;
                     let latitude = null;
                     let longitude = null;
-                    
+
                     try {
-                      const apiKey = process.env.VITE_GOOGLE_MAPS_API_KEY;
+                      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
                       const geocodeRes = await fetch(
                         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -677,6 +671,8 @@ const FarmerDashboard: React.FC = () => {
                       );
 
                       const geocodeData = await geocodeRes.json();
+                      console.log("Geocode response:", geocodeData);
+
 
                       if (
                         geocodeData.status === 'OK' &&
@@ -688,17 +684,19 @@ const FarmerDashboard: React.FC = () => {
                       } else {
                         throw new Error('Invalid location');
                       }
-                    } catch (err) {
+                    } catch (error) {
+                      console.error('Geocoding Error:', error);
                       toast.error('Failed to fetch coordinates for location', {
                         style: { background: '#14532d', color: 'white' },
                       });
                       return;
                     }
 
+
                     const newCrop = {
                       name: formData.get('name'),
                       price: Number(formData.get('price')),
-                      quantity: formData.get('quantity'),
+                      quantity: formData.get('quantity'), 
                       type: formData.get('type'),
                       availability: formData.get('availability'),
                       regionPincodes: (formData.get('regionPincodes') as string)
@@ -706,12 +704,13 @@ const FarmerDashboard: React.FC = () => {
                         .map((p) => p.trim()),
                       image: imageUrl,
                       location: {
-                        latitude,
-                        longitude,
+                        latitude: Number(latitude),    
+                        longitude: Number(longitude),
                       },
                     };
 
-                    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+
+                    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{ }')?.token;
 
                     const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
                       method: 'POST',
@@ -939,7 +938,7 @@ const FarmerDashboard: React.FC = () => {
 
           </>
         )}
-      </div>
+      </div >
       <Footer />
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}
