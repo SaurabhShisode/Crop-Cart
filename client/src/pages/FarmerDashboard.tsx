@@ -662,7 +662,7 @@ const FarmerDashboard: React.FC = () => {
                     let longitude = null;
 
                     try {
-                      const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+                      const apiKey = process.env.VITE_GOOGLE_MAPS_API_KEY;
 
                       const geocodeRes = await fetch(
                         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
