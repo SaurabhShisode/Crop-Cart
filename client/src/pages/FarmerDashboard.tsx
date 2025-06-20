@@ -111,6 +111,8 @@ interface Order {
   deliveryFee: number;
   total: number;
   basePrice: number;
+  fulfilled: boolean;
+  fulfilledAt?: string | null;
 }
 
 
@@ -245,6 +247,7 @@ const FarmerDashboard: React.FC = () => {
   const [currentMonthEarnings, setCurrentMonthEarnings] = useState(0);
   const [currentMonthOrders, setCurrentMonthOrders] = useState(0);
   const [mostSoldCrop, setMostSoldCrop] = useState<MostSoldCrop | null>(null);
+  const [filterStatus, setFilterStatus] = useState<'pending' | 'completed'>('pending');
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<StatsData[]>([]);
@@ -265,6 +268,8 @@ const FarmerDashboard: React.FC = () => {
   const toggleOrderDetails = (orderId: string) => {
     setExpandedOrderId((prevId) => (prevId === orderId ? null : orderId));
   };
+
+
 
 
   useEffect(() => {
@@ -343,6 +348,8 @@ const FarmerDashboard: React.FC = () => {
                 deliveryFee,
                 total,
                 basePrice,
+                fulfilled: order.fulfilled || false,
+                fulfilledAt: order.fulfilledAt || null,
               };
             })
             .filter((order: any) => order !== null);
@@ -506,6 +513,22 @@ const FarmerDashboard: React.FC = () => {
     return data.secure_url;
   }
 
+  const filteredOrders = orders.filter((order) =>
+    filterStatus === 'completed' ? order.fulfilled : !order.fulfilled
+  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const ORDERS_PER_PAGE = 5;
+
+  const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
+
+  const paginatedOrders = [...filteredOrders].reverse().slice(
+    (currentPage - 1) * ORDERS_PER_PAGE,
+    currentPage * ORDERS_PER_PAGE
+  );
+
+
+
+
   return (
     <>
       <Navbar />
@@ -590,14 +613,14 @@ const FarmerDashboard: React.FC = () => {
 
             {/* Crops Section */}
             <section className="my-10 sm:px-4 ">
-              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-2 sm:mb-4 px-4 sm:px-0">Your Crops</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-2 sm:mb-4 px-4 sm:px-0">Your Products</h2>
 
               {/* Crop Cards */}
               <ScrollableSection sectionId="crops-section">
                 {[...crops].reverse().map((crop) => (
                   <div
                     key={crop._id}
-                    className="first:ml-4 snap-start bg-white border border-2 border-green-900/60 sm:border-none p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-60 flex-shrink-0 "
+                    className="first:ml-4 snap-start bg-white border border-2 border-green-900/60 sm:border sm:border-green-800/20 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-60 flex-shrink-0 "
                     style={{ maxWidth: '240px' }}
                   >
                     {crop.image && (
@@ -656,7 +679,6 @@ const FarmerDashboard: React.FC = () => {
                       return;
                     }
 
-
                     const address = formData.get('location') as string;
                     let latitude = null;
                     let longitude = null;
@@ -671,8 +693,7 @@ const FarmerDashboard: React.FC = () => {
                       );
 
                       const geocodeData = await geocodeRes.json();
-                      console.log("Geocode response:", geocodeData);
-
+                      console.log('Geocode response:', geocodeData);
 
                       if (
                         geocodeData.status === 'OK' &&
@@ -692,11 +713,10 @@ const FarmerDashboard: React.FC = () => {
                       return;
                     }
 
-
                     const newCrop = {
                       name: formData.get('name'),
                       price: Number(formData.get('price')),
-                      quantity: formData.get('quantity'), 
+                      quantity: formData.get('quantity'),
                       type: formData.get('type'),
                       availability: formData.get('availability'),
                       regionPincodes: (formData.get('regionPincodes') as string)
@@ -704,11 +724,10 @@ const FarmerDashboard: React.FC = () => {
                         .map((p) => p.trim()),
                       image: imageUrl,
                       location: {
-                        latitude: Number(latitude),    
+                        latitude: Number(latitude),
                         longitude: Number(longitude),
                       },
                     };
-
 
                     const token = JSON.parse(localStorage.getItem('cropcartUser') || '{ }')?.token;
 
@@ -734,15 +753,36 @@ const FarmerDashboard: React.FC = () => {
                       });
                     }
                   }}
-                  className="bg-white p-6 sm:p-8 md:p-10 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 shadow hover:shadow-lg transition-all duration-300 mt-5 sm:mt-5 border border-2 border-green-900/60 sm:border-none"
+                  className="bg-white p-8 sm:p-10 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 shadow-xl  
+                  border border-2 border-green-900/60 sm:border sm:border-green-800/20 mt-8 transition-all"
                 >
-                  <h2 className="col-span-full text-lg sm:text-2xl font-semibold text-green-700">Add New Crop</h2>
+                  <h2 className="col-span-full text-2xl font-bold text-green-800 tracking-tight">Add New Product</h2>
 
-                  <input name="name" required placeholder="Crop Name" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
-                  <input name="price" type="number" required placeholder="Price (₹)" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
-                  <input name="quantity" required placeholder="Quantity (e.g., 20 kg)" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
+                  <input
+                    name="name"
+                    required
+                    placeholder="Crop Name"
+                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
+                  />
+                  <input
+                    name="price"
+                    type="number"
+                    required
+                    placeholder="Price (₹)"
+                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
+                  />
+                  <input
+                    name="quantity"
+                    required
+                    placeholder="Quantity (e.g., 20 kg)"
+                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
+                  />
 
-                  <select name="type" required className="input-field text-sm p-2 h-10 bg-white text-gray-700 sm:text-base sm:p-3 sm:h-12">
+                  <select
+                    name="type"
+                    required
+                    className="w-full border border-gray-300 rounded-xl p-3 text-sm text-gray-700 bg-white focus:ring-2 focus:ring-green-600 focus:outline-none transition"
+                  >
                     <option value="" disabled>Select Crop Type</option>
                     <option value="crop">Crop</option>
                     <option value="dairy">Dairy</option>
@@ -752,30 +792,74 @@ const FarmerDashboard: React.FC = () => {
                     <option value="fruit">Fruit</option>
                   </select>
 
-                  <input name="availability" required placeholder="Availability" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
-                  <input name="regionPincodes" required placeholder="Region Pincodes (comma separated)" className="input-field text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
+                  <input
+                    name="availability"
+                    required
+                    placeholder="Availability"
+                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
+                  />
+                  <input
+                    name="regionPincodes"
+                    required
+                    placeholder="Region Pincodes (comma separated)"
+                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
+                  />
 
-                  <input name="location" required placeholder="Crop Location (Full Address)" className="input-field col-span-full text-sm p-2 h-10 sm:text-base sm:p-3 sm:h-12" />
+                  <input
+                    name="location"
+                    required
+                    placeholder="Crop Location (Full Address)"
+                    className="w-full col-span-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
+                  />
 
                   <div className="flex flex-col col-span-full sm:col-span-1">
-                    <label className="text-gray-600 font-medium mb-1 text-sm sm:text-base">Upload Image</label>
-                    <input
-                      name="image"
-                      type="file"
-                      accept="image/*"
-                      className="rounded-2xl border border-gray-300 p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition text-sm sm:text-base"
-                    />
+
+                    <div className="relative group">
+                      <input
+                        id="image-upload"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const fileName = e.target.files?.[0]?.name;
+                          const label = document.getElementById('file-name-label');
+                          if (label && fileName) label.textContent = fileName;
+                        }}
+                      />
+                      <label
+                        htmlFor="image-upload"
+                        className="flex items-center gap-2 w-full py-3  text-black font-semibold rounded-xl hover:text-green-900 transition-all duration-200 ease-in-out cursor-pointer"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                          />
+                        </svg>
+                        <span>Upload Image</span>
+                      </label>
+                      <span id="file-name-label" className="block text-sm text-gray-500 truncate"></span>
+                    </div>
                   </div>
 
                   <div className="col-span-full sm:col-span-1 flex items-end">
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-br from-green-900 to-emerald-800 rounded-lg text-white py-2 sm:py-3 text-sm sm:text-base font-semibold shadow-md transition duration-300 ease-in-out hover:from-green-800 hover:to-emerald-700"
+                      className="w-full bg-gradient-to-br from-green-900 to-emerald-800 rounded-xl text-white py-3 text-base font-semibold shadow-md hover:shadow-lg hover:from-green-800 hover:to-emerald-700 transition duration-300"
                     >
-                      Add Crop
+                      Add Product
                     </button>
                   </div>
                 </form>
+
               </div>
 
 
@@ -786,100 +870,170 @@ const FarmerDashboard: React.FC = () => {
 
             {/* Orders Section */}
             <section className="mb-10 px-4 sm:px-4 lg:px-4">
-              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">Orders Received</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">
+                Orders Received
+              </h2>
 
-              {orders.length === 0 ? (
-                <p className="text-gray-600 text-sm sm:text-base">No orders received yet.</p>
+              <div className="flex mb-6 mt-4 gap-4">
+                <button
+                  onClick={() => setFilterStatus('pending')}
+                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold text-sm sm:text-base ${filterStatus === 'pending'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                    }`}
+                >
+                  Pending
+                </button>
+                <button
+                  onClick={() => setFilterStatus('completed')}
+                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold text-sm sm:text-base ${filterStatus === 'completed'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                    }`}
+                >
+                  Completed
+                </button>
+              </div>
+
+              {filteredOrders.length === 0 ? (
+                <p className="text-gray-600 text-sm sm:text-base">
+                  No {filterStatus} orders found.
+                </p>
               ) : (
-                <div className="grid grid-cols-1 gap-6">
-                  {[...orders].reverse().map((order) => {
-                    const isExpanded = expandedOrderId === order._id;
+                <>
+                  <div className="grid grid-cols-1 gap-6">
+                    {paginatedOrders.map((order) => {
+                      const isExpanded = expandedOrderId === order._id;
 
-                    return (
-                      <div
-                        key={order._id}
-                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition-all duration-300 cursor-pointer
-                        border border-2 border-green-900/60 sm:border-none"
-                        onClick={() => toggleOrderDetails(order._id)}
-                      >
-                        {/* Top section: Order ID and Date */}
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-                          <div>
-                            <p className="text-xs sm:text-sm text-gray-500">Order ID:</p>
-                            <p className="text-base sm:text-lg font-semibold text-green-800 dark:text-green-300 break-all">
-                              {order._id}
-                            </p>
-                          </div>
-                          <div className="text-left sm:text-right">
-                            <p className="text-xs sm:text-sm text-gray-500">Placed on</p>
-                            <p className="text-sm sm:text-base font-medium">
-                              {new Date(order.createdAt).toLocaleString("en-GB")}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Always-visible Info */}
-                        <p className="text-sm sm:text-base mb-2">
-                          <span className="font-medium">Buyer:</span> {order.buyer?.name}
-                        </p>
-                        <p className="text-sm sm:text-base mb-2 break-all">
-                          <span className="font-medium">Email:</span> {order.buyer?.email}
-                        </p>
-
-                        {/* Toggleable Expanded Details */}
+                      return (
                         <div
-                          className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded
-                            ? 'max-h-[9999px] opacity-100 mt-4'
-                            : 'max-h-0 opacity-0'
-                            }`}
+                          key={order._id}
+                          onClick={() => toggleOrderDetails(order._id)}
+                          className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 
+                shadow hover:shadow-lg transition-all duration-300 cursor-pointer border-2 border-green-900/60 sm:border-green-800/20"
                         >
-                          {order.address && (
-                            <p className="text-sm mb-2 break-words">
-                              <span className="font-medium">Delivery Address:</span> {order.address}
-                            </p>
-                          )}
-                          {order.phone && (
-                            <p className="text-sm mb-2">
-                              <span className="font-medium">Phone:</span> {order.phone}
-                            </p>
-                          )}
+                          {/* ✅ Status Badge */}
+                          <span
+                            className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full font-semibold ${order.fulfilled
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-yellow-100 text-yellow-800'
+                              }`}
+                          >
+                            {order.fulfilled ? 'Completed' : 'Pending'}
+                          </span>
 
-                          <div className="mb-4">
-                            <p className="font-medium text-sm mb-1">Items:</p>
-                            <ul className="list-disc ml-5 space-y-1 text-sm">
-                              {order.items.map((item, idx) => (
-                                <li key={idx}>
-                                  <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> — {item.quantityInCart} ({item.quantity}) × ₹{item.price.toFixed(2)} = ₹{(item.price * item.quantityInCart).toFixed(2)}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          {/* Price Details */}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                          {/* ✅ Top Info Section */}
+                          <div className="flex flex-col sm:flex-row sm:justify-between mt-4 gap-2">
                             <div>
-                              <p className="text-gray-500">Order Price</p>
-                              <p className="font-semibold">₹{order.basePrice.toFixed(2)}</p>
-                            </div>
-                            <div>
-                              <p className="text-gray-500">Tax</p>
-                              <p className="font-semibold">₹{order.tax.toFixed(2)}</p>
-                            </div>
-                            <div className="hidden md:block"></div>
-                            <div>
-                              <p className="text-gray-500">Total</p>
-                              <p className="font-bold text-green-700 dark:text-green-300">
-                                ₹{(order.basePrice + order.tax).toFixed(2)}
+                              <p className="text-xs sm:text-sm text-gray-500">Order ID:</p>
+                              <p className="text-base sm:text-lg font-semibold text-green-800 dark:text-green-300 break-all mb-2">
+                                {order._id}
+                              </p>
+                              <p className="text-sm sm:text-base mb-2">
+                                <span className="font-medium">Buyer:</span> {order.buyer?.name}
+                              </p>
+                              <p className="text-sm sm:text-base break-all">
+                                <span className="font-medium">Email:</span> {order.buyer?.email}
                               </p>
                             </div>
+                            <div className="text-left sm:text-right">
+                              <p className="text-xs sm:text-sm text-gray-500">Placed on</p>
+                              <p className="text-sm sm:text-base font-medium">
+                                {new Date(order.createdAt).toLocaleString('en-GB')}
+                              </p>
+                              {order.fulfilled && order.fulfilledAt && (
+                                <>
+                                  <p className="text-xs sm:text-sm text-gray-500 mt-1">Delivered on</p>
+                                  <p className="text-sm sm:text-base font-medium">
+                                    {new Date(order.fulfilledAt).toLocaleString('en-GB')}
+                                  </p>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* ✅ Expandable Details */}
+                          <div
+                            className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                              }`}
+                          >
+                            {order.address && (
+                              <p className="text-sm mb-2 break-words">
+                                <span className="font-medium">Delivery Address:</span> {order.address}
+                              </p>
+                            )}
+                            {order.phone && (
+                              <p className="text-sm mb-2">
+                                <span className="font-medium">Phone:</span> {order.phone}
+                              </p>
+                            )}
+
+                            {/* Items */}
+                            <div className="mb-4">
+                              <p className="font-medium text-sm mb-1">Items:</p>
+                              <ul className="list-disc ml-5 space-y-1 text-sm">
+                                {order.items.map((item, idx) => (
+                                  <li key={idx}>
+                                    <span className="font-medium">{item.crop?.name || 'Unknown Crop'}</span> —{' '}
+                                    {item.quantityInCart} ({item.quantity}) × ₹
+                                    {item.price.toFixed(2)} = ₹
+                                    {(item.price * item.quantityInCart).toFixed(2)}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Price Details */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                              <div>
+                                <p className="text-gray-500">Order Price</p>
+                                <p className="font-semibold">₹{order.basePrice.toFixed(2)}</p>
+                              </div>
+                              <div>
+                                <p className="text-gray-500">Tax</p>
+                                <p className="font-semibold">₹{order.tax.toFixed(2)}</p>
+                              </div>
+                              <div className="hidden md:block"></div>
+                              <div>
+                                <p className="text-gray-500">Total</p>
+                                <p className="font-bold text-green-700 dark:text-green-300">
+                                  ₹{(order.basePrice + order.tax).toFixed(2)}
+                                </p>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+
+
+                  {totalPages > 1 && (
+                    <div className="flex  mt-4 gap-1 sm:gap-3">
+                      <button
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="px-4 py-1.5 text-xs sm:text-sm bg-gray-200 text-gray-800 rounded hover:bg-green-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+
+                      <span className="px-3 py-1 text-xs sm:text-sm font-medium text-gray-700">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-1.5 text-xs sm:text-sm bg-gray-200 text-gray-800 rounded hover:bg-green-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </section>
+
 
 
 
@@ -907,7 +1061,7 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="border border-2 border-green-900/60 sm:border-none bg-white p-4 rounded-lg shadow">
+                <div className="border border-2 border-green-900/60 sm:border sm:border-green-800/20  bg-white p-4 rounded-lg shadow">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-6 sm:mb-10">
                     <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">
                       Earnings This {viewMode === 'weekly' ? 'Week' : 'Month'}
@@ -920,7 +1074,7 @@ const FarmerDashboard: React.FC = () => {
                   <Line data={earningsChartData} options={chartOptions} />
                 </div>
 
-                <div className="bg-white border border-2 border-green-900/60 sm:border-none p-4 rounded-lg shadow mb-10 sm:mb-0">
+                <div className="bg-white border border-2 border-green-900/60 sm:border sm:border-green-800/20 p-4 rounded-lg shadow mb-10 sm:mb-0">
                   <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-6 sm:mb-10">
                     <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">
                       Orders This {viewMode === 'weekly' ? 'Week' : 'Month'}
