@@ -147,7 +147,7 @@ const MyOrders: React.FC = () => {
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.message || 'Failed to delete order');
+        throw new Error(errData.message || 'Failed to cancel order');
       }
 
       toast.success('Order deleted successfully');
@@ -155,7 +155,9 @@ const MyOrders: React.FC = () => {
       setShowDeleteModal(false);
       setOrderToDelete(null);
     } catch (err: any) {
-      toast.error(err.message || 'Error deleting order');
+      toast.error(err.message || 'Error cancelling order', {
+        style: { background: '#14532d', color: 'white' },
+      });
     }
   };
 
@@ -190,32 +192,38 @@ const MyOrders: React.FC = () => {
         const data = await res.json();
         setOrders(data);
 
-        // Auto-mark completed orders as fulfilled
-        data.forEach(async (order: Order) => {
-          const createdAt = new Date(order.createdAt).getTime();
-          const deliveryMs = (order.deliveryTime || 30) * 60 * 1000;
-          const now = Date.now();
+        await Promise.all(
+          data.map(async (order: Order) => {
+            if (order.fulfilled) return;
 
-          const shouldBeFulfilled = now >= createdAt + deliveryMs;
+            const createdAt = new Date(order.createdAt).getTime();
+            const deliveryMs = (order.deliveryTime || 30) * 60 * 1000;
+            const now = Date.now();
 
-          if (shouldBeFulfilled && !order.fulfilled) {
-            try {
-              const res = await fetch(`https://crop-cart-backend.onrender.com/api/orders/${order._id}/fulfill`, {
-                method: 'PATCH',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-                },
-              });
+            const shouldBeFulfilled = now >= createdAt + deliveryMs;
 
-              if (!res.ok) {
-                console.warn(`Failed to fulfill order ${order._id}`);
+            if (shouldBeFulfilled) {
+              try {
+                const fulfillRes = await fetch(`https://crop-cart-backend.onrender.com/api/orders/${order._id}/fulfill`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                });
+
+                if (!fulfillRes.ok) {
+                  const errorData = await fulfillRes.json();
+                  if (errorData.message !== 'Order already fulfilled') {
+                    console.warn(`Failed to fulfill order ${order._id}: ${errorData.message}`);
+                  }
+                }
+              } catch (err) {
+                console.error(`Error fulfilling order ${order._id}:`, err);
               }
-            } catch (err) {
-              console.error(`Error fulfilling order ${order._id}:`, err);
             }
-          }
-        });
+          })
+        );
 
       } catch (error: any) {
         toast.error(error.message || 'Failed to load orders');
@@ -341,14 +349,14 @@ const MyOrders: React.FC = () => {
             className={`px-4 py-2 rounded-lg font-semibold ${filterStatus === 'pending' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
               }`}
           >
-            Pending Orders
+            Pending
           </button>
           <button
             onClick={() => setFilterStatus('completed')}
             className={`px-4 py-2 rounded-lg font-semibold ${filterStatus === 'completed' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
               }`}
           >
-            Completed Orders
+            Completed
           </button>
         </div>
         {loading ? (
@@ -388,12 +396,11 @@ const MyOrders: React.FC = () => {
                   <div
                     key={order._id}
                     onClick={() => toggleOrderDetails(order._id)}
-                    className={`relative bg-white border border-2 ${status === 'completed' ? 'border-green-400' : 'border-green-900/60'
-                      } sm:border-none rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition-all duration-300 text-sm sm:text-base cursor-pointer`}
+                    className={`relative bg-white border border-2 border-green-900/60 sm:border-none rounded-xl p-6 sm:p-6 sm:pt-9 shadow hover:shadow-lg transition-all duration-300 text-sm sm:text-base cursor-pointer`}
                   >
 
                     <span
-                      className={`absolute top-1 right-2 text-xs px-2 py-1 rounded-full font-semibold  ${status === 'completed'
+                      className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full font-semibold  ${status === 'completed'
                         ? 'bg-green-100 text-green-700'
                         : 'bg-yellow-100 text-yellow-800'
                         }`}
@@ -413,6 +420,17 @@ const MyOrders: React.FC = () => {
                         <p className="text-sm sm:text-base font-medium">
                           {new Date(order.createdAt).toLocaleString('en-GB')}
                         </p>
+
+                        {status === 'completed' && order.fulfilledAt && (
+                          <>
+                            <p className="text-xs sm:text-sm text-gray-500">Fulfilled on</p>
+                            <p className="text-sm sm:text-base font-medium">
+                              {new Date(order.fulfilledAt).toLocaleString('en-GB')}
+                            </p>
+                          </>
+                        )}
+
+
                       </div>
                     </div>
 
