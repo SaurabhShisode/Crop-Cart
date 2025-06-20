@@ -344,21 +344,28 @@ const MyOrders: React.FC = () => {
           My Orders
         </h1>
         <div className="flex mb-6 mt-4 gap-4">
-          <button
-            onClick={() => setFilterStatus('pending')}
-            className={`px-4 py-2 rounded-lg font-semibold ${filterStatus === 'pending' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-          >
-            Pending
-          </button>
-          <button
-            onClick={() => setFilterStatus('completed')}
-            className={`px-4 py-2 rounded-lg font-semibold ${filterStatus === 'completed' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-          >
-            Completed
-          </button>
-        </div>
+  <button
+    onClick={() => setFilterStatus('pending')}
+    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold text-sm sm:text-base ${
+      filterStatus === 'pending'
+        ? 'bg-green-600 text-white'
+        : 'bg-gray-200 text-gray-700'
+    }`}
+  >
+    Pending
+  </button>
+  <button
+    onClick={() => setFilterStatus('completed')}
+    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold text-sm sm:text-base ${
+      filterStatus === 'completed'
+        ? 'bg-green-600 text-white'
+        : 'bg-gray-200 text-gray-700'
+    }`}
+  >
+    Completed
+  </button>
+</div>
+
         {loading ? (
           <div className="flex justify-center items-center">
 
@@ -423,7 +430,7 @@ const MyOrders: React.FC = () => {
 
                         {status === 'completed' && order.fulfilledAt && (
                           <>
-                            <p className="text-xs sm:text-sm text-gray-500">Fulfilled on</p>
+                            <p className="text-xs sm:text-sm text-gray-500">Delivered on</p>
                             <p className="text-sm sm:text-base font-medium">
                               {new Date(order.fulfilledAt).toLocaleString('en-GB')}
                             </p>
