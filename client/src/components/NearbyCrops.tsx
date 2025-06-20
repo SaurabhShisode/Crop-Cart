@@ -72,10 +72,10 @@ const NearbyCrops = ({ selectedCoords, onNearbyCropsChange }: NearbyCropsProps) 
  rounded-3xl shadow-xl  overflow-hidden">
                 <div className="px-6 pt-6 sm:pt-8 sm:pt-8">
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                        Crops Near Your Location
+                        Products Near Your Location
                     </h2>
                     <p className="mt-1 text-sm sm:text-base text-white/80">
-                        Based on your selected delivery address, we found these nearby crops within a 25km radius.
+                        Based on your selected delivery address, we found these nearby products within a 25km radius.
                     </p>
                 </div>
 
