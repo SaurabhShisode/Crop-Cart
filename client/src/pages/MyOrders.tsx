@@ -33,70 +33,92 @@ interface Order {
 const downloadInvoice = (order: Order) => {
   const doc = new jsPDF();
 
-  doc.setFontSize(20);
+ 
+  const marginLeft = 20;
+  const marginRight = 190;
+  let currentY = 20;
+
+
+  doc.setFontSize(22);
   doc.setFont('helvetica', 'bold');
-  doc.text('CropCart Invoice', 14, 20);
+  doc.text('CropCart Invoice', 105, currentY, { align: 'center' });
+  currentY += 8;
+  doc.setDrawColor(54, 69, 173);
+  doc.setLineWidth(1);
+  doc.line(marginLeft, currentY, marginRight, currentY);
+  currentY += 8;
+
 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
   const details = [
     `Order ID: ${order._id}`,
     `Name: ${order.name}`,
+    `Email: ${order.email}`,
     `Phone: ${order.phone}`,
     `Address: ${order.address}`,
-    `Date: ${new Date(order.createdAt).toLocaleString('en-GB')}`,
-  ];
-  details.forEach((line, i) => {
-    doc.text(line, 14, 30 + i * 7);
-  });
+    `Order Date: ${new Date(order.createdAt).toLocaleString('en-GB')}`,
+    order.fulfilledAt ? `Fulfilled At: ${new Date(order.fulfilledAt).toLocaleString('en-GB')}` : undefined,
+    `Delivery Time: ${order.deliveryTime} min`
+  ].filter(Boolean) as string[];
 
+  details.forEach((line, i) => {
+    doc.text(line, marginLeft, currentY + i * 7);
+  });
+  currentY += details.length * 7 + 10;
+
+  
   const itemRows = order.items.map((item, idx) => [
     idx + 1,
     item.name,
     item.quantityInCart,
-    item.quantity,
+    item.quantity
   ]);
-
   autoTable(doc, {
-    head: [['#', 'Item', 'Quantity in Cart', 'Quantity']],
+    head: [['#', 'Item', 'Qty in Cart', 'Unit Qty']],
     body: itemRows,
-    startY: 30 + details.length * 7 + 10,
-    headStyles: {
-      fillColor: [54, 69, 173],
-      textColor: 255,
-      halign: 'center',
-    },
-    bodyStyles: {
-      halign: 'center',
-    },
-    alternateRowStyles: { fillColor: [240, 240, 240] },
+    startY: currentY,
+    margin: { left: marginLeft, right: 20 },
+    theme: 'grid',
+    headStyles: { fillColor: [54, 69, 173], textColor: 255, fontStyle: 'bold', halign: 'center' },
+    bodyStyles: { halign: 'center', fontSize: 11 },
+    alternateRowStyles: { fillColor: [245, 245, 245] },
+    styles: { cellPadding: 3 },
+    tableLineColor: [200, 200, 200],
+    tableLineWidth: 0.5,
   });
 
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
-  const basePrice = parseFloat(order.total) - parseFloat(order.tax) - order.deliveryFee;
 
-  const marginLeft = 14;
-  const marginRight = 200;
-  const lineHeight = 8;
+  const finalY = (doc as any).lastAutoTable.finalY + 12;
+  const basePrice = parseFloat(order.total) - parseFloat(order.tax) - order.deliveryFee;
+  const lineHeight = 9;
 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(60);
 
+
   doc.text('Base Price:', marginLeft, finalY);
-  doc.text(`\u20B9${basePrice.toFixed(2)}`, marginRight, finalY, { align: 'right' });
-
   doc.text('Tax:', marginLeft, finalY + lineHeight);
-  doc.text(`\u20B9${parseFloat(order.tax).toFixed(2)}`, marginRight, finalY + lineHeight, { align: 'right' });
-
   doc.text('Delivery Fee:', marginLeft, finalY + 2 * lineHeight);
-  doc.text(`\u20B9${order.deliveryFee.toFixed(2)}`, marginRight, finalY + 2 * lineHeight, { align: 'right' });
+
+
+  doc.text(`Rs ${basePrice.toFixed(2)}`, marginRight, finalY, { align: 'right' });
+  doc.text(`Rs ${parseFloat(order.tax).toFixed(2)}`, marginRight, finalY + lineHeight, { align: 'right' });
+  doc.text(`Rs ${order.deliveryFee.toFixed(2)}`, marginRight, finalY + 2 * lineHeight, { align: 'right' });
+
 
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(0, 0, 0);
   doc.text('Total:', marginLeft, finalY + 3 * lineHeight + 4);
-  doc.text(`\u20B9${parseFloat(order.total).toFixed(2)}`, marginRight, finalY + 3 * lineHeight + 4, { align: 'right' });
+  doc.text(`Rs ${parseFloat(order.total).toFixed(2)}`, marginRight, finalY + 3 * lineHeight + 4, { align: 'right' });
+
+  
+  doc.setFontSize(10);
+  doc.setTextColor(120);
+  doc.text('Thank you for shopping with CropCart!', 105, 285, { align: 'center' });
+  doc.text('For support: cropcartorder@gmail.com | +91-12345-67890', 105, 292, { align: 'center' });
 
   doc.save(`Invoice_${order._id}.pdf`);
 };
