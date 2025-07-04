@@ -912,7 +912,7 @@ const FarmerDashboard: React.FC = () => {
                           className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 
                 shadow hover:shadow-lg transition-all duration-300 cursor-pointer border-2 border-green-900/60 sm:border-green-800/20"
                         >
-                          {/* ✅ Status Badge */}
+                          
                           <span
                             className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full font-semibold ${order.fulfilled
                                 ? 'bg-green-100 text-green-700'
@@ -922,7 +922,7 @@ const FarmerDashboard: React.FC = () => {
                             {order.fulfilled ? 'Completed' : 'Pending'}
                           </span>
 
-                          {/* ✅ Top Info Section */}
+                         
                           <div className="flex flex-col sm:flex-row sm:justify-between mt-4 gap-2">
                             <div>
                               <p className="text-xs sm:text-sm text-gray-500">Order ID:</p>
@@ -952,7 +952,7 @@ const FarmerDashboard: React.FC = () => {
                             </div>
                           </div>
 
-                          {/* ✅ Expandable Details */}
+                         
                           <div
                             className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
                               }`}
@@ -968,7 +968,7 @@ const FarmerDashboard: React.FC = () => {
                               </p>
                             )}
 
-                            {/* Items */}
+                           
                             <div className="mb-4">
                               <p className="font-medium text-sm mb-1">Items:</p>
                               <ul className="list-disc ml-5 space-y-1 text-sm">
@@ -983,7 +983,7 @@ const FarmerDashboard: React.FC = () => {
                               </ul>
                             </div>
 
-                            {/* Price Details */}
+                            
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                               <div>
                                 <p className="text-gray-500">Order Price</p>
@@ -1038,7 +1038,7 @@ const FarmerDashboard: React.FC = () => {
 
 
 
-            {/* Stats Section */}
+            
             <section className='px-4 sm:px-4'>
               <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
 
