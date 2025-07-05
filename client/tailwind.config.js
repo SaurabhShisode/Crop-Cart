@@ -13,7 +13,7 @@ module.exports = {
       animation: {
         'gradient-x': 'gradientX 5s ease infinite',
         'slide-left-sm': 'slideLeft 20s linear infinite',
-        'slide-left-lg': 'slideLeft 40s linear infinite',
+        'slide-left': 'slideLeft 40s linear infinite',
         'scroll-up': 'scrollUp 30s linear infinite',
         'bounce-slow': 'bounceSlow 2s infinite',
         'slide-in': 'slideIn 0.6s ease-out',
