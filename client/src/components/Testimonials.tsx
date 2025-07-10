@@ -43,7 +43,7 @@ const TestimonialsSection = () => {
                             "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
                     }}
                 >
-                    <div className="flex slide-left gap-8 pr-8 flex-none hover:[animation-play-state:paused]">
+                    <div className="flex animate-slide-left gap-8 pr-8 flex-none hover:[animation-play-state:paused]">
                         {[...Array(2)].fill(0).map((_, i) => (
                             <Fragment key={i}>
                                 {testimonials.map(({ name, position, text, avatar }) => (
