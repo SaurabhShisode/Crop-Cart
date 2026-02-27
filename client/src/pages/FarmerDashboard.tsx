@@ -1032,7 +1032,7 @@ const FarmerDashboard: React.FC = () => {
               ) : (
                 <>
                   <div className="grid grid-cols-1 gap-6">
-                    {paginatedOrders.map((order, index) => {
+                    {paginatedOrders.map((order) => {
                       const isExpanded = expandedOrderId === order._id;
 
                       return (
