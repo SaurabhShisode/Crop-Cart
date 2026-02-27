@@ -645,13 +645,7 @@ const FarmerDashboard: React.FC = () => {
     currentPage * ORDERS_PER_PAGE
   );
 
-  const farmerName = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.user?.name || 'Farmer';
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  };
+
   const lifetimeEarnings = orders.reduce((sum, order) => sum + order.basePrice, 0);
   const memberSinceLabel = memberSinceIso
     ? new Date(memberSinceIso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
