@@ -442,11 +442,9 @@ const MyOrders: React.FC = () => {
 
 
                   return (
-                    <motion.div
+                    <div
                       key={order._id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.08 }}
+
                       onClick={() => toggleOrderDetails(order._id)}
                       className={`relative bg-white border border-2 border-green-900/60 sm:border-none rounded-xl p-6 sm:p-6 sm:pt-9 shadow hover:shadow-lg transition-all duration-300 text-sm sm:text-base cursor-pointer`}
                     >
@@ -554,7 +552,7 @@ const MyOrders: React.FC = () => {
                           )}
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
             </div>
