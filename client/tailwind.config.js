@@ -41,7 +41,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        heading: ['Poppins', 'Inter', 'sans-serif'],
+        accent: ['"Playfair Display"', 'Georgia', 'serif'],
       },
     },
   },

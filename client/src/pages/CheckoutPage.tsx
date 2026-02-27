@@ -163,7 +163,9 @@ const CheckoutPage: React.FC = () => {
 
   const onLogout = () => {
     localStorage.removeItem('cropcartUser');
-    toast.success('Logged out successfully');
+    toast.success('Logged out successfully', {
+      style: { background: '#14532d', color: 'white' },
+    });
     navigate('/home');
   };
 
@@ -208,7 +210,7 @@ const CheckoutPage: React.FC = () => {
     <>
       <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-lg sticky top-0 z-50">
         <div
-          className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400"
+          className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400 font-heading"
           onClick={() => navigate('/')}
           role="button"
           tabIndex={0}
@@ -290,7 +292,7 @@ const CheckoutPage: React.FC = () => {
           {/* Order Summary */}
 
           <section className="order-1 md:order-1 md:col-span-1 bg-green-900 border  rounded-xl p-4 md:p-6 shadow-2xl">
-            <h2 className="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6">Order Summary</h2>
+            <h2 className="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6 font-heading">Order Summary</h2>
 
             <ul className="divide-y divide-white">
               {cart.map((item) => {
@@ -400,7 +402,7 @@ const CheckoutPage: React.FC = () => {
 
           <section className="order-2 md:order-2 md:col-span-2 p-6 bg-green-50 rounded-xl shadow-2xl border border-2 border-green-900">
 
-            <h2 className="text-2xl font-bold text-green-900 mb-6">Shipping Details</h2>
+            <h2 className="text-2xl font-bold text-green-900 mb-6 font-heading">Shipping Details</h2>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -475,7 +477,17 @@ const CheckoutPage: React.FC = () => {
                 className={`w-full bg-green-900 text-white py-3 rounded-lg font-semibold shadow hover:bg-green-800 transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
               >
-                {loading ? 'Placing Order...' : 'Place Order'}
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Placing Order...
+                  </span>
+                ) : (
+                  'Place Order'
+                )}
               </button>
 
               <div className="bg-white flex items-center justify-center">

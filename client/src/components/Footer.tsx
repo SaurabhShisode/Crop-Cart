@@ -15,7 +15,7 @@ const Footer = () => {
 
         {/* Brand Info */}
         <div className="col-span-2 sm:col-span-1 ">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">CropCart</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 font-heading">CropCart</h2>
           <p className="text-green-300 text-sm leading-relaxed">
             Bridging the gap between farms and families. Get fresh, local, and seasonal produce delivered with care.
           </p>

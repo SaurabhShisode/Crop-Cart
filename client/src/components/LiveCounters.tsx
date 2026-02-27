@@ -21,7 +21,7 @@ const LiveCounters: React.FC = () => {
       ref={ref}
     >
       <div className="max-w-7xl mx-10 sm:mx-auto  text-center">
-        <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">
+        <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6 font-heading">
           Our Impact So Far
         </h2>
         <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">

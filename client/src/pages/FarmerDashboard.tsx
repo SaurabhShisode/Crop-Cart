@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import CountUp from 'react-countup';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -10,7 +12,7 @@ import {
   Legend,
 } from 'chart.js';
 
-import BouncingDotsLoader from '../components/BouncingDotsLoader';
+import DashboardSkeleton from '../components/skeletons/DashboardSkeleton';
 
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -20,6 +22,7 @@ import logo from '../assets/logo.png';
 import Footer from '../components/Footer';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import NoOrderIcon from '../assets/icons/noOrders.svg';
 
 const ScrollableSection: React.FC<{
   children: React.ReactNode;
@@ -533,12 +536,10 @@ const FarmerDashboard: React.FC = () => {
     <>
       <Navbar />
       <div className="min-h-screen sm:p-28 bg-green-50">
-        <h1 className="text-2xl sm:text-4xl font-bold text-green-900 mb-2 sm:mb-4 px-4 sm:px-4 pb-2 sm:pb-0 pt-10 sm:pt-0">Farmer Dashboard</h1>
+        <h1 className="text-2xl sm:text-4xl font-bold text-green-900 mb-2 sm:mb-4 px-4 sm:px-4 pb-2 sm:pb-0 pt-10 sm:pt-0 font-heading">Farmer Dashboard</h1>
 
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <BouncingDotsLoader />
-          </div>
+          <DashboardSkeleton />
         ) : (
           <>
             <div className="grid grid-cols-6 gap-6 text-white p-4 sm:px-4">
@@ -548,7 +549,7 @@ const FarmerDashboard: React.FC = () => {
                   <h3 className="text-lg sm:text-xl font-semibold">This Month's Earnings</h3>
 
                 </div>
-                <p className="text-2xl sm:text-4xl font-bold mt-2">₹{currentMonthEarnings.toFixed(2)}</p>
+                <p className="text-2xl sm:text-4xl font-bold mt-2">₹<CountUp end={currentMonthEarnings} decimals={2} duration={1.5} /></p>
                 <p
                   className={`text-sm mt-3 font-medium ${earningsGrowth > 0
                     ? 'text-lime-100'
@@ -571,7 +572,7 @@ const FarmerDashboard: React.FC = () => {
                   <h3 className="text-lg sm:text-xl font-semibold">This Month's Orders</h3>
 
                 </div>
-                <p className="text-2xl sm:text-4xl font-bold mt-2">{currentMonthOrders}</p>
+                <p className="text-2xl sm:text-4xl font-bold mt-2"><CountUp end={currentMonthOrders} duration={1.5} /></p>
                 <p
                   className={`text-sm mt-3 font-medium ${orderGrowth > 0
                     ? 'text-lime-100'
@@ -613,7 +614,7 @@ const FarmerDashboard: React.FC = () => {
 
             {/* Crops Section */}
             <section className="my-10 sm:px-4 ">
-              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-2 sm:mb-4 px-4 sm:px-0">Your Products</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-2 sm:mb-4 px-4 sm:px-0 font-heading">Your Products</h2>
 
               {/* Crop Cards */}
               <ScrollableSection sectionId="crops-section">
@@ -870,7 +871,7 @@ const FarmerDashboard: React.FC = () => {
 
             {/* Orders Section */}
             <section className="mb-10 px-4 sm:px-4 lg:px-4">
-              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4 font-heading">
                 Orders Received
               </h2>
 
@@ -896,33 +897,39 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               {filteredOrders.length === 0 ? (
-                <p className="text-gray-600 text-sm sm:text-base">
-                  No {filterStatus} orders found.
-                </p>
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <img src={NoOrderIcon} alt="No orders" className="w-32 h-32 mb-4 opacity-70" />
+                  <p className="text-gray-600 text-sm sm:text-base font-medium">
+                    No {filterStatus} orders found.
+                  </p>
+                </div>
               ) : (
                 <>
                   <div className="grid grid-cols-1 gap-6">
-                    {paginatedOrders.map((order) => {
+                    {paginatedOrders.map((order, index) => {
                       const isExpanded = expandedOrderId === order._id;
 
                       return (
-                        <div
+                        <motion.div
                           key={order._id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.08 }}
                           onClick={() => toggleOrderDetails(order._id)}
                           className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 
                 shadow hover:shadow-lg transition-all duration-300 cursor-pointer border-2 border-green-900/60 sm:border-green-800/20"
                         >
-                          
+
                           <span
                             className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full font-semibold ${order.fulfilled
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-yellow-100 text-yellow-800'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-800'
                               }`}
                           >
                             {order.fulfilled ? 'Completed' : 'Pending'}
                           </span>
 
-                         
+
                           <div className="flex flex-col sm:flex-row sm:justify-between mt-4 gap-2">
                             <div>
                               <p className="text-xs sm:text-sm text-gray-500">Order ID:</p>
@@ -952,7 +959,7 @@ const FarmerDashboard: React.FC = () => {
                             </div>
                           </div>
 
-                         
+
                           <div
                             className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
                               }`}
@@ -968,7 +975,7 @@ const FarmerDashboard: React.FC = () => {
                               </p>
                             )}
 
-                           
+
                             <div className="mb-4">
                               <p className="font-medium text-sm mb-1">Items:</p>
                               <ul className="list-disc ml-5 space-y-1 text-sm">
@@ -983,7 +990,7 @@ const FarmerDashboard: React.FC = () => {
                               </ul>
                             </div>
 
-                            
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                               <div>
                                 <p className="text-gray-500">Order Price</p>
@@ -1002,7 +1009,7 @@ const FarmerDashboard: React.FC = () => {
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -1038,9 +1045,9 @@ const FarmerDashboard: React.FC = () => {
 
 
 
-            
+
             <section className='px-4 sm:px-4'>
-              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4">Statistics</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4 font-heading">Statistics</h2>
 
 
               <div className="flex justify-start mb-4">

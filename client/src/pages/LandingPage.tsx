@@ -52,7 +52,7 @@ export default function LandingPage() {
             <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 p-4 md:px-6">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
-                    <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400">
+                    <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400 font-heading">
                         <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
                         <span>CropCart</span>
                     </div>
@@ -150,9 +150,9 @@ export default function LandingPage() {
                             </button>
                         ))}
                         <button onClick={() => {
-                                navigate('/farmer-login');
-                                setMobileMenuOpen(false);
-                            }} className="px-4 py-3 font-semibold text-left text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400">
+                            navigate('/farmer-login');
+                            setMobileMenuOpen(false);
+                        }} className="px-4 py-3 font-semibold text-left text-gray-800 dark:text-gray-200 hover:text-green-700 dark:hover:text-green-400">
                             Sell Your Produce
                         </button>
                         <button
@@ -183,14 +183,14 @@ export default function LandingPage() {
 
 
             {/* Hero Section */}
-             <section className="relative bg-green-900 text-white overflow-hidden h-[840px] sm:h-auto">
+            <section className="relative bg-green-900 text-white overflow-hidden h-[840px] sm:h-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
                     {/* Left Text Content */}
                     <div
                         className={`max-w-xl space-y-4 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-10  sm:translate-y-4 opacity-100' : 'translate-y-[100px]    sm:translate-y-[100px] opacity-0'
                             } mt- md:mt-24`}
                     >
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-center md:text-left">
+                        <h1 className="text-3xl sm:text-4xl md:text-6xl font-semibold  text-center md:text-left font-accent tracking-wide">
                             Buy Fresh Crops <br />Directly from Local Farmers
                         </h1>
                         <p className="text-sm sm:text-lg md:text-xl text-gray-200 leading-relaxed font-medium md:font-semibold text-center md:text-left">
@@ -253,7 +253,7 @@ export default function LandingPage() {
             {/* What We Do Section */}
             <section id="what-we-do" className=" sm:mt-20 py-16 sm:py-24 px-4 sm:px-6 md:px-20">
                 <div className="max-w-7xl mx-10 sm:mx-auto text-center">
-                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6 font-heading">
                         What We Do
                     </h2>
                     <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">
@@ -285,7 +285,7 @@ export default function LandingPage() {
 
             <section className=" py-16 sm:py-24 px-4 sm:px-6 md:px-20">
                 <div className="max-w-7xl mx-10 sm:mx-auto text-center">
-                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">How It Works</h2>
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6 font-heading">How It Works</h2>
                     <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">
                         A simple 3-step process to get fresh produce delivered to your doorstep.
                     </p>
@@ -319,7 +319,7 @@ export default function LandingPage() {
             <TestimonialSection />
             <section className=" py-16 sm:py-24 px-4 sm:px-6 md:px-20">
                 <div className="max-w-7xl mx-10 sm:mx-auto text-center">
-                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6">Frequently Asked Questions</h2>
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6 font-heading">Frequently Asked Questions</h2>
                     <p className="text-sm sm:text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8 sm:mb-14 font-medium sm:font-semibold leading-relaxed">
                         Have questions? We’ve got answers to help you understand how CropCart works.
                     </p>
@@ -365,7 +365,7 @@ export default function LandingPage() {
             {/* Contact Section */}
             <section id="contact-us" className="py-16 sm:py-24 px-4 sm:px-6 md:px-20 bg-green-100 text-green-900">
                 <div className="max-w-7xl mx-4 sm:mx-auto text-center">
-                    <h2 className="text-xl sm:text-3xl md:text-5xl font-extrabold text-green-800 mb-3 sm:mb-6">
+                    <h2 className="text-xl sm:text-3xl md:text-5xl font-extrabold text-green-800 mb-3 sm:mb-6 font-heading">
                         Get in Touch
                     </h2>
 

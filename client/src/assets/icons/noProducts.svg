@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Basket -->
+  <path d="M50 100h100l-10 60H60L50 100z" fill="#E8F5E9" stroke="#388E3C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M45 100h110" stroke="#388E3C" stroke-width="3" stroke-linecap="round"/>
+  <path d="M70 100L85 70" stroke="#388E3C" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M130 100L115 70" stroke="#388E3C" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Basket weave lines -->
+  <path d="M68 120h64M64 135h72M60 150h80" stroke="#388E3C" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+  <!-- Small leaf flying away -->
+  <g transform="translate(135, 65) rotate(-30)">
+    <path d="M0 15C0 15 5 0 20 0C20 0 15 10 0 15Z" fill="#66BB6A" opacity="0.7"/>
+    <path d="M0 15C5 8 10 4 20 0" stroke="#388E3C" stroke-width="1" fill="none" opacity="0.5"/>
+  </g>
+  <!-- Small leaf flying away 2 -->
+  <g transform="translate(55, 55) rotate(15)">
+    <path d="M0 12C0 12 4 0 16 0C16 0 12 8 0 12Z" fill="#81C784" opacity="0.5"/>
+    <path d="M0 12C4 6 8 3 16 0" stroke="#388E3C" stroke-width="1" fill="none" opacity="0.4"/>
+  </g>
+  <!-- Question mark -->
+  <text x="100" y="95" text-anchor="middle" font-size="30" font-weight="bold" fill="#388E3C" opacity="0.4" font-family="Arial, sans-serif">?</text>
+</svg>

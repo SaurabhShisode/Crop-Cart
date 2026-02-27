@@ -15,9 +15,12 @@ import {
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import BouncingDotsLoader from '../components/BouncingDotsLoader';
+import SkeletonCard from '../components/skeletons/SkeletonCard';
+import IngredientSkeleton from '../components/skeletons/IngredientSkeleton';
 import { motion } from 'framer-motion';
 import NearbyCrops from '../components/NearbyCrops';
+import NoProductsIcon from '../assets/icons/noProducts.svg';
+import EmptyCartIcon from '../assets/icons/emptyCart.svg';
 import { StandaloneSearchBox } from '@react-google-maps/api';
 
 
@@ -160,7 +163,7 @@ const Navbar: React.FC<{
         <nav className="flex justify-between items-center px-6 py-6 md:py-7 bg-white shadow-lg sticky top-0 z-50">
           {/* Logo */}
           <div
-            className="flex items-center gap-2 text-2xl font-extrabold text-green-700 cursor-pointer"
+            className="flex items-center gap-2 text-2xl font-extrabold text-green-700 cursor-pointer font-heading"
             onClick={() => navigate('/')}
             role="button"
             tabIndex={0}
@@ -353,15 +356,15 @@ const Navbar: React.FC<{
                 <span className="font-semibold text-green-800">{location}</span>
               </div>
               <StandaloneSearchBox
-              onLoad={(ref) => (searchBoxRef.current = ref)}
-              onPlacesChanged={handlePlacesChanged}
-            >
-              <input
-                type="text"
-                placeholder="Select Location"
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-64"
-              />
-            </StandaloneSearchBox>
+                onLoad={(ref) => (searchBoxRef.current = ref)}
+                onPlacesChanged={handlePlacesChanged}
+              >
+                <input
+                  type="text"
+                  placeholder="Select Location"
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-64"
+                />
+              </StandaloneSearchBox>
 
 
               <div className="relative">
@@ -416,7 +419,7 @@ const Home: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string | null>(null);
   const [location, setLocation] = useState<string>('Enter your area or city');
   const [searchQuery, setSearchQuery] = useState('');
@@ -684,7 +687,7 @@ const Home: React.FC = () => {
             />
 
             <div className="relative z-10">
-              <h1 className="text-2xl sm:text-4xl font-extrabold mb-3 tracking-tight leading-snug drop-shadow-md">
+              <h1 className="text-2xl sm:text-4xl font-extrabold mb-3 tracking-tight leading-snug drop-shadow-md font-heading">
                 CropCart Specials
               </h1>
               <p className="text-base sm:text-lg mb-6 font-medium text-white/90 max-w-xl">
@@ -753,10 +756,7 @@ const Home: React.FC = () => {
 
                 {/* Loading Spinner */}
                 {loadingIngredients && (
-                  <div className="flex justify-center items-center mt-8 text-white/80">
-                    <BouncingDotsLoader />
-                  </div>
-
+                  <IngredientSkeleton />
                 )}
 
                 {/* Ingredients List */}
@@ -829,13 +829,25 @@ const Home: React.FC = () => {
         <main className="flex-grow max-w-7xl mx-0 sm:mx-40 min-h-screen pb-10 px-4 bg-white">
 
           {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <BouncingDotsLoader />
+            <div className="space-y-12">
+              {Array.from({ length: 3 }).map((_, sectionIdx) => (
+                <section key={sectionIdx}>
+                  <div className="skeleton h-6 w-32 mb-4" />
+                  <div className="flex gap-4 overflow-hidden">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <SkeletonCard key={i} />
+                    ))}
+                  </div>
+                </section>
+              ))}
             </div>
           ) : Object.keys(groupedCrops).length === 0 ? (
-            <p className="text-center text-green-900 text-base font-medium">
-              No products available right now.
-            </p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <img src={NoProductsIcon} alt="No products" className="w-36 h-36 mb-4 opacity-80" />
+              <p className="text-green-900 text-base font-medium">
+                No products available right now.
+              </p>
+            </div>
           ) : (
             Object.entries(groupedCrops).map(([type, products]) => (
               <section key={type} className="mb-12">
@@ -846,14 +858,16 @@ const Home: React.FC = () => {
                   {products.map((crop) => (
                     <div
                       key={crop._id}
-                      className=" snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-md hover:scale-[1.02] transition-all duration-200 rounded-lg p-2 flex flex-col w-48 flex-shrink-0"
+                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-xl hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 rounded-lg p-2 flex flex-col w-48 flex-shrink-0 overflow-hidden group"
                     >
-                      <img
-                        src={crop.image}
-                        alt={crop.name}
-                        className="w-full h-24 object-cover rounded-md mb-2"
-                        loading="lazy"
-                      />
+                      <div className="overflow-hidden rounded-md mb-2">
+                        <img
+                          src={crop.image}
+                          alt={crop.name}
+                          className="w-full h-24 object-cover transition-transform duration-300 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                      </div>
                       <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
                         {crop.name}
                       </h3>
@@ -895,9 +909,12 @@ const Home: React.FC = () => {
       <div className="lg:hidden pb-6 bg-white min-h-screen mb-10">
         <main className="max-w-4xl mx-auto space-y-10">
           {Object.keys(groupedCrops).length === 0 ? (
-            <p className="text-center text-green-900 text-base font-medium">
-              No products available right now.
-            </p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <img src={NoProductsIcon} alt="No products" className="w-32 h-32 mb-4 opacity-80" />
+              <p className="text-green-900 text-base font-medium">
+                No products available right now.
+              </p>
+            </div>
           ) : (
             Object.entries(groupedCrops).map(([type, products]) => (
               <section key={type}>
@@ -959,7 +976,7 @@ const Home: React.FC = () => {
       >
         <div className="p-6 flex flex-col h-full w-full min-h-0">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-green-900">Your Cart</h2>
+            <h2 className="text-2xl font-bold text-green-900 font-heading">Your Cart</h2>
             <button
               onClick={() => setIsCartOpen(false)}
               aria-label="Close Cart"
@@ -970,9 +987,12 @@ const Home: React.FC = () => {
           </div>
 
           {cart.length === 0 ? (
-            <p className="text-gray-600 flex-grow flex items-center justify-center">
-              Your cart is empty.
-            </p>
+            <div className="flex-grow flex flex-col items-center justify-center text-center">
+              <img src={EmptyCartIcon} alt="Empty cart" className="w-28 h-28 mb-3 opacity-70" />
+              <p className="text-gray-600 font-medium">
+                Your cart is empty.
+              </p>
+            </div>
           ) : (
             <div className="flex-grow overflow-y-auto">
               {cart.map((item) => (
