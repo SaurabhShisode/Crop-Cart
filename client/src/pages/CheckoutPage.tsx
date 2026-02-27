@@ -36,6 +36,8 @@ const CheckoutPage: React.FC = () => {
   const [deliveryCoords, setDeliveryCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const navigate = useNavigate();
   const [deliveryDuration, setDeliveryDuration] = useState<number | null>(null);
+  const [debouncedAddress, setDebouncedAddress] = useState('');
+  const directionsRequested = useRef(false);
 
 
   useEffect(() => window.scrollTo(0, 0), []);
@@ -79,10 +81,18 @@ const CheckoutPage: React.FC = () => {
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedAddress(address);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [address]);
+
+  useEffect(() => {
     const fetchCoords = async () => {
-      if (!address) return;
+      if (!debouncedAddress) return;
+      directionsRequested.current = false;
       try {
-        const coords = await getDeliveryCoords(address);
+        const coords = await getDeliveryCoords(debouncedAddress);
         setDeliveryCoords(coords);
       } catch (err) {
         console.error('Geocoding error:', err);
@@ -91,7 +101,7 @@ const CheckoutPage: React.FC = () => {
     };
 
     fetchCoords();
-  }, [address]);
+  }, [debouncedAddress]);
 
   const totalPrice = cart.reduce((total, item) => {
     const quantityNum = item.quantityInCart || 0;
@@ -539,14 +549,14 @@ const CheckoutPage: React.FC = () => {
       <Footer />
       {deliveryCoords &&
         cart.length > 0 &&
-        cart.every(item => item.location) && (
+        cart.every(item => item.location) &&
+        !directionsRequested.current && (
           <DirectionsService
             options={{
               origin: {
                 lat: cart[0].location!.latitude,
                 lng: cart[0].location!.longitude,
               },
-
               destination: {
                 lat: deliveryCoords.latitude,
                 lng: deliveryCoords.longitude,
@@ -558,20 +568,17 @@ const CheckoutPage: React.FC = () => {
                 },
                 stopover: true,
               })),
-
               travelMode: window.google.maps.TravelMode.DRIVING,
               optimizeWaypoints: true,
             }}
             callback={(response, status) => {
+              directionsRequested.current = true;
               if (status === 'OK' && response?.routes?.length) {
                 const totalDuration = response.routes[0].legs.reduce((acc, leg) => {
                   return acc + (leg.duration?.value ?? 0);
                 }, 0);
-
                 const durationInMinutes = Math.round(totalDuration / 60);
                 setDeliveryDuration(durationInMinutes);
-
-
               } else {
                 console.error('DirectionsService error:', status, response);
               }
