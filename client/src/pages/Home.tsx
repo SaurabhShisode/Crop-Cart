@@ -880,9 +880,9 @@ const Home: React.FC = () => {
                   {products.map((crop) => (
                     <div
                       key={crop._id}
-                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-xl hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 rounded-lg p-2 flex flex-col w-48 flex-shrink-0 overflow-hidden group/card"
+                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-xl hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 rounded-lg  flex flex-col w-48 flex-shrink-0 overflow-hidden group/card"
                     >
-                      <div className="overflow-hidden rounded-md mb-2">
+                      <div className="overflow-hidden mb-2">
                         <img
                           src={crop.image}
                           alt={crop.name}
@@ -890,15 +890,15 @@ const Home: React.FC = () => {
                           loading="lazy"
                         />
                       </div>
-                      <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
+                      <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate px-2">
                         {crop.name}
                       </h3>
-                      <p className="text-green-700 text-sm font-bold mb-1">
+                      <p className="text-green-700 text-sm font-bold mb-1 px-2">
                         ₹{crop.price}
                       </p>
 
 
-                      <p className="text-xs text-gray-600 mb-2">
+                      <p className="text-xs text-gray-600 mb-2 px-2">
                         {crop.quantity}
                       </p>
 
@@ -910,7 +910,7 @@ const Home: React.FC = () => {
                             addToCart(crop);
                           }
                         }}
-                        className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600"
+                        className="mt-auto bg-green-800 text-white py-1 px-2 rounded text-xs font-medium hover:bg-green-600 p-2 m-2"
                       >
                         🛒 Add
                       </button>
