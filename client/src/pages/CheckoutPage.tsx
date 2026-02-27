@@ -289,7 +289,7 @@ const CheckoutPage: React.FC = () => {
       <div className="min-h-screen bg-white flex items-center justify-center px-6 pt-10 mt-16 sm:mt-0">
 
         <div className="max-w-6xl w-full  rounded-2xl  grid grid-cols-1 md:grid-cols-3 gap-8 pb-10  sm:p-10">
-          {/* Order Summary */}
+
 
           <section className="order-1 md:order-1 md:col-span-1 bg-green-900 border  rounded-xl p-4 md:p-6 shadow-2xl">
             <h2 className="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6 font-heading">Order Summary</h2>
@@ -398,7 +398,7 @@ const CheckoutPage: React.FC = () => {
           </section>
 
 
-          {/* Shipping Details */}
+
 
           <section className="order-2 md:order-2 md:col-span-2 p-6 bg-green-50 rounded-xl shadow-2xl border border-2 border-green-900">
 

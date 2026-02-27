@@ -50,7 +50,6 @@ const MyAccount: React.FC = () => {
         setOrderCount(orders.length);
       }
     } catch {
-      // Silently fail — order count is non-critical
     } finally {
       setLoading(false);
     }
@@ -86,7 +85,7 @@ const MyAccount: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navbar */}
+
       <nav className="flex justify-between items-center px-4 sm:px-6 py-5 sm:py-7 bg-white shadow-sm sticky top-0 z-50">
         <div
           className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none font-heading"
@@ -108,11 +107,11 @@ const MyAccount: React.FC = () => {
         </button>
       </nav>
 
-      {/* Main Content */}
+
       <main className="flex-grow max-w-3xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-16">
-        {/* Profile Header */}
+
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          {/* Banner */}
+
           <div className="h-32 sm:h-40 bg-gradient-to-br from-green-800 via-green-700 to-emerald-600 relative">
             <div className="absolute inset-0 opacity-20">
               <svg className="w-full h-full" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -123,7 +122,7 @@ const MyAccount: React.FC = () => {
             </div>
           </div>
 
-          {/* Avatar + Name */}
+
           <div className="relative px-6 sm:px-8 pb-6">
             <div className="absolute -top-12 sm:-top-14 left-6 sm:left-8">
               <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-green-700 border-4 border-white shadow-xl flex items-center justify-center">
@@ -153,7 +152,7 @@ const MyAccount: React.FC = () => {
           </div>
         </div>
 
-        {/* Account Details */}
+
         <section className="mt-8">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 font-heading">Account Details</h2>
           <div className="bg-white rounded-2xl shadow-md divide-y divide-gray-100">
@@ -203,7 +202,7 @@ const MyAccount: React.FC = () => {
           </div>
         </section>
 
-        {/* Quick Actions */}
+
         <section className="mt-8">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 font-heading">Quick Actions</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -259,7 +258,7 @@ const MyAccount: React.FC = () => {
           </div>
         </section>
 
-        {/* Danger Zone */}
+
         <section className="mt-8 mb-8">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 font-heading">Account Actions</h2>
           <div className="bg-white rounded-2xl shadow-md">

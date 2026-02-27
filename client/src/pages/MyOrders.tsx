@@ -364,7 +364,7 @@ const MyOrders: React.FC = () => {
 
 
 
-      {/* Orders Section */}
+
       <main className="pt-12 sm:pt-22 pb-24 sm:pb-28 max-w-6xl mx-auto px-3 sm:px-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-green-900 dark:text-green-300 mb-6 sm:mb-8 font-heading">
           My Orders
@@ -486,7 +486,7 @@ const MyOrders: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* ✅ Expanded Details */}
+
                       <div
                         className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 mt-4' : 'max-h-0 opacity-0'
                           }`}
@@ -528,7 +528,7 @@ const MyOrders: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* ✅ Action Buttons */}
+
                         <div className="flex flex-col sm:flex-row justify-start gap-2 sm:gap-3 mt-4">
                           <button
                             onClick={(e) => {

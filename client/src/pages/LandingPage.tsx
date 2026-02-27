@@ -52,16 +52,16 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-[#F9F9F9] dark:bg-gray-900 dark:text-white flex flex-col transition-colors duration-300">
-            {/* Navbar */}
+
             <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50 p-4 md:px-6">
                 <div className="flex justify-between items-center">
-                    {/* Logo */}
+
                     <div className="flex items-center space-x-2 text-2xl font-extrabold text-green-700 dark:text-green-400 font-heading">
                         <img src={logo} alt="CropCart Logo" className="w-8 h-8" />
                         <span>CropCart</span>
                     </div>
 
-                    {/* Centered Menu Links (Desktop Only) */}
+
                     <div className="hidden lg:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
                         {['home', 'about', 'contact'].map((section) => (
                             <button
@@ -91,7 +91,7 @@ export default function LandingPage() {
                         ))}
                     </div>
 
-                    {/* Right Buttons (Desktop Only) */}
+
                     <div className="hidden lg:flex items-center space-x-4">
                         <button
                             onClick={() => navigate('/farmer-login')}
@@ -114,7 +114,7 @@ export default function LandingPage() {
                         </button>
                     </div>
 
-                    {/* Hamburger Icon (Mobile Only) */}
+
                     <button
                         className="lg:hidden text-2xl text-green-700 dark:text-green-400 focus:outline-none"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -123,7 +123,7 @@ export default function LandingPage() {
                     </button>
                 </div>
 
-                {/* Mobile Menu */}
+
                 {mobileMenuOpen && (
                     <div className="flex flex-col mt-4 space-y-4 lg:hidden">
                         {['home', 'about', 'contact'].map((section) => (
@@ -186,10 +186,10 @@ export default function LandingPage() {
 
 
 
-            {/* Hero Section */}
+
             <section className="relative bg-green-900 text-white overflow-hidden h-[840px] sm:h-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-y-0 px-6 sm:px-8 md:px-10 pt-24 pb-16 md:py-24 max-w-7xl mx-auto">
-                    {/* Left Text Content */}
+
                     <div
                         className={`max-w-xl space-y-4 sm:space-y-8 transition-all duration-700 ease-out transform ${loaded ? 'translate-y-10  sm:translate-y-4 opacity-100' : 'translate-y-[100px]    sm:translate-y-[100px] opacity-0'
                             } mt- md:mt-24`}
@@ -212,7 +212,7 @@ export default function LandingPage() {
                     </div>
 
 
-                    {/* Right Image */}
+
                     <div
                         className={`relative max-w-sm mx-auto transition-all duration-700 ease-out transform ${loaded
                             ? 'translate-y-22 sm:translate-y-32 opacity-100'
@@ -227,7 +227,7 @@ export default function LandingPage() {
                     </div>
                 </div>
 
-                {/* SVG Bottom Wave */}
+
                 <div className=" absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
                     <svg
                         viewBox="0 0 1200 120"
@@ -254,7 +254,7 @@ export default function LandingPage() {
             </section>
 
 
-            {/* What We Do Section */}
+
             <section id="what-we-do" className=" sm:mt-20 py-16 sm:py-24 px-4 sm:px-6 md:px-20">
                 <div className="max-w-7xl mx-10 sm:mx-auto text-center">
                     <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-green-800 mb-4 sm:mb-6 font-heading">
@@ -366,7 +366,7 @@ export default function LandingPage() {
             </section>
 
 
-            {/* Contact Section */}
+
             <section id="contact-us" className="py-16 sm:py-24 px-4 sm:px-6 md:px-20 bg-green-100 text-green-900">
                 <div className="max-w-7xl mx-4 sm:mx-auto text-center">
                     <h2 className="text-xl sm:text-3xl md:text-5xl font-extrabold text-green-800 mb-3 sm:mb-6 font-heading">
@@ -443,7 +443,7 @@ export default function LandingPage() {
             </section>
 
 
-            {/* Footer */}
+
             <Footer />
 
 

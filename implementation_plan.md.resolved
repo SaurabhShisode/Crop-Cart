@@ -1,0 +1,88 @@
+# Farmer Dashboard — 11 Enhancements
+
+All changes are in [FarmerDashboard.tsx](file:///d:/Crop-Cart/client/src/pages/FarmerDashboard.tsx) unless noted.
+
+## Proposed Changes
+
+### Batch 1: Quick UI Additions
+
+#### 1. Greeting Banner
+- Read farmer name from `localStorage('cropcartUser')`
+- Compute greeting based on hour: Good morning / afternoon / evening
+- Render below the page header as a styled banner with emoji
+
+#### 2. Quick Stats Row
+- Compute from existing data: `crops.length`, `orders.reduce(sum of basePrice)`, account creation date from localStorage
+- Render a 3-column row of mini stat cards below the greeting
+
+#### 3. Empty State for Products
+- When `crops.length === 0`, show an illustration + "Add your first product" CTA button instead of the empty ScrollableSection
+
+---
+
+### Batch 2: Data & Analytics
+
+#### 4. Revenue Breakdown Donut Chart
+- Register `ArcElement` from chart.js, import `Doughnut` from react-chartjs-2
+- Compute revenue per crop type from orders data
+- Add a Doughnut chart in the Statistics section
+
+#### 5. Export Reports as PDF
+- Import `jsPDF` and `jspdf-autotable` (already installed)
+- Add "Download Report" button in the Statistics section header
+- Generate PDF with: summary stats, orders table, and earnings data
+
+#### 6. Animated Numbers in Statistics Section
+- Wrap the earnings/orders values in the chart section with `<CountUp>` (already imported)
+- Add `key={viewMode}` to force re-animation when toggling monthly/weekly
+
+---
+
+### Batch 3: CRUD & Functionality
+
+#### 7. Edit Product Modal
+- Add `editingCrop` state and `showEditProductModal` state
+- Add "Edit" button on each product card
+- Reuse the Add Product modal structure with pre-filled values
+- On submit, call `PUT /api/farmer/crops/:id` and update local state
+
+#### 8. Bulk Order Actions
+- Add `selectedOrders` state (Set of order IDs)
+- Add checkboxes on pending order cards
+- Add "Mark Selected as Completed" button (visible when selections exist)
+- Call `PUT /api/farmer/orders/:id/fulfill` for each selected order
+
+> [!IMPORTANT]
+> Bulk fulfill depends on a `PUT /api/farmer/orders/:id/fulfill` endpoint existing on the backend. If it doesn't exist, the bulk action button will appear but individual API calls may fail. This is a frontend-only implementation.
+
+#### 9. Search/Filter Products
+- Add `productSearch` and `productTypeFilter` states
+- Add a search input + type filter dropdown above the products ScrollableSection
+- Filter `crops` array before rendering
+
+---
+
+### Batch 4: Live Features
+
+#### 10. Order Trends on Stat Cards
+- Already showing growth % on earnings and orders cards
+- Add a small SVG trend arrow icon (up/down/flat) next to the percentage text for visual emphasis
+
+#### 11. Polling for New Orders
+- Add a `useEffect` with `setInterval` (every 60 seconds) to re-fetch orders
+- Compare count with previous count
+- If new orders detected, show `toast.success('You have X new order(s)!')`
+
+---
+
+## Verification Plan
+
+### Automated
+- `npx tsc --noEmit` — TypeScript compilation check
+
+### Manual
+- Verify each feature visually in the browser at `/farmer-dashboard`
+- Test the Add/Edit product modals
+- Test PDF export downloads correctly
+- Test the product search/filter
+- Test bulk order selection and completion

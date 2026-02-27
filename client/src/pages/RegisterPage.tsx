@@ -38,7 +38,7 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
 
-      {/* Left Panel */}
+
       <div className="w-full md:w-1/3 relative overflow-hidden flex items-center justify-center bg-green-900 py-12 md:py-0">
         <div className="z-10 text-center px-6 md:px-12">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white drop-shadow-lg font-accent">
@@ -50,7 +50,7 @@ const RegisterPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Right Panel */}
+
       <div className="w-full md:w-2/3 flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 px-4 py-12 sm:px-8">
         <div className="w-full max-w-md bg-white/80 backdrop-blur-lg p-6 sm:p-10 rounded-xl shadow-2xl border border-green-200">
           <h2 className="text-2xl sm:text-3xl font-bold text-green-800 mb-6 sm:mb-8 text-center font-heading">
@@ -58,7 +58,7 @@ const RegisterPage: React.FC = () => {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name */}
+
             <div className="relative">
               <UserIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
               <input
@@ -74,7 +74,7 @@ const RegisterPage: React.FC = () => {
               />
             </div>
 
-            {/* Email */}
+
             <div className="relative">
               <EnvelopeIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
               <input
@@ -90,7 +90,7 @@ const RegisterPage: React.FC = () => {
               />
             </div>
 
-            {/* Password */}
+
             <div className="relative">
               <LockClosedIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
               <input
@@ -118,7 +118,7 @@ const RegisterPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Register Button */}
+
             <button
               type="submit"
               className={`w-full py-3 rounded-lg font-semibold shadow-md transition-all ${loading
@@ -131,7 +131,7 @@ const RegisterPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Login Redirect */}
+
           <p className="mt-6 text-center text-green-700 text-sm sm:text-base">
             Already have an account?{' '}
             <button

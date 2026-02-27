@@ -11,7 +11,6 @@ const Navbar: React.FC = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

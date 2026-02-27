@@ -54,7 +54,7 @@ const RegisterFarmerPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
 
-      {/* Left Panel */}
+
       <div className="w-full md:w-1/3 flex items-center justify-center bg-green-900 py-10 md:py-0 px-6">
         <div className="z-10 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-white drop-shadow-lg font-accent">
@@ -67,7 +67,7 @@ const RegisterFarmerPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Right Panel */}
+
       <div className="w-full md:w-2/3 flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 py-12 px-4">
         <div className="w-full max-w-md bg-white/80 backdrop-blur-lg p-6 md:p-10 rounded-xl shadow-2xl border border-green-200">
           <h2 className="text-2xl md:text-3xl font-bold text-green-800 mb-6 md:mb-8 text-center font-heading">
@@ -75,7 +75,7 @@ const RegisterFarmerPage: React.FC = () => {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
-            {/* Name */}
+
             <div className="relative">
               <UserIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
               <input
@@ -90,7 +90,7 @@ const RegisterFarmerPage: React.FC = () => {
               />
             </div>
 
-            {/* Email */}
+
             <div className="relative">
               <EnvelopeIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
               <input
@@ -105,7 +105,7 @@ const RegisterFarmerPage: React.FC = () => {
               />
             </div>
 
-            {/* Password */}
+
             <div className="relative">
               <LockClosedIcon className="w-5 h-5 text-green-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
               <input
@@ -132,7 +132,7 @@ const RegisterFarmerPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Submit */}
+
             <button
               type="submit"
               disabled={loading}
@@ -145,7 +145,7 @@ const RegisterFarmerPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Login redirect */}
+
           <p className="mt-6 text-center text-green-700">
             Already registered?{' '}
             <button

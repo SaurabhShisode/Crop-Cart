@@ -1,16 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
-import { Line } from 'react-chartjs-2';
+import { Line, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  ArcElement,
+  Filler,
   Tooltip,
   Legend,
 } from 'chart.js';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 import DashboardSkeleton from '../components/skeletons/DashboardSkeleton';
 
@@ -71,6 +75,8 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  ArcElement,
+  Filler,
   Tooltip,
   Legend
 );
@@ -262,15 +268,59 @@ const FarmerDashboard: React.FC = () => {
   const [viewMode, setViewMode] = useState<'monthly' | 'weekly'>('monthly');
   const [orderGrowth, setOrderGrowth] = useState(0);
   const [earningsGrowth, setEarningsGrowth] = useState(0);
+  const [memberSinceIso, setMemberSinceIso] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [cropToDelete, setCropToDelete] = useState<Crop | null>(null);
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
+  const [editingCrop, setEditingCrop] = useState<Crop | null>(null);
+
+  const [productSearch, setProductSearch] = useState('');
+  const [productTypeFilter, setProductTypeFilter] = useState('');
+  const previousOrderCount = useRef<number>(0);
 
   const toggleOrderDetails = (orderId: string) => {
     setExpandedOrderId((prevId) => (prevId === orderId ? null : orderId));
   };
+
+  useEffect(() => {
+    let userId: string | null = null;
+    let createdAt: string | null = null;
+    try {
+      const raw = localStorage.getItem('cropcartUser');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        userId = parsed?.user?.id || null;
+        createdAt = parsed?.user?.createdAt || parsed?.user?.created_at || parsed?.user?.createdOn || null;
+      }
+    } catch {
+    }
+
+    const key = userId ? `cropcartMemberSince_${userId}` : 'cropcartMemberSince';
+    const existing = localStorage.getItem(key);
+    if (existing) {
+      setMemberSinceIso(existing);
+      return;
+    }
+
+    const iso = createdAt ? new Date(createdAt).toISOString() : new Date().toISOString();
+    localStorage.setItem(key, iso);
+    setMemberSinceIso(iso);
+  }, []);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowAddProductModal(false);
+        setShowEditProductModal(false);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, []);
 
 
 
@@ -427,6 +477,72 @@ const FarmerDashboard: React.FC = () => {
     fetchData();
   }, []);
 
+  const fetchOrders = useCallback(async () => {
+    try {
+      const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+      const ordersRes = await fetch('https://crop-cart-backend.onrender.com/api/farmer/orders', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
+        const farmerId = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.user?.id;
+        const formattedOrders: Order[] = ordersData
+          .map((order: any) => {
+            const items = order.items
+              .filter((item: any) => item.farmerId === farmerId)
+              .map((item: any) => ({
+                _id: item._id,
+                cropId: item.cropId,
+                crop: { name: item.name },
+                price: item.price,
+                quantity: item.quantity,
+                quantityInCart: Number(item.quantityInCart),
+              }));
+            if (items.length === 0) return null;
+            const basePrice = items.reduce(
+              (total: number, item: any) => total + item.price * item.quantityInCart, 0
+            );
+            const tax = parseFloat((basePrice * 0.18).toFixed(2));
+            const deliveryFee = 50;
+            const total = parseFloat((basePrice + tax + deliveryFee).toFixed(2));
+            return {
+              _id: order._id,
+              buyer: { name: order.name, email: order.email },
+              userId: { _id: order.userId?._id || '', name: order.userId?.name || '', email: order.userId?.email || '' },
+              farmerId: order.farmerId,
+              address: order.address,
+              phone: order.phone,
+              email: order.email,
+              createdAt: order.createdAt,
+              updatedAt: order.updatedAt,
+              items, tax, deliveryFee, total, basePrice,
+              fulfilled: order.fulfilled || false,
+              fulfilledAt: order.fulfilledAt || null,
+            };
+          })
+          .filter((order: any) => order !== null);
+
+        const prevCount = previousOrderCount.current;
+        if (prevCount > 0 && formattedOrders.length > prevCount) {
+          const newCount = formattedOrders.length - prevCount;
+          toast.success(`You have ${newCount} new order${newCount > 1 ? 's' : ''}!`, {
+            style: { background: '#14532d', color: 'white' },
+            icon: '🔔',
+          });
+        }
+        previousOrderCount.current = formattedOrders.length;
+        setOrders(formattedOrders);
+      }
+    } catch {
+    }
+  }, []);
+
+  useEffect(() => {
+    previousOrderCount.current = orders.length;
+    const interval = setInterval(fetchOrders, 60000);
+    return () => clearInterval(interval);
+  }, [fetchOrders, orders.length]);
+
 
   const chartLabels = viewMode === 'monthly'
     ? stats.map((item) => item.date)
@@ -529,27 +645,190 @@ const FarmerDashboard: React.FC = () => {
     currentPage * ORDERS_PER_PAGE
   );
 
+  const farmerName = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.user?.name || 'Farmer';
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+  const lifetimeEarnings = orders.reduce((sum, order) => sum + order.basePrice, 0);
+  const memberSinceLabel = memberSinceIso
+    ? new Date(memberSinceIso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+    : '—';
+
+  const filteredCrops = crops.filter((crop) => {
+    const matchesSearch = crop.name.toLowerCase().includes(productSearch.toLowerCase());
+    const matchesType = productTypeFilter === '' || crop.type === productTypeFilter;
+    return matchesSearch && matchesType;
+  });
+  const cropTypes = [...new Set(crops.map((c) => c.type))];
+
+  const revenuePerType: Record<string, number> = {};
+  orders.forEach((order) => {
+    order.items.forEach((item) => {
+      const cropMatch = crops.find((c) => c._id === item.cropId);
+      const type = cropMatch?.type || 'Other';
+      revenuePerType[type] = (revenuePerType[type] || 0) + item.price * item.quantityInCart;
+    });
+  });
+  const donutColors = ['#065f46', '#047857', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5'];
+  const donutChartData = {
+    labels: Object.keys(revenuePerType),
+    datasets: [{
+      data: Object.values(revenuePerType),
+      backgroundColor: donutColors.slice(0, Object.keys(revenuePerType).length),
+      borderWidth: 2,
+      borderColor: '#fff',
+    }],
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.setTextColor(6, 95, 70);
+    doc.text('CropCart — Farm Report', 14, 20);
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on ${new Date().toLocaleString()}`, 14, 28);
+
+    doc.setFontSize(13);
+    doc.setTextColor(0);
+    doc.text('Summary', 14, 40);
+    doc.setFontSize(11);
+    doc.text(`Total Products: ${crops.length}`, 14, 48);
+    doc.text(`Total Orders: ${orders.length}`, 14, 55);
+    doc.text(`Lifetime Earnings: ₹${lifetimeEarnings.toLocaleString()}`, 14, 62);
+    doc.text(`This Month Earnings: ₹${currentMonthEarnings.toLocaleString()}`, 14, 69);
+    doc.text(`This Month Orders: ${currentMonthOrders}`, 14, 76);
+
+    if (orders.length > 0) {
+      doc.setFontSize(13);
+      doc.text('Orders', 14, 90);
+      autoTable(doc, {
+        startY: 95,
+        head: [['Order ID', 'Buyer', 'Items', 'Base Price', 'Status', 'Date']],
+        body: orders.map((o) => [
+          o._id.slice(-8),
+          o.buyer?.name || 'N/A',
+          o.items.map((i) => i.crop?.name).join(', '),
+          `₹${o.basePrice.toFixed(2)}`,
+          o.fulfilled ? 'Completed' : 'Pending',
+          new Date(o.createdAt).toLocaleDateString(),
+        ]),
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [6, 95, 70] },
+      });
+    }
+
+    doc.save('CropCart_Farm_Report.pdf');
+    toast.success('Report downloaded!', { style: { background: '#14532d', color: 'white' }, icon: '📄' });
+  };
+
+  const TrendArrow = ({ value }: { value: number }) => {
+    if (value > 0) return (
+      <svg className="inline w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L10 6.414l-3.293 3.293a1 1 0 01-1.414 0z" clipRule="evenodd" />
+      </svg>
+    );
+    if (value < 0) return (
+      <svg className="inline w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L10 13.586l3.293-3.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      </svg>
+    );
+    return (
+      <svg className="inline w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+      </svg>
+    );
+  };
 
 
+
+  const handleEditProduct = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingCrop) return;
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const imageFile = formData.get('image') as File | null;
+
+    let imageUrl = editingCrop.image || '';
+    try {
+      if (imageFile && imageFile.name && imageFile.size > 0) {
+        imageUrl = await uploadImageToCloudinary(imageFile);
+      }
+    } catch {
+      toast.error('Image upload failed', { style: { background: '#14532d', color: 'white' } });
+      return;
+    }
+
+    const updatedCrop = {
+      name: formData.get('name'),
+      price: Number(formData.get('price')),
+      quantity: formData.get('quantity'),
+      type: formData.get('type'),
+      availability: formData.get('availability'),
+      regionPincodes: (formData.get('regionPincodes') as string).split(',').map((p) => p.trim()),
+      image: imageUrl,
+    };
+
+    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{}')?.token;
+    try {
+      const res = await fetch(`https://crop-cart-backend.onrender.com/api/farmer/crops/${editingCrop._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(updatedCrop),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setCrops((prev) => prev.map((c) => c._id === editingCrop._id ? { ...c, ...updated } : c));
+        setShowEditProductModal(false);
+        setEditingCrop(null);
+        toast.success('Product updated!', { style: { background: '#14532d', color: 'white' } });
+      } else {
+        toast.error('Failed to update product', { style: { background: '#14532d', color: 'white' } });
+      }
+    } catch {
+      toast.error('Failed to update product', { style: { background: '#14532d', color: 'white' } });
+    }
+  };
 
   return (
     <>
       <Navbar />
       <div className="min-h-screen sm:p-28 bg-green-50">
-        <h1 className="text-2xl sm:text-4xl font-bold text-green-900 mb-2 sm:mb-4 px-4 sm:px-4 pb-2 sm:pb-0 pt-10 sm:pt-0 font-heading">Farmer Dashboard</h1>
+        <div className="px-4 sm:px-4 pb-4 sm:pb-0 pt-10 sm:pt-0 mb-10">
+          <h1 className="text-2xl sm:text-4xl font-bold text-green-900 font-heading">Farmer Dashboard</h1>
+          <p className="text-sm sm:text-base text-gray-500 mt-1">Manage your products, track orders, and monitor performance</p>
+        </div>
 
         {loading ? (
           <DashboardSkeleton />
         ) : (
           <>
-            <div className="grid grid-cols-6 gap-6 text-white p-4 sm:px-4">
 
-              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-3 sm:p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
-                <div className="flex items-center  sm:justify-between">
-                  <h3 className="text-lg sm:text-xl font-semibold">This Month's Earnings</h3>
 
-                </div>
-                <p className="text-2xl sm:text-4xl font-bold mt-2">₹<CountUp end={currentMonthEarnings} decimals={2} duration={1.5} /></p>
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 px-4 sm:px-4 mb-6">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow duration-300">
+                <p className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-semibold">Products</p>
+                <p className="text-2xl sm:text-3xl font-extrabold text-green-800 mt-1.5">{crops.length}</p>
+              </div>
+              <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow duration-300">
+                <p className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-semibold">Lifetime Earnings</p>
+                <p className="text-2xl sm:text-3xl font-extrabold text-green-800 mt-1.5">₹{lifetimeEarnings.toLocaleString()}</p>
+              </div>
+              <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow duration-300">
+                <p className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-semibold">Member Since</p>
+                <p className="text-2xl sm:text-3xl font-extrabold text-green-800 mt-1.5">{memberSinceLabel}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 text-white p-4 sm:px-4">
+              <div className="col-span-1 bg-gradient-to-br from-green-900 via-green-800 to-emerald-700 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden hover:shadow-2xl transition-all duration-300">
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/5 rounded-full" />
+                <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-white/5 rounded-full" />
+                <p className="text-xs sm:text-sm font-medium text-green-200 uppercase tracking-wider">Monthly Earnings</p>
+                <p className="text-2xl sm:text-4xl font-bold mt-2">₹<CountUp key={`earn-${viewMode}`} end={currentMonthEarnings} decimals={2} duration={1.5} /></p>
                 <p
                   className={`text-sm mt-3 font-medium ${earningsGrowth > 0
                     ? 'text-lime-100'
@@ -563,16 +842,16 @@ const FarmerDashboard: React.FC = () => {
                     : earningsGrowth < 0
                       ? `↓ ${Math.abs(earningsGrowth)}% from last month`
                       : `→ 0% change from last month`}
+                  <TrendArrow value={earningsGrowth} />
                 </p>
               </div>
 
-              {/* Orders */}
-              <div className="col-span-3 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg sm:text-xl font-semibold">This Month's Orders</h3>
 
-                </div>
-                <p className="text-2xl sm:text-4xl font-bold mt-2"><CountUp end={currentMonthOrders} duration={1.5} /></p>
+              <div className="col-span-1 bg-gradient-to-br from-emerald-800 via-teal-700 to-cyan-800 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden hover:shadow-2xl transition-all duration-300">
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/5 rounded-full" />
+                <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-white/5 rounded-full" />
+                <p className="text-xs sm:text-sm font-medium text-emerald-200 uppercase tracking-wider">Monthly Orders</p>
+                <p className="text-2xl sm:text-4xl font-bold mt-2"><CountUp key={`ord-${viewMode}`} end={currentMonthOrders} duration={1.5} /></p>
                 <p
                   className={`text-sm mt-3 font-medium ${orderGrowth > 0
                     ? 'text-lime-100'
@@ -586,310 +865,163 @@ const FarmerDashboard: React.FC = () => {
                     : orderGrowth < 0
                       ? `↓ ${Math.abs(orderGrowth)}% from last month`
                       : `→ 0% change from last month`}
+                  <TrendArrow value={orderGrowth} />
                 </p>
               </div>
 
-              {/* Most Sold Crop */}
-              <div className="col-span-6 row-span-2 bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col justify-between hover:scale-[1.02] transition">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg sm:text-xl font-semibold">Most Sold Crop</h3>
 
-                </div>
-                <div className="text-center">
-                  {mostSoldCrop ? (
-                    <>
-                      <p className="text-3xl font-bold">{mostSoldCrop.cropName}</p>
-                      <p className="text-sm mt-3 font-medium text-lime-100">Sold {mostSoldCrop.totalSold} times</p>
-                    </>
-                  ) : (
-                    <p className="text-green-100">No crop sales data yet.</p>
-                  )}
-                </div>
+              <div className="col-span-2 lg:col-span-1 bg-gradient-to-br from-amber-700 via-orange-700 to-yellow-800 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden hover:shadow-2xl transition-all duration-300">
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/5 rounded-full" />
+                <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-white/5 rounded-full" />
+                <p className="text-xs sm:text-sm font-medium text-amber-200 uppercase tracking-wider">Best Seller</p>
+                {mostSoldCrop ? (
+                  <>
+                    <p className="text-2xl sm:text-3xl font-bold mt-2">{mostSoldCrop.cropName}</p>
+                    <p className="text-xs sm:text-sm mt-3 font-medium text-amber-100">Sold {mostSoldCrop.totalSold} times</p>
+                  </>
+                ) : (
+                  <p className="text-amber-100 mt-2 text-sm">No crop sales data yet.</p>
+                )}
               </div>
             </div>
 
-
-
-
-
-            {/* Crops Section */}
-            <section className="my-10 sm:px-4 ">
-              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-2 sm:mb-4 px-4 sm:px-0 font-heading">Your Products</h2>
-
-              {/* Crop Cards */}
-              <ScrollableSection sectionId="crops-section">
-                {[...crops].reverse().map((crop) => (
-                  <div
-                    key={crop._id}
-                    className="first:ml-4 snap-start bg-white border border-2 border-green-900/60 sm:border sm:border-green-800/20 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col w-60 flex-shrink-0 "
-                    style={{ maxWidth: '240px' }}
-                  >
-                    {crop.image && (
-                      <img
-                        src={crop.image}
-                        alt={crop.name}
-                        className="w-full h-28 sm:h-36 object-cover rounded-xl mb-3 border border-gray-100"
-                      />
-                    )}
-
-                    <h3 className="text-md sm:text-lg font-semibold text-green-800 mb-1 truncate">{crop.name}</h3>
-
-                    <div className="text-xs sm:text-sm text-gray-600 space-y-1 mb-3">
-                      <p><span className="font-medium text-gray-700">Price:</span> ₹{crop.price}</p>
-                      <p><span className="font-medium text-gray-700">Quantity:</span> {crop.quantity}</p>
-                      <p><span className="font-medium text-gray-700">Type:</span> {crop.type}</p>
-                      <p><span className="font-medium text-gray-700">Availability:</span> {crop.availability}</p>
-                      <p className="truncate">
-                        <span className="font-medium text-gray-700">Regions:</span> {crop.regionPincodes?.join(', ')}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        setCropToDelete(crop);
-                        setDeleteModalOpen(true);
-                      }}
-                      className="mt-auto bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl text-xs sm:text-sm font-medium transition"
-                    >
-                      Remove
-                    </button>
-                  </div>
-
-                ))}
-              </ScrollableSection>
-
-
-
-              <div className='px-4 sm:px-0'>
-                <form
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    const form = e.currentTarget;
-                    const formData = new FormData(form);
-                    const imageFile = formData.get('image') as File | null;
-
-                    let imageUrl = '';
-                    try {
-                      if (imageFile && imageFile.name) {
-                        imageUrl = await uploadImageToCloudinary(imageFile);
-                      }
-                    } catch (error) {
-                      toast.error('Image upload failed', {
-                        style: { background: '#14532d', color: 'white' },
-                      });
-                      return;
-                    }
-
-                    const address = formData.get('location') as string;
-                    let latitude = null;
-                    let longitude = null;
-
-                    try {
-                      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
-                      const geocodeRes = await fetch(
-                        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-                          address
-                        )}&key=${apiKey}`
-                      );
-
-                      const geocodeData = await geocodeRes.json();
-                      console.log('Geocode response:', geocodeData);
-
-                      if (
-                        geocodeData.status === 'OK' &&
-                        geocodeData.results &&
-                        geocodeData.results.length > 0
-                      ) {
-                        latitude = geocodeData.results[0].geometry.location.lat;
-                        longitude = geocodeData.results[0].geometry.location.lng;
-                      } else {
-                        throw new Error('Invalid location');
-                      }
-                    } catch (error) {
-                      console.error('Geocoding Error:', error);
-                      toast.error('Failed to fetch coordinates for location', {
-                        style: { background: '#14532d', color: 'white' },
-                      });
-                      return;
-                    }
-
-                    const newCrop = {
-                      name: formData.get('name'),
-                      price: Number(formData.get('price')),
-                      quantity: formData.get('quantity'),
-                      type: formData.get('type'),
-                      availability: formData.get('availability'),
-                      regionPincodes: (formData.get('regionPincodes') as string)
-                        .split(',')
-                        .map((p) => p.trim()),
-                      image: imageUrl,
-                      location: {
-                        latitude: Number(latitude),
-                        longitude: Number(longitude),
-                      },
-                    };
-
-                    const token = JSON.parse(localStorage.getItem('cropcartUser') || '{ }')?.token;
-
-                    const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                      },
-                      body: JSON.stringify(newCrop),
-                    });
-
-                    if (res.ok) {
-                      const addedCrop = await res.json();
-                      setCrops((prev) => [...prev, addedCrop]);
-                      form.reset();
-                      toast.success('Crop added successfully', {
-                        style: { background: '#14532d', color: 'white' },
-                      });
-                    } else {
-                      toast.error('Failed to add crop', {
-                        style: { background: '#14532d', color: 'white' },
-                      });
-                    }
-                  }}
-                  className="bg-white p-8 sm:p-10 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 shadow-xl  
-                  border border-2 border-green-900/60 sm:border sm:border-green-800/20 mt-8 transition-all"
+            <section className="my-10 sm:px-4">
+              <div className="flex items-center justify-between px-4 sm:px-0 mb-4">
+                <h2 className="text-xl sm:text-2xl font-semibold text-green-800 font-heading">Your Products</h2>
+                <button
+                  onClick={() => setShowAddProductModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-700 to-emerald-600 text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-500 transition-all duration-300"
                 >
-                  <h2 className="col-span-full text-2xl font-bold text-green-800 tracking-tight">Add New Product</h2>
-
-                  <input
-                    name="name"
-                    required
-                    placeholder="Crop Name"
-                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
-                  />
-                  <input
-                    name="price"
-                    type="number"
-                    required
-                    placeholder="Price (₹)"
-                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
-                  />
-                  <input
-                    name="quantity"
-                    required
-                    placeholder="Quantity (e.g., 20 kg)"
-                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
-                  />
-
-                  <select
-                    name="type"
-                    required
-                    className="w-full border border-gray-300 rounded-xl p-3 text-sm text-gray-700 bg-white focus:ring-2 focus:ring-green-600 focus:outline-none transition"
-                  >
-                    <option value="" disabled>Select Crop Type</option>
-                    <option value="crop">Crop</option>
-                    <option value="dairy">Dairy</option>
-                    <option value="grocery">Grocery</option>
-                    <option value="spice">Spice</option>
-                    <option value="vegetable">Vegetable</option>
-                    <option value="fruit">Fruit</option>
-                  </select>
-
-                  <input
-                    name="availability"
-                    required
-                    placeholder="Availability"
-                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
-                  />
-                  <input
-                    name="regionPincodes"
-                    required
-                    placeholder="Region Pincodes (comma separated)"
-                    className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
-                  />
-
-                  <input
-                    name="location"
-                    required
-                    placeholder="Crop Location (Full Address)"
-                    className="w-full col-span-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-600 focus:outline-none transition"
-                  />
-
-                  <div className="flex flex-col col-span-full sm:col-span-1">
-
-                    <div className="relative group">
-                      <input
-                        id="image-upload"
-                        name="image"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const fileName = e.target.files?.[0]?.name;
-                          const label = document.getElementById('file-name-label');
-                          if (label && fileName) label.textContent = fileName;
-                        }}
-                      />
-                      <label
-                        htmlFor="image-upload"
-                        className="flex items-center gap-2 w-full py-3  text-black font-semibold rounded-xl hover:text-green-900 transition-all duration-200 ease-in-out cursor-pointer"
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                          />
-                        </svg>
-                        <span>Upload Image</span>
-                      </label>
-                      <span id="file-name-label" className="block text-sm text-gray-500 truncate"></span>
-                    </div>
-                  </div>
-
-                  <div className="col-span-full sm:col-span-1 flex items-end">
-                    <button
-                      type="submit"
-                      className="w-full bg-gradient-to-br from-green-900 to-emerald-800 rounded-xl text-white py-3 text-base font-semibold shadow-md hover:shadow-lg hover:from-green-800 hover:to-emerald-700 transition duration-300"
-                    >
-                      Add Product
-                    </button>
-                  </div>
-                </form>
-
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                  Add Product
+                </button>
               </div>
 
+              {crops.length > 0 && (
+                <div className="flex flex-wrap gap-3 px-4 sm:px-0 mb-4">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={productSearch}
+                    onChange={(e) => setProductSearch(e.target.value)}
+                    className="flex-1 min-w-[180px] border border-gray-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none bg-white"
+                  />
+                  <select
+                    value={productTypeFilter}
+                    onChange={(e) => setProductTypeFilter(e.target.value)}
+                    className="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none bg-white text-gray-700"
+                  >
+                    <option value="">All Types</option>
+                    {cropTypes.map((t) => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
+                  </select>
+                </div>
+              )}
 
 
+              {crops.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+                  <div className="w-32 h-32 mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-16 h-16 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-700 mb-2">No products yet</h3>
+                  <p className="text-gray-500 text-sm mb-4">Start by adding your first product to your store.</p>
+                  <button
+                    onClick={() => setShowAddProductModal(true)}
+                    className="px-6 py-2.5 bg-gradient-to-r from-green-700 to-emerald-600 text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all"
+                  >
+                    + Add Your First Product
+                  </button>
+                </div>
+              ) : (
+                <ScrollableSection sectionId="crops-section">
+                  {[...filteredCrops].reverse().map((crop) => (
+                    <div
+                      key={crop._id}
+                      className="first:ml-4 snap-start bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col w-64 flex-shrink-0 group overflow-hidden"
+                    >
+                      {crop.image ? (
+                        <div className="overflow-hidden">
+                          <img
+                            src={crop.image}
+                            alt={crop.name}
+                            className="w-full h-36 sm:h-40 object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full h-36 sm:h-40 bg-gradient-to-br from-green-100 to-emerald-50 flex items-center justify-center">
+                          <svg className="w-12 h-12 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                          </svg>
+                        </div>
+                      )}
 
+                      <div className="p-4 flex flex-col flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="text-base font-bold text-gray-900 truncate flex-1 mr-2">{crop.name}</h3>
+                          <p className="text-lg font-extrabold text-green-700 whitespace-nowrap">₹{crop.price}</p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 mb-3">
+                          <span className="text-[10px] uppercase tracking-wider font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-md">{crop.type}</span>
+                          <span className="text-[10px] uppercase tracking-wider font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">{crop.availability}</span>
+                        </div>
+
+                        <div className="text-xs text-gray-500 space-y-1 mb-4">
+                          <p>Qty: <span className="font-semibold text-gray-700">{crop.quantity}</span></p>
+                          <p className="truncate">Regions: <span className="font-semibold text-gray-700">{crop.regionPincodes?.join(', ')}</span></p>
+                        </div>
+
+                        <div className="mt-auto flex gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingCrop(crop);
+                              setShowEditProductModal(true);
+                            }}
+                            className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 py-2 rounded-lg text-xs font-semibold transition-all border border-green-200 hover:border-green-300"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => {
+                              setCropToDelete(crop);
+                              setDeleteModalOpen(true);
+                            }}
+                            className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-lg text-xs font-semibold transition-all border border-red-200 hover:border-red-300"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </ScrollableSection>
+              )}
 
             </section>
 
-            {/* Orders Section */}
+
             <section className="mb-10 px-4 sm:px-4 lg:px-4">
               <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4 font-heading">
                 Orders Received
               </h2>
 
-              <div className="flex mb-6 mt-4 gap-4">
+              <div className="flex mb-6 mt-4 gap-3">
                 <button
                   onClick={() => setFilterStatus('pending')}
-                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold text-sm sm:text-base ${filterStatus === 'pending'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-700'
+                  className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 ${filterStatus === 'pending'
+                    ? 'bg-gradient-to-r from-green-700 to-emerald-600 text-white shadow-md'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-green-300 hover:text-green-700'
                     }`}
                 >
                   Pending
                 </button>
                 <button
                   onClick={() => setFilterStatus('completed')}
-                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold text-sm sm:text-base ${filterStatus === 'completed'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-700'
+                  className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 ${filterStatus === 'completed'
+                    ? 'bg-gradient-to-r from-green-700 to-emerald-600 text-white shadow-md'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-green-300 hover:text-green-700'
                     }`}
                 >
                   Completed
@@ -916,14 +1048,12 @@ const FarmerDashboard: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: index * 0.08 }}
                           onClick={() => toggleOrderDetails(order._id)}
-                          className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 
-                shadow hover:shadow-lg transition-all duration-300 cursor-pointer border-2 border-green-900/60 sm:border-green-800/20"
+                          className="relative bg-white rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-green-200"
                         >
-
                           <span
-                            className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full font-semibold ${order.fulfilled
+                            className={`absolute top-3 right-3 text-xs px-3 py-1 rounded-full font-semibold ${order.fulfilled
                               ? 'bg-green-100 text-green-700'
-                              : 'bg-yellow-100 text-yellow-800'
+                              : 'bg-amber-50 text-amber-700'
                               }`}
                           >
                             {order.fulfilled ? 'Completed' : 'Pending'}
@@ -1016,24 +1146,23 @@ const FarmerDashboard: React.FC = () => {
 
 
                   {totalPages > 1 && (
-                    <div className="flex  mt-4 gap-1 sm:gap-3">
+                    <div className="flex items-center mt-6 gap-2 sm:gap-3">
                       <button
                         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
-                        className="px-4 py-1.5 text-xs sm:text-sm bg-gray-200 text-gray-800 rounded hover:bg-green-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 text-sm bg-white text-gray-700 rounded-xl border border-gray-200 hover:border-green-300 hover:text-green-700 font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:text-gray-700"
                       >
-                        Previous
+                        ← Previous
                       </button>
-
-                      <span className="px-3 py-1 text-xs sm:text-sm font-medium text-gray-700">
-                        Page {currentPage} of {totalPages}
+                      <span className="px-3 py-1 text-sm font-medium text-gray-500">
+                        {currentPage} / {totalPages}
                       </span>
                       <button
                         onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
-                        className="px-4 py-1.5 text-xs sm:text-sm bg-gray-200 text-gray-800 rounded hover:bg-green-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 text-sm bg-white text-gray-700 rounded-xl border border-gray-200 hover:border-green-300 hover:text-green-700 font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:text-gray-700"
                       >
-                        Next
+                        Next →
                       </button>
                     </div>
                   )}
@@ -1047,20 +1176,33 @@ const FarmerDashboard: React.FC = () => {
 
 
             <section className='px-4 sm:px-4'>
-              <h2 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4 font-heading">Statistics</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl sm:text-2xl font-semibold text-green-800 font-heading">Statistics</h2>
+                <button
+                  onClick={handleExportPDF}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-700 to-emerald-600 text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-500 transition-all duration-300"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  Download Report
+                </button>
+              </div>
 
 
-              <div className="flex justify-start mb-4">
+              <div className="flex gap-2 mb-4">
                 <button
                   onClick={() => setViewMode('monthly')}
-                  className={`px-3 py-1.5 text-sm sm:px-4 sm:py-2 sm:text-base mr-2 rounded ${viewMode === 'monthly' ? 'bg-green-600 text-white' : 'bg-gray-200'
+                  className={`px-4 py-2 text-sm rounded-xl font-semibold transition-all duration-200 ${viewMode === 'monthly'
+                    ? 'bg-gradient-to-r from-green-700 to-emerald-600 text-white shadow-md'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-green-300 hover:text-green-700'
                     }`}
                 >
                   Monthly
                 </button>
                 <button
                   onClick={() => setViewMode('weekly')}
-                  className={`px-3 py-1.5 text-sm sm:px-4 sm:py-2 sm:text-base rounded ${viewMode === 'weekly' ? 'bg-green-600 text-white' : 'bg-gray-200'
+                  className={`px-4 py-2 text-sm rounded-xl font-semibold transition-all duration-200 ${viewMode === 'weekly'
+                    ? 'bg-gradient-to-r from-green-700 to-emerald-600 text-white shadow-md'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-green-300 hover:text-green-700'
                     }`}
                 >
                   Weekly
@@ -1068,32 +1210,54 @@ const FarmerDashboard: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="border border-2 border-green-900/60 sm:border sm:border-green-800/20  bg-white p-4 rounded-lg shadow">
-                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-6 sm:mb-10">
-                    <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl flex flex-col justify-center items-center mb-6">
+                    <h3 className="text-sm sm:text-base font-semibold text-green-700 uppercase tracking-wider mb-2">
                       Earnings This {viewMode === 'weekly' ? 'Week' : 'Month'}
                     </h3>
                     <p className="text-3xl sm:text-4xl font-extrabold text-green-800">
-                      ₹{(viewMode === 'weekly' ? currentWeekEarnings : currentMonthEarnings).toLocaleString()}
+                      ₹<CountUp key={`stat-earn-${viewMode}`} end={viewMode === 'weekly' ? currentWeekEarnings : currentMonthEarnings} duration={1.5} separator="," />
                     </p>
                   </div>
-                  <h3 className="text-lg font-bold mb-2 text-green-700">Earnings Over Time</h3>
+                  <h3 className="text-base font-bold mb-3 text-green-700">Earnings Over Time</h3>
                   <Line data={earningsChartData} options={chartOptions} />
                 </div>
 
-                <div className="bg-white border border-2 border-green-900/60 sm:border sm:border-green-800/20 p-4 rounded-lg shadow mb-10 sm:mb-0">
-                  <div className="flex-1 bg-green-100 p-6 rounded-lg shadow-md flex flex-col justify-center items-center mb-6 sm:mb-10">
-                    <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 mb-10 sm:mb-0">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl flex flex-col justify-center items-center mb-6">
+                    <h3 className="text-sm sm:text-base font-semibold text-green-700 uppercase tracking-wider mb-2">
                       Orders This {viewMode === 'weekly' ? 'Week' : 'Month'}
                     </h3>
                     <p className="text-3xl sm:text-4xl font-extrabold text-green-800">
-                      {viewMode === 'weekly' ? currentWeekOrders : currentMonthOrders}
+                      <CountUp key={`stat-ord-${viewMode}`} end={viewMode === 'weekly' ? currentWeekOrders : currentMonthOrders} duration={1.5} />
                     </p>
                   </div>
-                  <h3 className="text-lg font-bold mb-2 text-green-700">Orders Over Time</h3>
+                  <h3 className="text-base font-bold mb-3 text-green-700">Orders Over Time</h3>
                   <Line data={ordersChartData} options={chartOptions} />
                 </div>
               </div>
+
+              {Object.keys(revenuePerType).length > 0 && (
+                <div className="mt-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+                  <h3 className="text-base font-bold mb-4 text-green-700">Revenue Breakdown by Crop Type</h3>
+                  <div className="max-w-xs mx-auto">
+                    <Doughnut
+                      data={donutChartData}
+                      options={{
+                        responsive: true,
+                        plugins: {
+                          legend: { position: 'bottom' },
+                          tooltip: {
+                            callbacks: {
+                              label: (ctx: any) => `${ctx.label}: ₹${ctx.parsed.toLocaleString()}`,
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
 
             </section>
 
@@ -1101,6 +1265,345 @@ const FarmerDashboard: React.FC = () => {
         )}
       </div >
       <Footer />
+      {
+        showAddProductModal && (
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            onClick={() => setShowAddProductModal(false)}
+          >
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="sticky top-0 bg-white rounded-t-2xl px-6 sm:px-8 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between z-10">
+                <h2 className="text-xl sm:text-2xl font-bold text-green-800 font-heading">Add New Product</h2>
+                <button
+                  onClick={() => setShowAddProductModal(false)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition"
+                >
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.currentTarget;
+                  const formData = new FormData(form);
+                  const imageFile = formData.get('image') as File | null;
+
+                  let imageUrl = '';
+                  try {
+                    if (imageFile && imageFile.name) {
+                      imageUrl = await uploadImageToCloudinary(imageFile);
+                    }
+                  } catch (error) {
+                    toast.error('Image upload failed', {
+                      style: { background: '#14532d', color: 'white' },
+                    });
+                    return;
+                  }
+
+                  const address = formData.get('location') as string;
+                  let latitude = null;
+                  let longitude = null;
+
+                  try {
+                    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+                    const geocodeRes = await fetch(
+                      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
+                    );
+                    const geocodeData = await geocodeRes.json();
+
+
+                    if (geocodeData.status === 'OK' && geocodeData.results && geocodeData.results.length > 0) {
+                      latitude = geocodeData.results[0].geometry.location.lat;
+                      longitude = geocodeData.results[0].geometry.location.lng;
+                    } else {
+                      throw new Error('Invalid location');
+                    }
+                  } catch (error) {
+                    console.error('Geocoding Error:', error);
+                    toast.error('Failed to fetch coordinates for location', {
+                      style: { background: '#14532d', color: 'white' },
+                    });
+                    return;
+                  }
+
+                  const newCrop = {
+                    name: formData.get('name'),
+                    price: Number(formData.get('price')),
+                    quantity: formData.get('quantity'),
+                    type: formData.get('type'),
+                    availability: formData.get('availability'),
+                    regionPincodes: (formData.get('regionPincodes') as string)
+                      .split(',')
+                      .map((p) => p.trim()),
+                    image: imageUrl,
+                    location: {
+                      latitude: Number(latitude),
+                      longitude: Number(longitude),
+                    },
+                  };
+
+                  const token = JSON.parse(localStorage.getItem('cropcartUser') || '{ }')?.token;
+                  const res = await fetch('https://crop-cart-backend.onrender.com/api/farmer/crops', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(newCrop),
+                  });
+
+                  if (res.ok) {
+                    const addedCrop = await res.json();
+                    setCrops((prev) => [...prev, addedCrop]);
+                    form.reset();
+                    setShowAddProductModal(false);
+                    toast.success('Crop added successfully', {
+                      style: { background: '#14532d', color: 'white' },
+                    });
+                  } else {
+                    toast.error('Failed to add crop', {
+                      style: { background: '#14532d', color: 'white' },
+                    });
+                  }
+                }}
+                className="px-6 sm:px-8 py-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
+              >
+                <input
+                  name="name"
+                  required
+                  placeholder="Crop Name"
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+                />
+                <input
+                  name="price"
+                  type="number"
+                  required
+                  placeholder="Price (₹)"
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+                />
+                <input
+                  name="quantity"
+                  required
+                  placeholder="Quantity (e.g., 20 kg)"
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+                />
+                <select
+                  name="type"
+                  required
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm text-gray-700 bg-gray-50 hover:bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition"
+                >
+                  <option value="" disabled>Select Crop Type</option>
+                  <option value="crop">Crop</option>
+                  <option value="dairy">Dairy</option>
+                  <option value="grocery">Grocery</option>
+                  <option value="spice">Spice</option>
+                  <option value="vegetable">Vegetable</option>
+                  <option value="fruit">Fruit</option>
+                </select>
+                <input
+                  name="availability"
+                  required
+                  placeholder="Availability"
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+                />
+                <input
+                  name="regionPincodes"
+                  required
+                  placeholder="Region Pincodes (comma separated)"
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+                />
+                <input
+                  name="location"
+                  required
+                  placeholder="Crop Location (Full Address)"
+                  className="w-full col-span-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+                />
+
+                <div className="flex flex-col col-span-full sm:col-span-1">
+                  <div className="relative group">
+                    <input
+                      id="image-upload"
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const fileName = e.target.files?.[0]?.name;
+                        const label = document.getElementById('file-name-label');
+                        if (label && fileName) label.textContent = fileName;
+                      }}
+                    />
+                    <label
+                      htmlFor="image-upload"
+                      className="flex items-center gap-2 w-full py-3 px-4 text-gray-700 font-medium rounded-xl border border-dashed border-gray-300 hover:border-green-500 hover:text-green-700 bg-gray-50 hover:bg-green-50 transition-all duration-200 cursor-pointer"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4" />
+                      </svg>
+                      <span>Upload Image</span>
+                    </label>
+                    <span id="file-name-label" className="block text-xs text-gray-500 truncate mt-1"></span>
+                  </div>
+                </div>
+
+                <div className="col-span-full flex items-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddProductModal(false)}
+                    className="flex-1 py-3 rounded-xl text-gray-700 font-semibold border border-gray-300 hover:bg-gray-50 transition duration-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-gradient-to-br from-green-800 to-emerald-700 rounded-xl text-white py-3 text-base font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-600 transition duration-300"
+                  >
+                    Add Product
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )
+      }
+
+      {showEditProductModal && editingCrop && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          onClick={() => { setShowEditProductModal(false); setEditingCrop(null); }}
+        >
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-white rounded-t-2xl px-6 sm:px-8 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between z-10">
+              <h2 className="text-xl sm:text-2xl font-bold text-green-800 font-heading">Edit Product</h2>
+              <button
+                onClick={() => { setShowEditProductModal(false); setEditingCrop(null); }}
+                className="p-2 rounded-full hover:bg-gray-100 transition"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleEditProduct}
+              className="px-6 sm:px-8 py-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
+            >
+              <input
+                name="name"
+                required
+                defaultValue={editingCrop.name}
+                placeholder="Crop Name"
+                className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+              />
+              <input
+                name="price"
+                type="number"
+                required
+                defaultValue={editingCrop.price}
+                placeholder="Price (₹)"
+                className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+              />
+              <input
+                name="quantity"
+                required
+                defaultValue={editingCrop.quantity}
+                placeholder="Quantity (e.g., 20 kg)"
+                className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+              />
+              <select
+                name="type"
+                required
+                defaultValue={editingCrop.type}
+                className="w-full border border-gray-200 rounded-xl p-3 text-sm text-gray-700 bg-gray-50 hover:bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition"
+              >
+                <option value="" disabled>Select Crop Type</option>
+                <option value="crop">Crop</option>
+                <option value="dairy">Dairy</option>
+                <option value="grocery">Grocery</option>
+                <option value="spice">Spice</option>
+                <option value="vegetable">Vegetable</option>
+                <option value="fruit">Fruit</option>
+              </select>
+              <input
+                name="availability"
+                required
+                defaultValue={editingCrop.availability}
+                placeholder="Availability"
+                className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+              />
+              <input
+                name="regionPincodes"
+                required
+                defaultValue={editingCrop.regionPincodes?.join(', ')}
+                placeholder="Region Pincodes (comma separated)"
+                className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none transition bg-gray-50 hover:bg-white"
+              />
+
+              <div className="flex flex-col col-span-full sm:col-span-1">
+                <div className="relative group">
+                  <input
+                    id="edit-image-upload"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const fileName = e.target.files?.[0]?.name;
+                      const label = document.getElementById('edit-file-name-label');
+                      if (label && fileName) label.textContent = fileName;
+                    }}
+                  />
+                  <label
+                    htmlFor="edit-image-upload"
+                    className="flex items-center gap-2 w-full py-3 px-4 text-gray-700 font-medium rounded-xl border border-dashed border-gray-300 hover:border-green-500 hover:text-green-700 bg-gray-50 hover:bg-green-50 transition-all duration-200 cursor-pointer"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4" />
+                    </svg>
+                    <span>Change Image (optional)</span>
+                  </label>
+                  <span id="edit-file-name-label" className="block text-xs text-gray-500 truncate mt-1"></span>
+                </div>
+              </div>
+
+              <div className="col-span-full flex items-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => { setShowEditProductModal(false); setEditingCrop(null); }}
+                  className="flex-1 py-3 rounded-xl text-gray-700 font-semibold border border-gray-300 hover:bg-gray-50 transition duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-gradient-to-br from-green-800 to-emerald-700 rounded-xl text-white py-3 text-base font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-600 transition duration-300"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

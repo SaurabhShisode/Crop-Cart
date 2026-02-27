@@ -161,7 +161,7 @@ const Navbar: React.FC<{
     return (
       <>
         <nav className="flex justify-between items-center px-6 py-6 md:py-7 bg-white shadow-lg sticky top-0 z-50">
-          {/* Logo */}
+
           <div
             className="flex items-center gap-2 text-2xl font-extrabold text-green-700 cursor-pointer font-heading"
             onClick={() => navigate('/')}
@@ -173,9 +173,9 @@ const Navbar: React.FC<{
             <span>CropCart</span>
           </div>
 
-          {/* Desktop Inputs */}
+
           <div className="hidden lg:flex items-center space-x-8">
-            {/* Displayed location */}
+
             <div className="flex items-center gap-2 bg-green-50 text-green-800 px-4 py-2 rounded-md shadow-sm w-56">
               <MapPinIcon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
               <span className="font-semibold truncate overflow-hidden whitespace-nowrap">
@@ -185,7 +185,7 @@ const Navbar: React.FC<{
 
 
 
-            {/* Address input with autocomplete */}
+
             <StandaloneSearchBox
               onLoad={(ref) => (searchBoxRef.current = ref)}
               onPlacesChanged={handlePlacesChanged}
@@ -197,7 +197,7 @@ const Navbar: React.FC<{
               />
             </StandaloneSearchBox>
 
-            {/* Product search bar */}
+
             <div className="relative">
               <input
                 type="text"
@@ -217,7 +217,7 @@ const Navbar: React.FC<{
               <MagnifyingGlassIcon className="w-5 h-5 absolute right-2 top-2.5 text-gray-500" aria-hidden="true" />
             </div>
 
-            {/* Cart */}
+
             <div
               className="relative cursor-pointer"
               onClick={toggleCart}
@@ -236,7 +236,7 @@ const Navbar: React.FC<{
           </div>
 
 
-          {/* Right side */}
+
           <div className="flex items-center gap-6 md:gap-6">
 
             <div
@@ -258,7 +258,7 @@ const Navbar: React.FC<{
               )}
             </div>
 
-            {/* User / Auth Buttons */}
+
             <div className=" items-center lg:space-x-4">
               {userName ? (
                 <div className="flex items-center gap-3">
@@ -342,13 +342,13 @@ const Navbar: React.FC<{
               )}
             </div>
 
-            {/* Mobile Menu Toggle */}
+
             <button className="lg:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} className="text-green-800 text-xl" />
             </button>
           </div>
 
-          {/* Mobile Menu */}
+
           {mobileMenuOpen && (
             <div className="lg:hidden absolute top-20 md:top-[86px] left-0 w-full bg-white shadow-md px-6 py-4 space-y-4 z-50">
               <div className="flex items-center gap-2">
@@ -732,7 +732,7 @@ const Home: React.FC = () => {
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#6b21a8] text-white p-4 sm:p-6 shadow-2xl w-full h-fit sm:h-auto">
             <div className="relative z-10 max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-8">
 
-              {/* Text Content */}
+
               <div className="flex-1">
                 <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-4 pt-2">
                   What’s for <span className="text-green-300">{mealTime}?</span>
@@ -741,7 +741,7 @@ const Home: React.FC = () => {
                   Type in a meal you're thinking of — like <span className="italic text-white/90">"paneer butter masala"</span>
                 </p>
 
-                {/* Input Field */}
+
                 <div className="relative">
                   <input
                     type="text"
@@ -755,12 +755,12 @@ const Home: React.FC = () => {
                   />
                 </div>
 
-                {/* Loading Spinner */}
+
                 {loadingIngredients && (
                   <IngredientSkeleton />
                 )}
 
-                {/* Ingredients List */}
+
                 {!loadingIngredients && ingredients.length > 0 && (
                   <motion.div
                     ref={ingredientsRef}
@@ -812,7 +812,7 @@ const Home: React.FC = () => {
               </div>
             </div>
 
-            {/* Soft gradient overlay for depth */}
+
             <div className="absolute inset-0 z-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none"></div>
           </div>
           <NearbyCrops
