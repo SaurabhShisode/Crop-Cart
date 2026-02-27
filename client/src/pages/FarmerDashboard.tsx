@@ -933,14 +933,14 @@ const FarmerDashboard: React.FC = () => {
                   {[...filteredCrops].reverse().map((crop) => (
                     <div
                       key={crop._id}
-                      className="first:ml-4 snap-start bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col w-64 flex-shrink-0 group overflow-hidden"
+                      className="first:ml-4 snap-start bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col w-64 flex-shrink-0 group/card overflow-hidden"
                     >
                       {crop.image ? (
                         <div className="overflow-hidden">
                           <img
                             src={crop.image}
                             alt={crop.name}
-                            className="w-full h-36 sm:h-40 object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="w-full h-36 sm:h-40 object-cover transition-transform duration-500 group-hover/card:scale-105"
                           />
                         </div>
                       ) : (

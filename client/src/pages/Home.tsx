@@ -431,6 +431,7 @@ const Home: React.FC = () => {
   const ingredientsRef = useRef<HTMLDivElement | null>(null);
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [nearbyCrops, setNearbyCrops] = useState<Crop[]>([]);
+  const mapSectionRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
 
@@ -637,6 +638,13 @@ const Home: React.FC = () => {
     setIsMobileCartOpen((prev) => !prev);
   };
 
+  const handleLocationSelect = (coords: { lat: number; lng: number }) => {
+    setSelectedCoords(coords);
+    setTimeout(() => {
+      mapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
   const filteredCrops = (selectedCoords ? nearbyCrops : crops).filter((crop) =>
     crop.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
   );
@@ -670,7 +678,7 @@ const Home: React.FC = () => {
         setLocation={setLocation}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        onLocationSelect={setSelectedCoords}
+        onLocationSelect={handleLocationSelect}
       />
 
 
@@ -815,11 +823,12 @@ const Home: React.FC = () => {
 
             <div className="absolute inset-0 z-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none"></div>
           </div>
-          <NearbyCrops
-            selectedCoords={selectedCoords}
-            onNearbyCropsChange={setNearbyCrops}
-
-          />
+          <div ref={mapSectionRef}>
+            <NearbyCrops
+              selectedCoords={selectedCoords}
+              onNearbyCropsChange={setNearbyCrops}
+            />
+          </div>
 
         </div>
 
@@ -859,13 +868,13 @@ const Home: React.FC = () => {
                   {products.map((crop) => (
                     <div
                       key={crop._id}
-                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-xl hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 rounded-lg p-2 flex flex-col w-48 flex-shrink-0 overflow-hidden group"
+                      className="snap-start bg-white/80 backdrop-blur-sm border border-black/20 shadow hover:shadow-xl hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 rounded-lg p-2 flex flex-col w-48 flex-shrink-0 overflow-hidden group/card"
                     >
                       <div className="overflow-hidden rounded-md mb-2">
                         <img
                           src={crop.image}
                           alt={crop.name}
-                          className="w-full h-24 object-cover transition-transform duration-300 group-hover:scale-110"
+                          className="w-full h-24 object-cover transition-transform duration-300 group-hover/card:scale-110"
                           loading="lazy"
                         />
                       </div>
