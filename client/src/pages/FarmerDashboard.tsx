@@ -1036,11 +1036,9 @@ const FarmerDashboard: React.FC = () => {
                       const isExpanded = expandedOrderId === order._id;
 
                       return (
-                        <motion.div
+                        <div
                           key={order._id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.08 }}
+
                           onClick={() => toggleOrderDetails(order._id)}
                           className="relative bg-white rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-green-200"
                         >
@@ -1133,7 +1131,7 @@ const FarmerDashboard: React.FC = () => {
                               </div>
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </div>
