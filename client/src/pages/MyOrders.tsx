@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -431,7 +431,7 @@ const MyOrders: React.FC = () => {
             <div className="grid gap-6">
               {filteredOrders
 
-                .map((order, index) => {
+                .map((order) => {
                   const total = parseFloat(order.total);
                   const tax = parseFloat(order.tax);
                   const delivery = order.deliveryFee;
