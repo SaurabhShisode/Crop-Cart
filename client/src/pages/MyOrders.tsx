@@ -8,7 +8,7 @@ import logo from '../assets/logo.png';
 import {
   UserPlusIcon,
 } from '@heroicons/react/24/outline';
-import { User, } from 'lucide-react';
+import { User, ChevronDown } from 'lucide-react';
 import Footer from '../components/Footer';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import OrderSkeleton from '../components/skeletons/OrderSkeleton';
@@ -460,7 +460,7 @@ const MyOrders: React.FC = () => {
                         {status === 'completed' ? 'Completed' : 'Pending'}
                       </span>
 
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 pr-6">
                         <div>
                           <p className="text-xs sm:text-sm text-gray-500">Order ID:</p>
                           <p className="text-sm sm:text-lg font-semibold text-green-800 dark:text-green-300 break-all">
@@ -484,6 +484,7 @@ const MyOrders: React.FC = () => {
 
 
                         </div>
+                        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                       </div>
 
 

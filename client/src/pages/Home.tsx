@@ -718,7 +718,13 @@ const Home: React.FC = () => {
               <p className="mb-5 text-base text-cyan-800">
                 Enjoy <span className="font-bold text-cyan-900">10% off</span> on all organic vegetables this week! 🔥
               </p>
-              <button className="text-sm sm:text-base bg-white text-cyan-700 px-5 py-2 rounded-xl font-semibold shadow-md hover:bg-cyan-100 transition">
+              <button
+                onClick={() => {
+                  const el = document.querySelector('[id^="section-"]');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-sm sm:text-base bg-white text-cyan-700 px-5 py-2 rounded-xl font-semibold shadow-md hover:bg-cyan-100 transition"
+              >
                 Shop Now
               </button>
             </div>
@@ -730,7 +736,13 @@ const Home: React.FC = () => {
               <p className="mb-5 text-base text-yellow-800">
                 Get your fresh produce delivered at no extra cost! 🚚
               </p>
-              <button className="text-sm sm:text-base bg-white text-yellow-800 px-5 py-2 rounded-xl font-semibold shadow-md hover:bg-yellow-100 transition">
+              <button
+                onClick={() => {
+                  const el = document.querySelector('[id^="section-"]');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-sm sm:text-base bg-white text-yellow-800 px-5 py-2 rounded-xl font-semibold shadow-md hover:bg-yellow-100 transition"
+              >
                 Start Shopping
               </button>
             </div>
@@ -999,9 +1011,19 @@ const Home: React.FC = () => {
           {cart.length === 0 ? (
             <div className="flex-grow flex flex-col items-center justify-center text-center">
               <img src={EmptyCartIcon} alt="Empty cart" className="w-28 h-28 mb-3 opacity-70" />
-              <p className="text-gray-600 font-medium">
+              <p className="text-gray-600 font-medium mb-4">
                 Your cart is empty.
               </p>
+              <button
+                onClick={() => {
+                  setIsCartOpen(false);
+                  const el = document.querySelector('[id^="section-"]');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-5 py-2 bg-green-700 hover:bg-green-800 text-white text-sm font-semibold rounded-lg transition"
+              >
+                Browse Products
+              </button>
             </div>
           ) : (
             <div className="flex-grow overflow-y-auto">

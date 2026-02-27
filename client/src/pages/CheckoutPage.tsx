@@ -4,8 +4,8 @@ import toast from 'react-hot-toast';
 import Footer from '../components/Footer';
 import logo from '../assets/logo.png';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
-import { User } from 'lucide-react';
-
+import { User, ShoppingCart, Truck, CheckCircle, ChevronLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { DirectionsService } from '@react-google-maps/api';
 
 interface CartItem {
@@ -16,6 +16,7 @@ interface CartItem {
   quantity: string;
   farmer: string;
   cropId: string;
+  image?: string;
   location?: {
     latitude: number;
     longitude: number;
@@ -38,7 +39,8 @@ const CheckoutPage: React.FC = () => {
   const [deliveryDuration, setDeliveryDuration] = useState<number | null>(null);
   const [debouncedAddress, setDebouncedAddress] = useState('');
   const directionsRequested = useRef(false);
-
+  const [checkoutStep, setCheckoutStep] = useState(1);
+  const [orderSuccess, setOrderSuccess] = useState(false);
 
   useEffect(() => window.scrollTo(0, 0), []);
 
@@ -157,13 +159,13 @@ const CheckoutPage: React.FC = () => {
 
       if (!response.ok) throw new Error('Failed to place order.');
 
-      toast.success('Order placed successfully!');
       if (userId) localStorage.removeItem(`cart_${userId}`);
       setCart([]);
       setName('');
       setEmail('');
       setAddress('');
-      navigate('/home');
+      setOrderSuccess(true);
+      setCheckoutStep(3);
     } catch (err) {
       console.error(err);
       toast.error('Failed to place order. Please try again.');
@@ -180,35 +182,18 @@ const CheckoutPage: React.FC = () => {
     navigate('/home');
   };
 
-  if (cart.length === 0) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center  px-6 text-center">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-16">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-        </svg>
-
-        <h2 className="text-3xl font-semibold text-gray-700 mb-4">Your cart is empty</h2>
-        <p className="text-gray-500">Please add some items to your cart before checking out.</p>
-      </div>
-    );
-  }
   const updateQuantity = (itemId: string, newQuantity: number) => {
     let updatedCart;
-
     if (newQuantity <= 0) {
-
       updatedCart = cart.filter(item => item._id !== itemId);
     } else {
-
       updatedCart = cart.map(item =>
         item._id === itemId
           ? { ...item, quantityInCart: newQuantity }
           : item
       );
     }
-
     setCart(updatedCart);
-
     const storedUser = localStorage.getItem('cropcartUser');
     const userId = storedUser ? JSON.parse(storedUser)?.user?.id : null;
     if (userId) {
@@ -216,12 +201,104 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
+  const steps = [
+    { num: 1, label: 'Cart', icon: ShoppingCart },
+    { num: 2, label: 'Shipping', icon: Truck },
+    { num: 3, label: 'Confirm', icon: CheckCircle },
+  ];
+
+  if (orderSuccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex flex-col">
+        <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-sm sticky top-0 z-50">
+          <div
+            className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none font-heading"
+            onClick={() => navigate('/')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
+          >
+            <img src={logo} alt="CropCart Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
+            <span>CropCart</span>
+          </div>
+        </nav>
+        <div className="flex-grow flex items-center justify-center px-6">
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="text-center max-w-md"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.4, type: 'spring', stiffness: 200 }}
+              className="w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center"
+            >
+              <CheckCircle className="w-14 h-14 text-green-600" />
+            </motion.div>
+            <motion.h1
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 font-heading"
+            >
+              Order Placed!
+            </motion.h1>
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-gray-500 mb-8 text-base sm:text-lg"
+            >
+              Your fresh produce is on its way. You can track your order from the My Orders page.
+            </motion.p>
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-3 justify-center"
+            >
+              <button
+                onClick={() => navigate('/myorders')}
+                className="px-6 py-3 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                View My Orders
+              </button>
+              <button
+                onClick={() => navigate('/home')}
+                className="px-6 py-3 bg-white text-green-700 font-semibold rounded-xl border-2 border-green-700 hover:bg-green-50 transition-all duration-300"
+              >
+                Continue Shopping
+              </button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  if (cart.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex flex-col items-center justify-center px-6 text-center">
+        <ShoppingCart className="w-16 h-16 text-gray-300 mb-4" />
+        <h2 className="text-3xl font-semibold text-gray-700 mb-4 font-heading">Your cart is empty</h2>
+        <p className="text-gray-500 mb-6">Please add some items to your cart before checking out.</p>
+        <button
+          onClick={() => navigate('/home')}
+          className="px-6 py-3 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-all"
+        >
+          Start Shopping
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
-      <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-lg sticky top-0 z-50">
+      <nav className="flex justify-between items-center px-3 sm:px-6 py-5 sm:py-7 bg-white shadow-sm sticky top-0 z-50">
         <div
-          className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none dark:text-green-400 font-heading"
+          className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 cursor-pointer select-none font-heading"
           onClick={() => navigate('/')}
           role="button"
           tabIndex={0}
@@ -231,13 +308,12 @@ const CheckoutPage: React.FC = () => {
           <span>CropCart</span>
         </div>
 
-        <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           {userName ? (
-            <div className="flex items-center space-x-2 sm:space-x-4 flex-col sm:flex-row">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <span className="hidden sm:flex font-semibold text-green-700 text-sm sm:text-lg">
                 Hi, {userName}
               </span>
-
               <div ref={dropdownRef} className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -250,7 +326,6 @@ const CheckoutPage: React.FC = () => {
                 </button>
                 {dropdownOpen && (
                   <ul className="absolute right-0 mt-2 w-44 sm:w-48 bg-white border border-green-200 rounded-md shadow-lg z-50 text-sm sm:text-base">
-
                     <li>
                       <button
                         onClick={() => {
@@ -296,132 +371,141 @@ const CheckoutPage: React.FC = () => {
           )}
         </div>
       </nav>
-      <div className="min-h-screen bg-white flex items-center justify-center px-6 pt-10 mt-16 sm:mt-0">
 
-        <div className="max-w-6xl w-full  rounded-2xl  grid grid-cols-1 md:grid-cols-3 gap-8 pb-10  sm:p-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        <div className="flex items-center justify-center mb-10">
+          {steps.map((step, i) => (
+            <React.Fragment key={step.num}>
+              <div className="flex flex-col items-center">
+                <div
+                  className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 ${checkoutStep >= step.num
+                    ? 'bg-green-700 text-white shadow-lg'
+                    : 'bg-gray-100 text-gray-400'
+                    }`}
+                >
+                  <step.icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <span className={`text-xs sm:text-sm mt-2 font-semibold ${checkoutStep >= step.num ? 'text-green-700' : 'text-gray-400'
+                  }`}>{step.label}</span>
+              </div>
+              {i < steps.length - 1 && (
+                <div className={`flex-1 h-0.5 mx-2 sm:mx-4 mt-[-20px] transition-all duration-300 ${checkoutStep > step.num ? 'bg-green-700' : 'bg-gray-200'
+                  }`} />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
 
-
-          <section className="order-1 md:order-1 md:col-span-1 bg-green-900 border  rounded-xl p-4 md:p-6 shadow-2xl">
-            <h2 className="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6 font-heading">Order Summary</h2>
-
-            <ul className="divide-y divide-white">
-              {cart.map((item) => {
-                const quantityNum = item.quantityInCart || 0;
-
-
-                return (
-                  <li
-                    key={item._id}
-                    className="py-3 md:py-4 flex flex-col sm:flex-row justify-between gap-2 sm:gap-4"
-                  >
-                    <div className="flex flex-col">
-                      <p className="font-semibold text-white text-sm md:text-base">
-                        {item.name} ({item.quantity})
-                      </p>
-
-
-
-                      <div className="flex items-center space-x-2 mt-2 bg-green-700 rounded w-fit px-2 py-1">
-                        <button
-                          type="button"
-                          aria-label={`Decrease quantity of ${item.name}`}
-                          onClick={() => updateQuantity(item._id, quantityNum - 1)}
-                          className="px-2 py-1 text-white text-xs font-bold"
-                          disabled={quantityNum <= 0}
-                        >
-                          −
-                        </button>
-                        <span className="text-white text-sm font-bold">{quantityNum}</span>
-                        <button
-                          type="button"
-                          aria-label={`Increase quantity of ${item.name}`}
-                          onClick={() => updateQuantity(item._id, quantityNum + 1)}
-                          className="px-2 py-1 text-white text-xs font-bold"
-                        >
-                          +
-                        </button>
-                      </div>
+        {checkoutStep === 1 && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 font-heading">Your Cart</h2>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 divide-y divide-gray-100">
+              {cart.map((item) => (
+                <div key={item._id} className="flex items-center gap-4 p-4 sm:p-5">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-green-100 to-emerald-50 flex items-center justify-center flex-shrink-0">
+                      <ShoppingCart className="w-6 h-6 text-green-300" />
                     </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{item.name}</h3>
+                    <p className="text-xs sm:text-sm text-gray-500">{item.quantity}</p>
+                    <p className="text-green-700 font-bold text-sm sm:text-base mt-0.5">₹{item.price}</p>
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-2 py-1">
+                    <button
+                      type="button"
+                      onClick={() => updateQuantity(item._id, item.quantityInCart - 1)}
+                      className="w-7 h-7 rounded-md bg-white shadow-sm text-gray-600 font-bold text-sm hover:bg-gray-100 transition"
+                    >
+                      −
+                    </button>
+                    <span className="text-sm font-bold text-gray-800 w-6 text-center">{item.quantityInCart}</span>
+                    <button
+                      type="button"
+                      onClick={() => updateQuantity(item._id, item.quantityInCart + 1)}
+                      className="w-7 h-7 rounded-md bg-white shadow-sm text-gray-600 font-bold text-sm hover:bg-gray-100 transition"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <p className="font-bold text-gray-900 text-sm sm:text-base w-20 text-right">
+                    ₹{(item.price * item.quantityInCart).toFixed(2)}
+                  </p>
+                </div>
+              ))}
+            </div>
 
-                    <p className="font-semibold text-white text-sm md:text-base self-end sm:self-center">
-                      ₹{(item.price * quantityNum).toFixed(2)}
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
-
-
-
-            <div className=" border-t border-white mt-8 md:mt-6 pt-3 md:pt-4 space-y-4 text-white">
-              <div className="flex justify-between items-center text-sm md:text-base">
-                <span className="flex items-center gap-2 font-semibold">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-circle-dollar-sign-icon lucide-circle-dollar-sign"><circle cx="12" cy="12" r="10" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 18V6" /></svg>Base Price:</span>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mt-4 p-5">
+              <div className="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Subtotal</span>
                 <span className="font-semibold">₹{totalPrice.toFixed(2)}</span>
               </div>
-
-              <div className="flex justify-between items-center text-sm md:text-base">
-                <span className="flex items-center gap-2 font-semibold">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-landmark-icon lucide-landmark"><path d="M10 18v-7" /><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z" /><path d="M14 18v-7" /><path d="M18 18v-7" /><path d="M3 22h18" /><path d="M6 18v-7" /></svg>Taxes:</span>
+              <div className="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Tax (18%)</span>
                 <span className="font-semibold">₹{(totalPrice * 0.18).toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center text-sm md:text-base">
-                <span className="flex items-center gap-2 font-semibold">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-truck-icon lucide-truck"
-                  >
-                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
-                    <path d="M15 18H9" />
-                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
-                    <circle cx="17" cy="18" r="2" />
-                    <circle cx="7" cy="18" r="2" />
-                  </svg>
-                  Delivery Fee:
-                </span>
-
+              <div className="flex justify-between text-sm text-gray-600 mb-3">
+                <span>Delivery</span>
                 {totalPrice > 299 ? (
                   <span>
-                    <span className="line-through text-white/50 mr-1 md:mr-2 font-semibold">₹50.00</span>
-                    <span className="text-green-200 font-semibold">Free</span>
+                    <span className="line-through text-gray-400 mr-1">₹50</span>
+                    <span className="text-green-600 font-semibold">Free</span>
                   </span>
                 ) : (
                   <span className="font-semibold">₹50.00</span>
                 )}
               </div>
-
-              <div className="flex justify-between items-center font-bold text-base md:text-xl border-t border-white pt-2 mt-2">
-                <span>Total:</span>
-                <span>
+              <div className="border-t border-gray-100 pt-3 flex justify-between">
+                <span className="font-bold text-gray-900">Total</span>
+                <span className="font-bold text-green-700 text-lg">
                   ₹{(totalPrice * 1.18 + (totalPrice > 299 ? 0 : 50)).toFixed(2)}
                 </span>
               </div>
             </div>
-          </section>
 
+            <button
+              onClick={() => setCheckoutStep(2)}
+              className="w-full mt-6 bg-green-700 hover:bg-green-800 text-white py-3.5 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Proceed to Shipping
+            </button>
+          </motion.div>
+        )}
 
-
-
-          <section className="order-2 md:order-2 md:col-span-2 p-6 bg-green-50 rounded-xl shadow-2xl border border-2 border-green-900">
-
-            <h2 className="text-2xl font-bold text-green-900 mb-6 font-heading">Shipping Details</h2>
+        {checkoutStep === 2 && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <button
+              onClick={() => setCheckoutStep(1)}
+              className="flex items-center gap-1 text-green-700 font-semibold text-sm mb-6 hover:text-green-800 transition"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back to Cart
+            </button>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 font-heading">Shipping Details</h2>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handlePlaceOrder();
               }}
-              className="space-y-6"
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 space-y-5"
             >
               <div>
-                <label htmlFor="name" className="block text-green-800 font-medium mb-2">
+                <label htmlFor="name" className="block text-gray-700 font-semibold mb-1.5 text-sm">
                   Full Name
                 </label>
                 <input
@@ -431,12 +515,11 @@ const CheckoutPage: React.FC = () => {
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="John Doe"
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-900 transition"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-sm"
                 />
               </div>
-
               <div>
-                <label htmlFor="email" className="block text-green-800 font-medium mb-2">
+                <label htmlFor="email" className="block text-gray-700 font-semibold mb-1.5 text-sm">
                   Email Address
                 </label>
                 <input
@@ -446,11 +529,11 @@ const CheckoutPage: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="john@example.com"
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-900 transition"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-sm"
                 />
               </div>
               <div>
-                <label htmlFor="phone" className="block text-green-800 font-medium mb-2">
+                <label htmlFor="phone" className="block text-gray-700 font-semibold mb-1.5 text-sm">
                   Phone Number
                 </label>
                 <input
@@ -461,13 +544,11 @@ const CheckoutPage: React.FC = () => {
                   required
                   placeholder="e.g., 9876543210"
                   pattern="[0-9]{10}"
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-900 transition"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-sm"
                 />
               </div>
-
-
               <div>
-                <label htmlFor="address" className="block text-green-800 font-medium mb-2">
+                <label htmlFor="address" className="block text-gray-700 font-semibold mb-1.5 text-sm">
                   Shipping Address
                 </label>
                 <textarea
@@ -475,17 +556,53 @@ const CheckoutPage: React.FC = () => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
-                  rows={4}
+                  rows={3}
                   placeholder="123, Green Street, City, Country"
-                  className="w-full border border-green-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-900 resize-none transition"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none transition text-sm"
                 />
+              </div>
+
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 flex items-center gap-4">
+                <Truck className="w-8 h-8 text-green-600 flex-shrink-0" />
+                <p className="text-sm font-semibold text-gray-800">
+                  {deliveryDuration ? (
+                    <>Estimated delivery in <span className="text-green-700">{deliveryDuration} mins</span></>
+                  ) : (
+                    <span className="text-gray-500">Enter your delivery address to get estimated delivery time</span>
+                  )}
+                </p>
+              </div>
+
+              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Subtotal ({cart.reduce((a, i) => a + i.quantityInCart, 0)} items)</span>
+                  <span className="font-semibold">₹{totalPrice.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Tax (18%)</span>
+                  <span className="font-semibold">₹{(totalPrice * 0.18).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Delivery</span>
+                  {totalPrice > 299 ? (
+                    <span>
+                      <span className="line-through text-gray-400 mr-1">₹50</span>
+                      <span className="text-green-600 font-semibold">Free</span>
+                    </span>
+                  ) : (
+                    <span className="font-semibold">₹50.00</span>
+                  )}
+                </div>
+                <div className="border-t border-gray-200 pt-2 flex justify-between">
+                  <span className="font-bold text-gray-900">Total</span>
+                  <span className="font-bold text-green-700 text-lg">₹{(totalPrice * 1.18 + (totalPrice > 299 ? 0 : 50)).toFixed(2)}</span>
+                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full bg-green-900 text-white py-3 rounded-lg font-semibold shadow hover:bg-green-800 transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                className={`w-full bg-green-700 text-white py-3.5 rounded-xl font-semibold shadow-lg hover:bg-green-800 hover:shadow-xl transition-all duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -499,52 +616,10 @@ const CheckoutPage: React.FC = () => {
                   'Place Order'
                 )}
               </button>
-
-              <div className="bg-white flex items-center justify-center">
-
-                <div className="max-w-6xl w-full rounded-xl bg-gradient-to-br from-green-100 via-emerald-200 to-green-50 border border-2 border-green-900 shadow-xl p-2 sm:p-4 flex items-center justify-center gap-6 ">
-
-
-                  <div className="relative flex-shrink-0">
-                    <img
-                      src="https://images.vexels.com/media/users/3/153665/isolated/preview/85caec2546a1e9eaaabadfb301945221-fast-delivery-colored-stroke-icon.png"
-                      alt="Fast Delivery"
-                      className="w-12 h-12 sm:w-16 sm:h-16 "
-                    />
-
-
-                  </div>
-
-
-                  <p className="text-md sm:text-lg font-semibold text-gray-800 text-center sm:text-left">
-                    {deliveryDuration ? (
-                      <>
-                        Your order will arrive in&nbsp;
-                        <span className="text-green-800">{deliveryDuration} mins</span>
-                      </>
-                    ) : (
-                      <span className="text-gray-600">Enter your delivery address to get estimated delivery time</span>
-                    )}
-                  </p>
-                </div>
-
-              </div>
-
             </form>
-
-
-
-          </section>
-
-        </div>
-
-
-
+          </motion.div>
+        )}
       </div>
-
-
-
-
 
       <Footer />
       {deliveryCoords &&
