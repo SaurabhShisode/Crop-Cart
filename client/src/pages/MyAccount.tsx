@@ -73,12 +73,89 @@ const MyAccount: React.FC = () => {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 rounded-full skeleton" />
-          <div className="w-48 h-5 skeleton" />
-          <div className="w-32 h-4 skeleton" />
-        </div>
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <nav className="flex justify-between items-center px-4 sm:px-6 py-5 sm:py-7 bg-white shadow-sm sticky top-0 z-50">
+          <div className="flex items-center space-x-2 text-xl sm:text-2xl font-extrabold text-green-700 select-none font-heading">
+            <img src={logo} alt="CropCart Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
+            <span>CropCart</span>
+          </div>
+          <div className="skeleton h-9 w-20 rounded-lg" />
+        </nav>
+
+        <main className="flex-grow max-w-3xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-16">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="h-32 sm:h-40 bg-gradient-to-br from-green-800 via-green-700 to-emerald-600 relative">
+              <div className="absolute inset-0 opacity-20">
+                <svg className="w-full h-full" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="80" fill="white" opacity="0.1" />
+                  <circle cx="350" cy="150" r="100" fill="white" opacity="0.08" />
+                  <circle cx="200" cy="20" r="60" fill="white" opacity="0.06" />
+                </svg>
+              </div>
+            </div>
+            <div className="relative px-6 sm:px-8 pb-6">
+              <div className="absolute -top-12 sm:-top-14 left-6 sm:left-8">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-green-200 border-4 border-white shadow-xl animate-pulse" />
+              </div>
+              <div className="pt-14 sm:pt-16">
+                <div className="skeleton h-7 w-48 rounded mb-2" />
+                <div className="skeleton h-4 w-56 rounded mb-3" />
+                <div className="flex gap-2">
+                  <div className="skeleton h-6 w-20 rounded-full" />
+                  <div className="skeleton h-6 w-24 rounded-full" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <section className="mt-8">
+            <div className="skeleton h-5 w-36 rounded mb-4" />
+            <div className="bg-white rounded-2xl shadow-md divide-y divide-gray-100">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 px-6 py-5">
+                  <div className="w-10 h-10 rounded-full bg-green-50 flex-shrink-0 animate-pulse" />
+                  <div>
+                    <div className="skeleton h-2.5 w-20 rounded mb-2" />
+                    <div className="skeleton h-4 w-40 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-8">
+            <div className="skeleton h-5 w-32 rounded mb-4" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between bg-white rounded-2xl shadow-md px-6 py-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-100 animate-pulse" />
+                    <div className="skeleton h-4 w-28 rounded" />
+                  </div>
+                  <div className="skeleton h-4 w-4 rounded" />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-8 mb-8">
+            <div className="skeleton h-5 w-36 rounded mb-4" />
+            <div className="bg-white rounded-2xl shadow-md">
+              <div className="flex items-center justify-between px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-red-50 animate-pulse" />
+                  <div>
+                    <div className="skeleton h-4 w-16 rounded mb-1.5" />
+                    <div className="skeleton h-2.5 w-40 rounded" />
+                  </div>
+                </div>
+                <div className="skeleton h-4 w-4 rounded" />
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <Footer />
       </div>
     );
   }
