@@ -59,7 +59,6 @@ const MyAccount: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('cropcartUser');
     toast.success('Logged out successfully', {
-      style: { background: '#14532d', color: 'white' },
     });
     navigate('/');
   };

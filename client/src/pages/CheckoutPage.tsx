@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Footer from '../components/Footer';
 import logo from '../assets/logo.png';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
@@ -41,6 +41,7 @@ const CheckoutPage: React.FC = () => {
   useEffect(() => window.scrollTo(0, 0), []);
 
   useEffect(() => {
+    document.title = 'Checkout | CropCart';
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
       try {
@@ -97,11 +98,11 @@ const CheckoutPage: React.FC = () => {
     return total + item.price * quantityNum;
   }, 0);
 
-  const toastStyle = { style: { background: '#14532d', color: 'white' } };
+
 
   const handlePlaceOrder = async () => {
     if (!name || !email || !address || !cart.length) {
-      toast.error('Please fill in all fields and add items to cart.', toastStyle);
+      toast.error('Please fill in all fields and add items to cart.');
       return;
     }
 
@@ -146,7 +147,7 @@ const CheckoutPage: React.FC = () => {
 
       if (!response.ok) throw new Error('Failed to place order.');
 
-      toast.success('Order placed successfully!', toastStyle);
+      toast.success('Order placed successfully!');
       if (userId) localStorage.removeItem(`cart_${userId}`);
       setCart([]);
       setName('');
@@ -155,7 +156,7 @@ const CheckoutPage: React.FC = () => {
       navigate('/home');
     } catch (err) {
       console.error(err);
-      toast.error('Failed to place order. Please try again.', toastStyle);
+      toast.error('Failed to place order. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -285,7 +286,6 @@ const CheckoutPage: React.FC = () => {
           )}
         </div>
       </nav>
-      <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-white flex items-center justify-center px-6 pt-10 mt-16 sm:mt-0">
 
         <div className="max-w-6xl w-full  rounded-2xl  grid grid-cols-1 md:grid-cols-3 gap-8 pb-10  sm:p-10">

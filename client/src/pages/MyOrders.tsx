@@ -174,20 +174,19 @@ const MyOrders: React.FC = () => {
       }
 
       toast.success('Order deleted successfully', {
-        style: { background: '#14532d', color: 'white' },
       });
       setOrders((prev) => prev.filter((o) => o._id !== orderToDelete._id));
       setShowDeleteModal(false);
       setOrderToDelete(null);
     } catch (err: any) {
       toast.error(err.message || 'Error cancelling order', {
-        style: { background: '#14532d', color: 'white' },
       });
     }
   };
 
 
   useEffect(() => {
+    document.title = 'My Orders | CropCart';
     const fetchOrders = async () => {
       try {
         const userData = localStorage.getItem('cropcartUser');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import {
   UserIcon, EnvelopeIcon, LockClosedIcon, EyeIcon,
   EyeSlashIcon
 } from '@heroicons/react/24/outline';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 const RegisterFarmerPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -15,6 +15,10 @@ const RegisterFarmerPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Farmer Registration | CropCart';
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -33,17 +37,14 @@ const RegisterFarmerPage: React.FC = () => {
 
       if (res.ok) {
         toast.success('Farmer registered successfully!', {
-          style: { background: '#14532d', color: 'white' },
         });
         navigate('/farmer-login');
       } else {
         toast.error(data.message || 'Registration failed', {
-          style: { background: '#14532d', color: 'white' },
         });
       }
     } catch (error: any) {
       toast.error(error.message, {
-        style: { background: '#14532d', color: 'white' },
       });
     } finally {
       setLoading(false);
@@ -52,7 +53,6 @@ const RegisterFarmerPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <Toaster position="top-center" reverseOrder={false} />
 
       {/* Left Panel */}
       <div className="w-full md:w-1/3 flex items-center justify-center bg-green-900 py-10 md:py-0 px-6">
@@ -137,8 +137,8 @@ const RegisterFarmerPage: React.FC = () => {
               type="submit"
               disabled={loading}
               className={`w-full py-3 rounded-lg font-semibold transition-all shadow-md ${loading
-                  ? 'bg-green-900 text-white cursor-not-allowed'
-                  : 'bg-green-900 text-white hover:scale-[1.02]'
+                ? 'bg-green-900 text-white cursor-not-allowed'
+                : 'bg-green-900 text-white hover:scale-[1.02]'
                 }`}
             >
               {loading ? 'Registering...' : 'Register as Farmer'}

@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { UserIcon, EnvelopeIcon, LockClosedIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -12,6 +12,10 @@ const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = 'Register | CropCart';
+  }, []);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -21,12 +25,10 @@ const RegisterPage: React.FC = () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       toast.success('User registered successfully!', {
-        style: { background: '#14532d', color: 'white' },
       });
       navigate('/login');
     } catch (error: any) {
       toast.error(error.message, {
-        style: { background: '#14532d', color: 'white' },
       });
     } finally {
       setLoading(false);
@@ -35,7 +37,6 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <Toaster position="top-center" reverseOrder={false} />
 
       {/* Left Panel */}
       <div className="w-full md:w-1/3 relative overflow-hidden flex items-center justify-center bg-green-900 py-12 md:py-0">
@@ -121,8 +122,8 @@ const RegisterPage: React.FC = () => {
             <button
               type="submit"
               className={`w-full py-3 rounded-lg font-semibold shadow-md transition-all ${loading
-                  ? 'bg-green-900 text-white cursor-not-allowed'
-                  : 'bg-green-900 text-white hover:scale-[1.02]'
+                ? 'bg-green-900 text-white cursor-not-allowed'
+                : 'bg-green-900 text-white hover:scale-[1.02]'
                 }`}
               disabled={loading}
             >

@@ -276,6 +276,7 @@ const FarmerDashboard: React.FC = () => {
 
 
   useEffect(() => {
+    document.title = 'Farmer Dashboard | CropCart';
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -417,7 +418,6 @@ const FarmerDashboard: React.FC = () => {
         }
       } catch (error) {
         toast.error('Failed to fetch data', {
-          style: { background: '#14532d', color: 'white' },
         });
       } finally {
         setLoading(false);

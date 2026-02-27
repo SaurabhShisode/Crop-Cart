@@ -467,6 +467,7 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    document.title = 'Shop Fresh Produce | CropCart';
     const storedUser = localStorage.getItem('cropcartUser');
     if (storedUser) {
       try {

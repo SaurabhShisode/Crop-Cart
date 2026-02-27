@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import heroImage from '../assets/hero.png';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,6 +17,10 @@ import { useForm, ValidationError } from '@formspree/react';
 
 export default function LandingPage() {
     const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        document.title = 'CropCart - Buy Fresh Produce Directly from Farmers';
+    }, []);
     const [active, setActive] = useState('home');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [state, handleSubmit] = useForm("movwjepn");

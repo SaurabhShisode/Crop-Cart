@@ -10,6 +10,7 @@ import FarmerLogin from './pages/FarmerLoginPage';
 import FarmerRegister from './pages/FarmerRegisterPage';
 import FarmerDashboard from './pages/FarmerDashboard';
 import MyAccount from './pages/MyAccount';
+import NotFound from './pages/NotFound';
 import ScrollToTop from './components/ScrollToTop';
 
 const pageVariants = {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/farmer-register" element={<AnimatedRoute><FarmerRegister /></AnimatedRoute>} />
           <Route path="/farmer-dashboard" element={<AnimatedRoute><FarmerDashboard /></AnimatedRoute>} />
           <Route path="/my-account" element={<AnimatedRoute><MyAccount /></AnimatedRoute>} />
+          <Route path="*" element={<AnimatedRoute><NotFound /></AnimatedRoute>} />
         </Routes>
       </AnimatePresence>
     </>

@@ -10,6 +10,10 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = 'Login | CropCart';
+  }, []);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -30,12 +34,10 @@ const LoginPage: React.FC = () => {
       if (res.ok) {
         localStorage.setItem('cropcartUser', JSON.stringify(data));
         toast.success(`Logged in as ${email}`, {
-          style: { background: '#14532d', color: 'white' },
         });
         navigate('/home');
       } else {
         toast.error(data.message || 'Login failed', {
-          style: { background: '#14532d', color: 'white' },
         });
       }
     } catch (error: any) {
@@ -69,12 +71,10 @@ const LoginPage: React.FC = () => {
       if (res.ok) {
         localStorage.setItem('cropcartUser', JSON.stringify(data));
         toast.success(`Logged in as ${user.email}`, {
-          style: { background: '#14532d', color: 'white' },
         });
         navigate('/home');
       } else {
         toast.error(data.message || 'Google login failed', {
-          style: { background: '#14532d', color: 'white' },
         });
       }
     } catch (error: any) {
@@ -154,8 +154,8 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               className={`w-full py-3 rounded-lg font-semibold shadow-md transition-all ${loading
-                  ? 'bg-green-900 text-white cursor-not-allowed'
-                  : 'bg-green-900 text-white hover:scale-[1.02]'
+                ? 'bg-green-900 text-white cursor-not-allowed'
+                : 'bg-green-900 text-white hover:scale-[1.02]'
                 }`}
               disabled={loading}
             >
@@ -170,8 +170,8 @@ const LoginPage: React.FC = () => {
               onClick={handleGoogleLogin}
               disabled={loading}
               className={`w-full flex items-center justify-center gap-3 py-2 rounded-lg shadow-sm transition-all ${loading
-                  ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
             >
               <img
